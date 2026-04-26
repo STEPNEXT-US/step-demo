@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mark Attendance · STEP Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Pretendard Variable', 'Pretendard', 'system-ui', 'sans-serif'],
+          mono: ['JetBrains Mono', 'monospace'],
+        },
+        colors: {
+          ink: { 900:'#0A0A0B', 800:'#18181B', 700:'#27272A', 600:'#52525B', 500:'#71717A', 400:'#A1A1AA', 300:'#D4D4D8', 200:'#E4E4E7', 100:'#F4F4F5', 50:'#F9FAFB' },
+          brand: { 500:'#3B82F6', 600:'#2563EB', 700:'#1D4ED8' },
+          present: '#3B82F6',
+          late: '#F59E0B',
+          absent: '#EF4444',
+          trial: '#10B981',
+        },
+        boxShadow: {
+          card: '0 1px 2px rgba(16,24,40,0.04), 0 1px 3px rgba(16,24,40,0.06)',
+          elev: '0 4px 12px rgba(16,24,40,0.06), 0 2px 4px rgba(16,24,40,0.04)',
+          floating: '0 12px 32px rgba(16,24,40,0.12), 0 4px 8px rgba(16,24,40,0.06)',
+        },
+        animation: {
+          'pulse-soft': 'pulseSoft 2s ease-in-out infinite',
+          'slide-up': 'slideUp 0.3s ease-out',
+          'fade-in': 'fadeIn 0.2s ease-out',
+        },
+        keyframes: {
+          pulseSoft: { '0%,100%':{opacity:'1'},'50%':{opacity:'0.6'} },
+          slideUp: { '0%':{transform:'translateY(20px)',opacity:'0'},'100%':{transform:'translateY(0)',opacity:'1'} },
+          fadeIn: { '0%':{opacity:'0'},'100%':{opacity:'1'} },
+        }
+      }
+    }
+  }
+</script>
+<style>
+  body { font-family: 'Pretendard Variable','Pretendard',system-ui,sans-serif; background:#F9FAFB; color:#18181B; -webkit-font-smoothing:antialiased; }
+  .mono { font-family: 'JetBrains Mono', monospace; font-feature-settings: "tnum"; }
+
+  /* Class card in left panel */
+  .class-card { padding:14px; border-radius:14px; border:1px solid #E4E4E7; transition:all .15s; cursor:pointer; background:#fff; }
+  .class-card:hover { border-color:#D4D4D8; box-shadow:0 1px 2px rgba(0,0,0,.04); }
+  .class-card.active { border-color:#3B82F6; background:#EFF6FF; box-shadow:0 0 0 3px rgba(59,130,246,.08); }
+
+  /* Student card */
+  .student-card { background:#fff; border:1px solid #E4E4E7; border-radius:16px; padding:14px; transition:all .15s; position:relative; }
+  .student-card:hover { border-color:#D4D4D8; box-shadow:0 4px 12px rgba(16,24,40,.06); }
+  .student-card.selected { border-color:#3B82F6; background:#F8FAFF; box-shadow:0 0 0 3px rgba(59,130,246,.10); }
+  .student-card.status-present { border-color:#BFDBFE; background:#EFF6FF; }
+  .student-card.status-late { border-color:#FDE68A; background:#FFFBEB; }
+  .student-card.status-absent { border-color:#FECACA; background:#FEF2F2; }
+
+  /* Status action buttons */
+  .status-btn { width:32px; height:32px; border-radius:10px; display:flex; align-items:center; justify-content:center; transition:all .12s; cursor:pointer; border:1px solid transparent; }
+  .status-btn svg { width:16px; height:16px; }
+  .status-btn.present { background:#F4F4F5; color:#A1A1AA; }
+  .status-btn.present:hover { background:#DBEAFE; color:#2563EB; }
+  .student-card.status-present .status-btn.present { background:#3B82F6; color:#fff; }
+  .status-btn.late { background:#F4F4F5; color:#A1A1AA; }
+  .status-btn.late:hover { background:#FEF3C7; color:#D97706; }
+  .student-card.status-late .status-btn.late { background:#F59E0B; color:#fff; }
+  .status-btn.absent { background:#F4F4F5; color:#A1A1AA; }
+  .status-btn.absent:hover { background:#FEE2E2; color:#DC2626; }
+  .student-card.status-absent .status-btn.absent { background:#EF4444; color:#fff; }
+
+  /* Belt badge */
+  .belt-badge { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:6px; font-size:11px; font-weight:600; line-height:1; letter-spacing:-0.01em; }
+  .belt-yellow { background:#FEF3C7; color:#A16207; }
+  .belt-green { background:#D1FAE5; color:#047857; }
+  .belt-blue { background:#DBEAFE; color:#1D4ED8; }
+  .belt-red { background:#FEE2E2; color:#B91C1C; }
+  .belt-white { background:#F4F4F5; color:#52525B; }
+  .belt-trial { background:#ECFDF5; color:#059669; border:1px dashed #10B981; }
+
+  /* Tabs */
+  .tab { padding:8px 14px; border-radius:10px; font-size:14px; font-weight:600; color:#71717A; cursor:pointer; transition:all .15s; display:flex; align-items:center; gap:6px; }
+  .tab:hover { color:#18181B; background:#F4F4F5; }
+  .tab.active { background:#18181B; color:#fff; }
+  .tab .count { font-size:11px; padding:1px 6px; border-radius:6px; background:rgba(255,255,255,.18); font-weight:600; }
+  .tab:not(.active) .count { background:#E4E4E7; color:#52525B; }
+
+  /* Live badge */
+  .live-badge { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:999px; background:#EF4444; color:#fff; font-size:11px; font-weight:700; letter-spacing:0.02em; }
+  .live-badge::before { content:''; width:6px; height:6px; border-radius:50%; background:#fff; animation:pulseSoft 1.4s ease-in-out infinite; }
+
+  /* Buttons */
+  .btn { display:inline-flex; align-items:center; gap:6px; padding:8px 14px; border-radius:10px; font-size:13px; font-weight:600; transition:all .15s; cursor:pointer; }
+  .btn-primary { background:#18181B; color:#fff; }
+  .btn-primary:hover { background:#27272A; }
+  .btn-secondary { background:#fff; color:#27272A; border:1px solid #E4E4E7; }
+  .btn-secondary:hover { background:#F9FAFB; border-color:#D4D4D8; }
+  .btn-brand { background:#3B82F6; color:#fff; }
+  .btn-brand:hover { background:#2563EB; }
+  .btn-xiro { background:linear-gradient(135deg,#3B82F6 0%,#1D4ED8 100%); color:#fff; }
+  .btn-xiro:hover { background:linear-gradient(135deg,#2563EB 0%,#1E40AF 100%); }
+
+  /* Progress */
+  .progress-track { height:8px; background:#F4F4F5; border-radius:999px; overflow:hidden; position:relative; }
+  .progress-fill { height:100%; background:linear-gradient(90deg,#3B82F6,#60A5FA); border-radius:999px; transition:width .4s; position:relative; }
+  .progress-fill::after { content:''; position:absolute; right:0; top:0; bottom:0; width:24px; background:linear-gradient(90deg,transparent,rgba(255,255,255,.5)); }
+
+  /* Right panel cards */
+  .panel-card { background:#fff; border:1px solid #E4E4E7; border-radius:14px; padding:16px; }
+
+  /* Alert items */
+  .alert-item { display:flex; align-items:flex-start; gap:10px; padding:10px; border-radius:10px; transition:all .15s; cursor:pointer; }
+  .alert-item:hover { background:#F9FAFB; }
+  .alert-tag { font-size:10px; font-weight:700; padding:3px 7px; border-radius:6px; letter-spacing:0.02em; }
+  .alert-tag.new { background:#DBEAFE; color:#1D4ED8; }
+  .alert-tag.chk { background:#FEF3C7; color:#A16207; }
+  .alert-tag.res { background:#FEE2E2; color:#B91C1C; }
+
+  /* Timeline */
+  .tl-item { display:flex; gap:10px; padding:6px 0; }
+  .tl-dot { width:8px; height:8px; border-radius:50%; margin-top:6px; flex-shrink:0; background:#D4D4D8; }
+  .tl-dot.active { background:#10B981; box-shadow:0 0 0 3px rgba(16,185,129,.2); }
+  .tl-dot.next { background:#3B82F6; }
+
+  /* Search */
+  .search-input { width:100%; padding:10px 14px 10px 38px; background:#F9FAFB; border:1px solid #E4E4E7; border-radius:12px; font-size:14px; transition:all .15s; }
+  .search-input:focus { outline:none; background:#fff; border-color:#3B82F6; box-shadow:0 0 0 3px rgba(59,130,246,.10); }
+
+  /* Bulk action bar */
+  .bulk-bar { position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:#18181B; color:#fff; padding:10px 14px 10px 18px; border-radius:14px; display:flex; align-items:center; gap:10px; box-shadow:0 12px 32px rgba(16,24,40,.18); animation:slideUp .3s ease-out; z-index:50; }
+  .bulk-bar .bulk-btn { padding:6px 12px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; transition:all .15s; }
+  .bulk-bar .bulk-btn.present { background:#3B82F6; color:#fff; }
+  .bulk-bar .bulk-btn.late { background:#F59E0B; color:#fff; }
+  .bulk-bar .bulk-btn.absent { background:#EF4444; color:#fff; }
+  .bulk-bar .bulk-btn.message { background:rgba(255,255,255,.10); color:#fff; }
+  .bulk-bar .bulk-btn:hover { transform:translateY(-1px); }
+
+  /* Xiro insight pill */
+  .xiro-pill { background:linear-gradient(135deg,#EFF6FF 0%,#F0F9FF 100%); border:1px solid #BFDBFE; border-radius:12px; padding:12px; }
+
+  /* Avatar */
+  .avatar { width:36px; height:36px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:600; font-size:13px; color:#fff; flex-shrink:0; }
+
+  /* Custom checkbox */
+  .ck { width:18px; height:18px; border:1.5px solid #D4D4D8; border-radius:5px; display:flex; align-items:center; justify-content:center; cursor:pointer; background:#fff; transition:all .12s; }
+  .ck:hover { border-color:#3B82F6; }
+  .ck.checked { background:#3B82F6; border-color:#3B82F6; }
+  .ck.checked svg { display:block; }
+  .ck svg { display:none; width:12px; height:12px; color:#fff; }
+
+  /* Quick note popover trigger */
+  .quick-note-btn { opacity:0; transition:opacity .15s; position:absolute; top:10px; right:36px; width:24px; height:24px; border-radius:6px; background:#fff; border:1px solid #E4E4E7; display:flex; align-items:center; justify-content:center; color:#71717A; cursor:pointer; }
+  .student-card:hover .quick-note-btn { opacity:1; }
+  .quick-note-btn:hover { background:#3B82F6; color:#fff; border-color:#3B82F6; }
+
+  /* Note indicator */
+  .note-indicator { position:absolute; top:14px; right:36px; width:6px; height:6px; border-radius:50%; background:#3B82F6; }
+
+  /* Header global */
+  .global-header { height:56px; border-bottom:1px solid #E4E4E7; background:#fff; display:flex; align-items:center; justify-content:space-between; padding:0 24px; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width:8px; height:8px; }
+  ::-webkit-scrollbar-thumb { background:#E4E4E7; border-radius:4px; }
+  ::-webkit-scrollbar-thumb:hover { background:#D4D4D8; }
+  ::-webkit-scrollbar-track { background:transparent; }
+</style>
+</head>
+<body>
+
+<div class="flex h-screen overflow-hidden">
+
+  <!-- ===== Main (full width, no sidebar) ===== -->
+  <main class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- Global header -->
+    <header class="global-header flex-shrink-0">
+      <div class="flex items-center gap-5">
+        <!-- Logo -->
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white font-bold">S</div>
+          <div>
+            <div class="font-bold text-[14px] tracking-tight leading-tight">STEP Manager</div>
+            <div class="text-[10px] text-ink-500 leading-tight mono">PRO · Riverside Dojang</div>
+          </div>
+        </div>
+
+        <div class="w-px h-6 bg-ink-200"></div>
+
+        <!-- Breadcrumb with back button -->
+        <nav class="flex items-center gap-2 text-sm">
+          <a href="step_main_v4.html" class="w-7 h-7 rounded-md hover:bg-ink-100 flex items-center justify-center text-ink-500 hover:text-ink-900 transition -ml-1" title="Back to dashboard">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+          </a>
+          <span class="text-ink-500">Attendance</span>
+          <svg class="w-3 h-3 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+          <span class="font-semibold text-ink-900">Mark Today</span>
+          <span class="mono text-xs text-ink-400 ml-2">Sun · Apr 26</span>
+        </nav>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-ink-100 rounded-lg text-xs text-ink-500 cursor-pointer hover:bg-ink-200">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <span>Search</span>
+          <span class="mono px-1.5 py-0.5 bg-white rounded text-[10px] border border-ink-200">⌘K</span>
+        </div>
+
+        <!-- Xiro chip -->
+        <button class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-100 hover:border-blue-200 transition">
+          <div class="w-5 h-5 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white font-bold text-[10px]">X</div>
+          <span class="text-xs font-semibold text-brand-700">Xiro</span>
+          <span class="mono text-[10px] font-bold text-white bg-brand-500 px-1.5 py-0.5 rounded-full">3</span>
+        </button>
+
+        <!-- DEMO toggle: 학생 등록 상태 -->
+        <div class="flex items-center gap-1 px-1.5 py-1 bg-ink-100 rounded-lg border border-ink-200">
+          <span class="mono text-[9px] text-ink-500 font-bold px-1.5">DEMO</span>
+          <button id="demo-state-normal" class="px-2 py-0.5 rounded text-[11px] font-semibold bg-ink-900 text-white transition">정상</button>
+          <button id="demo-state-empty" class="px-2 py-0.5 rounded text-[11px] font-semibold text-ink-500 hover:text-ink-900 transition">미등록</button>
+        </div>
+
+        <button class="w-9 h-9 rounded-lg hover:bg-ink-100 flex items-center justify-center text-ink-600 relative">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+          <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white"></span>
+        </button>
+        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white text-sm font-bold cursor-pointer">SK</div>
+
+        <div class="w-px h-6 bg-ink-200 mx-1"></div>
+
+        <!-- Save & Close: 메인으로 복귀 -->
+        <a href="step_main_v4.html" class="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-ink-900 hover:bg-ink-800 text-white text-xs font-semibold transition group" title="Save and return to dashboard (ESC)">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          <span>Save &amp; Close</span>
+          <span class="mono text-[9px] font-bold px-1.5 py-0.5 bg-white/15 rounded">ESC</span>
+        </a>
+
+        <a href="step_main_v4.html" class="w-9 h-9 rounded-lg hover:bg-ink-100 flex items-center justify-center text-ink-500 hover:text-ink-900 transition" title="Close (return to dashboard)">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </a>
+      </div>
+    </header>
+
+    <!-- Class banner -->
+    <div id="class-banner" class="px-6 pt-5 pb-4 bg-white border-b border-ink-200 flex-shrink-0">
+      <div class="flex items-start justify-between mb-3">
+        <div class="flex-1">
+          <div class="flex items-center gap-3 mb-1.5">
+            <h1 class="text-[22px] font-bold tracking-tight">Kids Beginner — Yellow Belt</h1>
+            <span class="live-badge">LIVE</span>
+          </div>
+          <div class="flex items-center gap-4 text-[13px] text-ink-500">
+            <span class="flex items-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              <span class="mono">4:00 — 5:00 PM</span>
+            </span>
+            <span class="flex items-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0zM15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              Zone A
+            </span>
+            <span class="flex items-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+              Master Park
+            </span>
+            <span class="flex items-center gap-1.5">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+              <span class="mono">18 / 22</span>
+            </span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2">
+          <button class="btn btn-secondary">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+            Quick Message
+          </button>
+          <button class="btn btn-secondary">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            Class Notes
+          </button>
+          <button class="btn btn-xiro">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+            Ask Xiro
+          </button>
+        </div>
+      </div>
+
+      <!-- Progress -->
+      <div>
+        <div class="flex items-center justify-between mb-1.5">
+          <span class="text-[11px] font-semibold text-ink-500 uppercase tracking-wider">Class Progress</span>
+          <span class="mono text-xs font-semibold text-ink-700">68%</span>
+        </div>
+        <div class="progress-track"><div class="progress-fill" style="width:68%"></div></div>
+      </div>
+    </div>
+
+    <!-- Content area: 3 columns (정상 상태) -->
+    <div id="content-normal" class="flex-1 overflow-hidden flex">
+
+      <!-- Left: Today's Classes -->
+      <div class="w-[240px] border-r border-ink-200 bg-white flex flex-col flex-shrink-0">
+        <div class="px-4 pt-4 pb-3 flex items-center justify-between">
+          <h3 class="text-sm font-bold text-ink-900">Today · Live Dojang</h3>
+          <span class="mono text-[10px] text-ink-400">Apr 26</span>
+        </div>
+        <div class="flex-1 overflow-y-auto px-3 pb-3 space-y-2">
+          <div class="class-card active">
+            <div class="flex items-start justify-between mb-1.5">
+              <div class="text-[13px] font-bold text-ink-900">Kids Beginner</div>
+              <span class="live-badge">LIVE</span>
+            </div>
+            <div class="text-[11px] text-ink-500 mono">4:00 PM · Yellow Belt</div>
+            <div class="flex items-center gap-1 mt-2 text-[11px]">
+              <svg class="w-3 h-3 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0"/></svg>
+              <span class="mono text-ink-600 font-semibold">18/22</span>
+            </div>
+          </div>
+
+          <div class="class-card">
+            <div class="flex items-start justify-between mb-1.5">
+              <div class="text-[13px] font-bold text-ink-900">Tigers · Green</div>
+              <span class="text-[10px] font-bold text-ink-500 mono">5:00</span>
+            </div>
+            <div class="text-[11px] text-ink-500 mono">5:00 PM · Green Belt</div>
+            <div class="flex items-center gap-1 mt-2 text-[11px]">
+              <svg class="w-3 h-3 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857"/></svg>
+              <span class="mono text-ink-600 font-semibold">— / 16</span>
+              <span class="text-ink-400 ml-1">· in 24 min</span>
+            </div>
+          </div>
+
+          <div class="class-card">
+            <div class="flex items-start justify-between mb-1.5">
+              <div class="text-[13px] font-bold text-ink-900">Adult Sparring</div>
+              <span class="text-[10px] font-bold text-ink-500 mono">6:30</span>
+            </div>
+            <div class="text-[11px] text-ink-500 mono">6:30 PM · Black Belt</div>
+            <div class="flex items-center gap-1 mt-2 text-[11px]">
+              <svg class="w-3 h-3 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857"/></svg>
+              <span class="mono text-ink-600 font-semibold">— / 12</span>
+            </div>
+          </div>
+
+          <div class="class-card opacity-60">
+            <div class="flex items-start justify-between mb-1.5">
+              <div class="text-[13px] font-bold text-ink-900">Little Tigers</div>
+              <svg class="w-4 h-4 text-emerald-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"/></svg>
+            </div>
+            <div class="text-[11px] text-ink-500 mono">3:00 PM · Closed</div>
+            <div class="flex items-center gap-1 mt-2 text-[11px]">
+              <span class="mono text-emerald-600 font-semibold">12/14 attended</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Xiro insight footer -->
+        <div class="p-3 border-t border-ink-200">
+          <div class="xiro-pill">
+            <div class="flex items-start gap-2">
+              <div class="w-6 h-6 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white font-bold text-[10px] flex-shrink-0">X</div>
+              <div class="flex-1 min-w-0">
+                <div class="text-[11px] font-semibold text-brand-700 mb-0.5">Xiro · Heads up</div>
+                <div class="text-[11px] text-ink-700 leading-snug">3 students missed last class. Worth checking in today.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center: Student grid -->
+      <div class="flex-1 overflow-hidden flex flex-col">
+
+        <!-- Search + Tabs -->
+        <div class="px-6 pt-5 pb-4 bg-white border-b border-ink-200">
+          <div class="relative mb-4">
+            <svg class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            <input type="text" placeholder="Search by name, ID, or parent contact..." class="search-input">
+            <div class="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+              <button class="btn btn-secondary !py-1.5 !px-3 !text-xs">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                Trial Drop-in
+              </button>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-1">
+              <div class="tab active">All <span class="count mono">22</span></div>
+              <div class="tab">
+                <span class="w-2 h-2 rounded-full bg-present"></span>
+                Present <span class="count mono">14</span>
+              </div>
+              <div class="tab">
+                <span class="w-2 h-2 rounded-full bg-late"></span>
+                Late <span class="count mono">2</span>
+              </div>
+              <div class="tab">
+                <span class="w-2 h-2 rounded-full bg-absent"></span>
+                Absent <span class="count mono">2</span>
+              </div>
+              <div class="tab">
+                <span class="w-2 h-2 rounded-full bg-trial"></span>
+                Trial <span class="count mono">1</span>
+              </div>
+              <div class="tab">
+                <span class="w-2 h-2 rounded-full bg-ink-300"></span>
+                Pending <span class="count mono">3</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-ink-500">
+              <span class="mono">14/22 marked</span>
+              <button class="btn btn-secondary !py-1 !px-2 !text-[11px]">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+                List
+              </button>
+              <button class="btn btn-primary !py-1 !px-2 !text-[11px]">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                Grid
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Student Grid -->
+        <div class="flex-1 overflow-y-auto px-6 py-5">
+          <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3">
+
+            <!-- Card 1: Present -->
+            <div class="student-card status-present selected">
+              <div class="ck checked absolute top-3 right-3"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
+              <button class="quick-note-btn"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="belt-yellow belt-badge">● Yellow</span>
+              </div>
+              <div class="flex items-center gap-2.5 mb-3">
+                <div class="avatar bg-gradient-to-br from-blue-400 to-blue-600">SK</div>
+                <div class="min-w-0">
+                  <div class="text-sm font-bold text-ink-900 truncate">Sarah Kim</div>
+                  <div class="text-[11px] text-ink-500 flex items-center gap-1">
+                    <svg class="w-3 h-3 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <span>Play STEP · 4:01 PM</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="status-btn present" title="Present"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></button>
+                <button class="status-btn late" title="Late"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></button>
+                <button class="status-btn absent" title="Absent"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+              </div>
+            </div>
+
+            <!-- Card 2: Late -->
+            <div class="student-card status-late">
+              <div class="ck absolute top-3 right-3"></div>
+              <button class="quick-note-btn"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="belt-yellow belt-badge">● Yellow</span>
+                <span class="text-[10px] mono text-late font-semibold">+8 min</span>
+              </div>
+              <div class="flex items-center gap-2.5 mb-3">
+                <div class="avatar bg-gradient-to-br from-emerald-400 to-emerald-600">JL</div>
+                <div class="min-w-0">
+                  <div class="text-sm font-bold text-ink-900 truncate">Jacob Lee</div>
+                  <div class="text-[11px] text-ink-500 flex items-center gap-1">
+                    <svg class="w-3 h-3 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm.93-11.412l-.929 4.643A1 1 0 009 12.65v.7a1 1 0 002 0v-.7a1 1 0 01.071-.376l1.357-3.388A1 1 0 0011.5 7h-1z"/></svg>
+                    <span>Manager · 4:08 PM</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="status-btn present"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></button>
+                <button class="status-btn late"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></button>
+                <button class="status-btn absent"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+              </div>
+            </div>
+
+            <!-- Card 3: Absent + auto-alert sent -->
+            <div class="student-card status-absent">
+              <div class="ck absolute top-3 right-3"></div>
+              <span class="note-indicator" title="Note added"></span>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="belt-green belt-badge">● Yellow</span>
+                <span class="text-[10px] font-bold text-absent uppercase tracking-wider flex items-center gap-1">
+                  <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                  Alerted
+                </span>
+              </div>
+              <div class="flex items-center gap-2.5 mb-3">
+                <div class="avatar bg-gradient-to-br from-rose-400 to-rose-600">MR</div>
+                <div class="min-w-0">
+                  <div class="text-sm font-bold text-ink-900 truncate">Mia Rodriguez</div>
+                  <div class="text-[11px] text-ink-500">3rd absence · Auto-push to parent</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="status-btn present"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></button>
+                <button class="status-btn late"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></button>
+                <button class="status-btn absent"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+              </div>
+            </div>
+
+            <!-- Card 4: Present (Coach manual) -->
+            <div class="student-card status-present">
+              <div class="ck absolute top-3 right-3"></div>
+              <button class="quick-note-btn"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="belt-yellow belt-badge">● Yellow</span>
+              </div>
+              <div class="flex items-center gap-2.5 mb-3">
+                <div class="avatar bg-gradient-to-br from-purple-400 to-purple-600">EJ</div>
+                <div class="min-w-0">
+                  <div class="text-sm font-bold text-ink-900 truncate">Ethan Jung</div>
+                  <div class="text-[11px] text-ink-500 flex items-center gap-1">
+                    <svg class="w-3 h-3 text-ink-400" fill="currentColor" viewBox="0 0 20 20"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/></svg>
+                    <span>Coach · 4:02 PM</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="status-btn present"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></button>
+                <button class="status-btn late"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></button>
+                <button class="status-btn absent"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+              </div>
+            </div>
+
+            <!-- Card 5: Trial student -->
+            <div class="student-card">
+              <div class="ck absolute top-3 right-3"></div>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="belt-trial belt-badge">★ Trial</span>
+                <span class="text-[10px] mono text-trial font-bold">DAY 1</span>
+              </div>
+              <div class="flex items-center gap-2.5 mb-3">
+                <div class="avatar bg-gradient-to-br from-emerald-400 to-emerald-600">EL</div>
+                <div class="min-w-0">
+                  <div class="text-sm font-bold text-ink-900 truncate">Emma Lee</div>
+                  <div class="text-[11px] text-ink-500">First class · Convert by May 3</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="status-btn present"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></button>
+                <button class="status-btn late"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></button>
+                <button class="status-btn absent"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+              </div>
+            </div>
+
+            <!-- Card 6: Pending -->
+            <div class="student-card">
+              <div class="ck absolute top-3 right-3"></div>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="belt-yellow belt-badge">● Yellow</span>
+                <span class="text-[10px] mono text-ink-400 font-semibold uppercase tracking-wider">Pending</span>
+              </div>
+              <div class="flex items-center gap-2.5 mb-3">
+                <div class="avatar bg-gradient-to-br from-cyan-400 to-cyan-600">DC</div>
+                <div class="min-w-0">
+                  <div class="text-sm font-bold text-ink-900 truncate">Daniel Choi</div>
+                  <div class="text-[11px] text-ink-500">Not checked in</div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="status-btn present"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></button>
+                <button class="status-btn late"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></button>
+                <button class="status-btn absent"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+              </div>
+            </div>
+
+            <!-- Card 7: Present + Note -->
+            <div class="student-card status-present">
+              <div class="ck absolute top-3 right-3"></div>
+              <span class="note-indicator" title="Note added"></span>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="belt-yellow belt-badge">● Yellow</span>
+                <span class="text-[10px] text-brand-600 font-semibold flex items-center gap-1">
+                  <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M9 4.804A7.968 7.968 0 005.5 4c-1.255 0-2.443.29-3.5.804v10A7.969 7.969 0 015.5 14c1.669 0 3.218.51 4.5 1.385A7.962 7.962 0 0114.5 14c1.255 0 2.443.29 3.5.804v-10A7.968 7.968 0 0014.5 4c-1.255 0-2.443.29-3.5.804V12a1 1 0 11-2 0V4.804z"/></svg>
+                  Note
+                </span>
+              </div>
+              <div class="flex items-center gap-2.5 mb-3">
+                <div class="avatar bg-gradient-to-br from-pink-400 to-pink-600">OB</div>
+                <div class="min-w-0">
+                  <div class="text-sm font-bold text-ink-900 truncate">Olivia Brown</div>
+                  <div class="text-[11px] text-ink-500 flex items-center gap-1">
+                    <svg class="w-3 h-3 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/></svg>
+                    <span>Play STEP · 4:00 PM</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="status-btn present"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></button>
+                <button class="status-btn late"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></button>
+                <button class="status-btn absent"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+              </div>
+            </div>
+
+            <!-- Card 8: Present -->
+            <div class="student-card status-present">
+              <div class="ck absolute top-3 right-3"></div>
+              <button class="quick-note-btn"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="belt-yellow belt-badge">● Yellow</span>
+              </div>
+              <div class="flex items-center gap-2.5 mb-3">
+                <div class="avatar bg-gradient-to-br from-orange-400 to-orange-600">NP</div>
+                <div class="min-w-0">
+                  <div class="text-sm font-bold text-ink-900 truncate">Noah Park</div>
+                  <div class="text-[11px] text-ink-500 flex items-center gap-1">
+                    <svg class="w-3 h-3 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/></svg>
+                    <span>Play STEP · 3:58 PM</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="status-btn present"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></button>
+                <button class="status-btn late"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></button>
+                <button class="status-btn absent"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+              </div>
+            </div>
+
+            <!-- Card 9: Present -->
+            <div class="student-card status-present">
+              <div class="ck absolute top-3 right-3"></div>
+              <button class="quick-note-btn"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
+              <div class="flex items-center gap-2 mb-2">
+                <span class="belt-yellow belt-badge">● Yellow</span>
+              </div>
+              <div class="flex items-center gap-2.5 mb-3">
+                <div class="avatar bg-gradient-to-br from-teal-400 to-teal-600">AW</div>
+                <div class="min-w-0">
+                  <div class="text-sm font-bold text-ink-900 truncate">Ava Wilson</div>
+                  <div class="text-[11px] text-ink-500 flex items-center gap-1">
+                    <svg class="w-3 h-3 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/></svg>
+                    <span>Play STEP · 4:03 PM</span>
+                  </div>
+                </div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="status-btn present"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></button>
+                <button class="status-btn late"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></button>
+                <button class="status-btn absent"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+              </div>
+            </div>
+
+            <!-- Card 10-12 (compressed for length): generic Present -->
+            <div class="student-card status-present">
+              <div class="ck absolute top-3 right-3"></div>
+              <div class="flex items-center gap-2 mb-2"><span class="belt-yellow belt-badge">● Yellow</span></div>
+              <div class="flex items-center gap-2.5 mb-3">
+                <div class="avatar bg-gradient-to-br from-indigo-400 to-indigo-600">LK</div>
+                <div class="min-w-0"><div class="text-sm font-bold text-ink-900 truncate">Liam Kim</div><div class="text-[11px] text-ink-500 flex items-center gap-1"><svg class="w-3 h-3 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/></svg><span>Play STEP · 4:00 PM</span></div></div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="status-btn present"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></button>
+                <button class="status-btn late"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></button>
+                <button class="status-btn absent"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+              </div>
+            </div>
+
+            <div class="student-card">
+              <div class="ck absolute top-3 right-3"></div>
+              <div class="flex items-center gap-2 mb-2"><span class="belt-yellow belt-badge">● Yellow</span><span class="text-[10px] mono text-ink-400 font-semibold uppercase tracking-wider">Pending</span></div>
+              <div class="flex items-center gap-2.5 mb-3">
+                <div class="avatar bg-gradient-to-br from-violet-400 to-violet-600">SC</div>
+                <div class="min-w-0"><div class="text-sm font-bold text-ink-900 truncate">Sophia Chen</div><div class="text-[11px] text-ink-500">Not checked in</div></div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="status-btn present"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></button>
+                <button class="status-btn late"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></button>
+                <button class="status-btn absent"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+              </div>
+            </div>
+
+            <div class="student-card status-present">
+              <div class="ck absolute top-3 right-3"></div>
+              <div class="flex items-center gap-2 mb-2"><span class="belt-yellow belt-badge">● Yellow</span></div>
+              <div class="flex items-center gap-2.5 mb-3">
+                <div class="avatar bg-gradient-to-br from-fuchsia-400 to-fuchsia-600">IK</div>
+                <div class="min-w-0"><div class="text-sm font-bold text-ink-900 truncate">Isabella Khan</div><div class="text-[11px] text-ink-500 flex items-center gap-1"><svg class="w-3 h-3 text-blue-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/></svg><span>Play STEP · 3:59 PM</span></div></div>
+              </div>
+              <div class="flex items-center gap-2">
+                <button class="status-btn present"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></button>
+                <button class="status-btn late"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></button>
+                <button class="status-btn absent"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Empty state hint at bottom -->
+          <div class="mt-6 mb-24 text-center text-xs text-ink-400">
+            <span class="mono">Showing 12 of 22</span> · 
+            <button class="text-brand-600 hover:underline font-semibold">Load remaining 10 →</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Insights Panel -->
+      <aside class="w-[300px] border-l border-ink-200 bg-ink-50 overflow-y-auto flex-shrink-0 p-4 space-y-4">
+
+        <!-- Class Alerts -->
+        <div class="panel-card">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-bold text-ink-900">Class Alerts</h3>
+            <div class="flex items-center gap-1 text-[10px] mono">
+              <button class="px-2 py-0.5 rounded-md bg-ink-900 text-white font-semibold">Today</button>
+              <button class="px-2 py-0.5 rounded-md text-ink-500 hover:bg-ink-100">Past</button>
+            </div>
+          </div>
+          <div class="space-y-1">
+            <div class="alert-item">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-0.5">
+                  <span class="text-xs font-bold text-ink-900">1 Trial Student</span>
+                  <span class="alert-tag new">NEW</span>
+                </div>
+                <div class="text-[11px] text-ink-500">Emma Lee · First visit · Day 1</div>
+              </div>
+            </div>
+            <div class="alert-item">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-0.5">
+                  <span class="text-xs font-bold text-ink-900">2 Promotion Ready</span>
+                  <span class="alert-tag chk">CHK</span>
+                </div>
+                <div class="text-[11px] text-ink-500">Jacob Lee · Sophia Park</div>
+              </div>
+            </div>
+            <div class="alert-item">
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-0.5">
+                  <span class="text-xs font-bold text-ink-900">1 Payment Issue</span>
+                  <span class="alert-tag res">RES</span>
+                </div>
+                <div class="text-[11px] text-ink-500">Daniel Choi · Tuition overdue</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Play STEP Check-in Status -->
+        <div class="panel-card">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-bold text-ink-900 flex items-center gap-1.5">
+              <svg class="w-3.5 h-3.5 text-brand-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+              Play STEP Check-in
+            </h3>
+            <span class="mono text-[11px] text-ink-500 font-semibold">9 / 22</span>
+          </div>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between text-[12px]">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-present"></span>
+                <span class="font-semibold text-ink-800">Sarah Kim</span>
+              </div>
+              <span class="mono text-ink-500">4:01 PM</span>
+            </div>
+            <div class="flex items-center justify-between text-[12px]">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-late"></span>
+                <span class="font-semibold text-ink-800">Jacob Lee</span>
+              </div>
+              <span class="mono text-ink-500">4:08 PM</span>
+            </div>
+            <div class="flex items-center justify-between text-[12px]">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-present"></span>
+                <span class="font-semibold text-ink-800">Olivia Brown</span>
+              </div>
+              <span class="mono text-ink-500">4:00 PM</span>
+            </div>
+            <div class="flex items-center justify-between text-[12px]">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-present"></span>
+                <span class="font-semibold text-ink-800">Noah Park</span>
+              </div>
+              <span class="mono text-ink-500">3:58 PM</span>
+            </div>
+            <div class="flex items-center justify-between text-[12px]">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-present"></span>
+                <span class="font-semibold text-ink-800">Ava Wilson</span>
+              </div>
+              <span class="mono text-ink-500">4:03 PM</span>
+            </div>
+            <button class="w-full mt-2 py-2 text-[11px] font-semibold text-ink-600 bg-ink-50 rounded-lg hover:bg-ink-100 transition">
+              Show 4 more →
+            </button>
+          </div>
+        </div>
+
+        <!-- Auto-alert preview -->
+        <div class="panel-card border-rose-200 bg-rose-50/40">
+          <div class="flex items-start gap-2 mb-3">
+            <div class="w-7 h-7 rounded-lg bg-rose-100 flex items-center justify-center flex-shrink-0">
+              <svg class="w-4 h-4 text-rose-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+            </div>
+            <div class="flex-1 min-w-0">
+              <h3 class="text-sm font-bold text-ink-900">Auto-alert Queue</h3>
+              <p class="text-[11px] text-ink-600">Parent push when class ends</p>
+            </div>
+          </div>
+          <div class="space-y-2">
+            <div class="flex items-start gap-2 p-2 rounded-lg bg-white border border-rose-100">
+              <div class="avatar bg-gradient-to-br from-rose-400 to-rose-600 !w-6 !h-6 !text-[10px]">MR</div>
+              <div class="flex-1 min-w-0">
+                <div class="text-[11px] font-bold text-ink-900">Mia Rodriguez</div>
+                <div class="text-[10px] text-ink-500 leading-tight">Mom · 3rd absence in 2 weeks</div>
+              </div>
+              <button class="text-[10px] font-semibold text-rose-600 hover:text-rose-700">Edit</button>
+            </div>
+          </div>
+          <button class="w-full mt-2 py-1.5 text-[11px] font-semibold text-rose-700 hover:text-rose-800">
+            Customize message →
+          </button>
+        </div>
+
+        <!-- Real-time Timeline -->
+        <div class="panel-card">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-bold text-ink-900">Live Timeline</h3>
+            <span class="text-[10px] text-emerald-600 font-bold flex items-center gap-1">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse-soft"></span>
+              LIVE
+            </span>
+          </div>
+          <div class="space-y-0">
+            <div class="tl-item">
+              <span class="tl-dot"></span>
+              <div class="flex-1">
+                <div class="mono text-[10px] text-ink-400">3:00 PM</div>
+                <div class="text-[12px] font-semibold text-ink-700">Little Tigers · 12/14</div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <span class="tl-dot active"></span>
+              <div class="flex-1">
+                <div class="mono text-[10px] text-emerald-600 font-bold">4:00 PM · NOW</div>
+                <div class="text-[12px] font-semibold text-ink-900">Kids Beginner · 14/22</div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <span class="tl-dot next"></span>
+              <div class="flex-1">
+                <div class="mono text-[10px] text-brand-600 font-bold">5:00 PM · NEXT</div>
+                <div class="text-[12px] font-semibold text-ink-700">Tigers · Green Belt</div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <span class="tl-dot"></span>
+              <div class="flex-1">
+                <div class="mono text-[10px] text-ink-400">6:30 PM</div>
+                <div class="text-[12px] font-medium text-ink-500">Adult Sparring</div>
+              </div>
+            </div>
+            <div class="tl-item">
+              <span class="tl-dot"></span>
+              <div class="flex-1">
+                <div class="mono text-[10px] text-ink-400">7:30 PM</div>
+                <div class="text-[12px] font-medium text-ink-500">Black Belt Forms</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </aside>
+
+    </div>
+  </main>
+</div>
+
+<!-- ===== Empty State: 학생 미등록 시 ===== -->
+<div id="content-empty" class="flex-1 overflow-y-auto hidden">
+  <div class="max-w-[720px] mx-auto px-6 py-12 md:py-16">
+
+    <!-- Hero block -->
+    <div class="text-center mb-8">
+      <!-- Illustration: empty roster icon -->
+      <div class="relative inline-block mb-6">
+        <div class="w-24 h-24 mx-auto rounded-3xl bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-200 flex items-center justify-center relative">
+          <svg class="w-12 h-12 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+          </svg>
+        </div>
+        <!-- Floating exclamation badge -->
+        <div class="absolute -top-2 -right-2 w-9 h-9 rounded-full bg-amber-500 border-4 border-[#F9FAFB] flex items-center justify-center shadow-lg">
+          <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4a2 2 0 00-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z"/></svg>
+        </div>
+      </div>
+
+      <div class="inline-flex items-center gap-2 px-3 py-1 bg-amber-50 border border-amber-200 rounded-full mb-4">
+        <span class="text-[11px] font-bold text-amber-700 uppercase tracking-wider">Setup Required</span>
+      </div>
+
+      <h2 class="text-[26px] md:text-[30px] font-bold tracking-tight text-ink-900 leading-tight mb-3">
+        수련생 정보를 등록해야 확인할 수 있습니다.
+      </h2>
+      <p class="text-[14px] md:text-[15px] text-ink-600 max-w-[520px] mx-auto leading-relaxed">
+        출석 체크는 등록된 수련생을 기준으로 작동해요.<br class="hidden md:block">
+        먼저 수련생 명단을 등록하시면, 이 화면에서 매일 출석을 관리하실 수 있어요.
+      </p>
+    </div>
+
+    <!-- Xiro callout -->
+    <div class="bg-white border border-ink-200 rounded-2xl p-5 mb-6 shadow-sm">
+      <div class="flex items-start gap-3">
+        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">X</div>
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 mb-1.5">
+            <span class="text-sm font-bold text-ink-900">Xiro</span>
+            <span class="text-[10px] mono font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded">설정 검토</span>
+          </div>
+          <p class="text-[13px] text-ink-700 leading-relaxed">
+            수련생이 <strong class="text-ink-900">0명</strong> 등록되어 있어요. 출석 체크, 승급 관리, 결제 관리 모두 수련생 정보를 기반으로 작동해요. 엑셀 파일이 있으면 <strong class="text-ink-900">한 번에 30명도 1분이면</strong> 등록할 수 있어요.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- What needs students (impact preview) -->
+    <div class="bg-white border border-ink-200 rounded-2xl p-5 mb-6">
+      <div class="flex items-center gap-2 mb-4">
+        <svg class="w-4 h-4 text-ink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        <h3 class="text-sm font-bold text-ink-900">수련생 등록하면 바로 사용할 수 있어요</h3>
+      </div>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5">
+        <div class="px-3 py-3 bg-ink-50 rounded-xl">
+          <div class="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center mb-2">
+            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          </div>
+          <div class="text-[12px] font-semibold text-ink-900 mb-0.5">출석 체크</div>
+          <div class="text-[11px] text-ink-500 leading-snug">3-stage<br>자동 동기화</div>
+        </div>
+        <div class="px-3 py-3 bg-ink-50 rounded-xl">
+          <div class="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center mb-2">
+            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+          </div>
+          <div class="text-[12px] font-semibold text-ink-900 mb-0.5">승급 관리</div>
+          <div class="text-[11px] text-ink-500 leading-snug">띠별 자동<br>분류</div>
+        </div>
+        <div class="px-3 py-3 bg-ink-50 rounded-xl">
+          <div class="w-7 h-7 rounded-lg bg-purple-100 flex items-center justify-center mb-2">
+            <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+          </div>
+          <div class="text-[12px] font-semibold text-ink-900 mb-0.5">결제 자동화</div>
+          <div class="text-[11px] text-ink-500 leading-snug">Stripe<br>auto-billing</div>
+        </div>
+        <div class="px-3 py-3 bg-ink-50 rounded-xl">
+          <div class="w-7 h-7 rounded-lg bg-pink-100 flex items-center justify-center mb-2">
+            <svg class="w-4 h-4 text-pink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+          </div>
+          <div class="text-[12px] font-semibold text-ink-900 mb-0.5">학생 노트</div>
+          <div class="text-[11px] text-ink-500 leading-snug">관찰 기록<br>5 카테고리</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Two registration paths -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
+      <!-- Bulk upload (recommended) -->
+      <a href="step_setup_step4.html" class="group relative bg-white border-2 border-brand-500 rounded-2xl p-5 hover:shadow-lg transition-all">
+        <div class="absolute -top-2 left-4">
+          <span class="text-[10px] font-bold text-white bg-brand-500 px-2 py-0.5 rounded-full uppercase tracking-wider">Recommended</span>
+        </div>
+        <div class="flex items-start gap-3">
+          <div class="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1">
+              <h4 class="text-[14px] font-bold text-ink-900">파일로 한 번에 등록</h4>
+              <span class="text-[10px] mono font-bold text-brand-600">~1 min</span>
+            </div>
+            <p class="text-[12px] text-ink-600 leading-snug">엑셀(.xlsx) 또는 CSV 파일이 있으면 Xiro가 자동으로 파싱해서 일괄 등록합니다.</p>
+          </div>
+          <svg class="w-4 h-4 text-ink-400 group-hover:text-brand-600 group-hover:translate-x-0.5 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </div>
+      </a>
+
+      <!-- Manual entry -->
+      <a href="step_setup_step4.html" class="group bg-white border border-ink-200 rounded-2xl p-5 hover:border-ink-300 hover:shadow-md transition-all">
+        <div class="flex items-start gap-3">
+          <div class="w-10 h-10 rounded-xl bg-ink-100 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-ink-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 mb-1">
+              <h4 class="text-[14px] font-bold text-ink-900">한 명씩 직접 입력</h4>
+              <span class="text-[10px] mono font-bold text-ink-500">~30s/명</span>
+            </div>
+            <p class="text-[12px] text-ink-600 leading-snug">소수의 학생부터 시작하거나 천천히 추가하고 싶을 때 적합합니다.</p>
+          </div>
+          <svg class="w-4 h-4 text-ink-400 group-hover:text-ink-700 group-hover:translate-x-0.5 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </div>
+      </a>
+    </div>
+
+    <!-- Setup checklist mini -->
+    <div class="bg-ink-50 border border-ink-200 rounded-2xl p-4 mb-6">
+      <div class="flex items-center justify-between mb-3">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-ink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+          <span class="text-[12px] font-bold text-ink-900">기본 설정 진척률</span>
+        </div>
+        <span class="mono text-[11px] font-bold text-emerald-600">3/4 완료</span>
+      </div>
+      <div class="grid grid-cols-4 gap-2">
+        <div class="bg-white border border-emerald-200 rounded-lg p-2 flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          <span class="text-[11px] font-semibold text-ink-700 truncate">도장 정보</span>
+        </div>
+        <div class="bg-white border border-emerald-200 rounded-lg p-2 flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          <span class="text-[11px] font-semibold text-ink-700 truncate">띠 체계</span>
+        </div>
+        <div class="bg-white border border-emerald-200 rounded-lg p-2 flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          <span class="text-[11px] font-semibold text-ink-700 truncate">시간표</span>
+        </div>
+        <div class="bg-white border-2 border-amber-400 rounded-lg p-2 flex items-center gap-1.5">
+          <span class="w-3.5 h-3.5 rounded-full bg-amber-400 flex items-center justify-center flex-shrink-0">
+            <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+          </span>
+          <span class="text-[11px] font-bold text-amber-700 truncate">수련생 등록</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer actions -->
+    <div class="flex items-center justify-between text-[12px] text-ink-500">
+      <a href="step_main_v4.html" class="flex items-center gap-1.5 hover:text-ink-900 transition">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        메인으로 돌아가기
+      </a>
+      <button class="flex items-center gap-1.5 hover:text-ink-900 transition">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        도움이 필요해요
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Bulk Action Bar -->
+<div class="bulk-bar">
+  <span class="text-[13px] font-semibold">1 selected</span>
+  <button class="text-ink-400 hover:text-white"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>
+  <div class="w-px h-5 bg-white/15 mx-1"></div>
+  <button class="bulk-btn present">
+    <span class="flex items-center gap-1.5">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+      Present
+    </span>
+  </button>
+  <button class="bulk-btn late">Late</button>
+  <button class="bulk-btn absent">Absent</button>
+  <div class="w-px h-5 bg-white/15 mx-1"></div>
+  <button class="bulk-btn message">
+    <span class="flex items-center gap-1.5">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+      Message
+    </span>
+  </button>
+  <button class="bulk-btn message">
+    <span class="flex items-center gap-1.5">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+      Note
+    </span>
+  </button>
+</div>
+
+<script>
+  // Status button click → toggle card status
+  document.querySelectorAll('.status-btn').forEach(btn => {
+    btn.addEventListener('click', e => {
+      const card = btn.closest('.student-card');
+      card.classList.remove('status-present','status-late','status-absent');
+      if (btn.classList.contains('present')) card.classList.add('status-present');
+      else if (btn.classList.contains('late')) card.classList.add('status-late');
+      else if (btn.classList.contains('absent')) card.classList.add('status-absent');
+      e.stopPropagation();
+    });
+  });
+
+  // Checkbox toggle
+  document.querySelectorAll('.ck').forEach(ck => {
+    ck.addEventListener('click', e => {
+      ck.classList.toggle('checked');
+      const card = ck.closest('.student-card');
+      card.classList.toggle('selected');
+      e.stopPropagation();
+    });
+  });
+
+  // Tab switch
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+    });
+  });
+
+  // Class card switch
+  document.querySelectorAll('.class-card').forEach(card => {
+    card.addEventListener('click', () => {
+      document.querySelectorAll('.class-card').forEach(c => c.classList.remove('active'));
+      card.classList.add('active');
+    });
+  });
+
+  // ============================================
+  // DEMO: 학생 등록 상태 토글 (정상 / 미등록)
+  // ============================================
+  const contentNormal = document.getElementById('content-normal');
+  const contentEmpty = document.getElementById('content-empty');
+  const classBanner = document.getElementById('class-banner');
+  const bulkBar = document.querySelector('.bulk-bar');
+  const btnNormal = document.getElementById('demo-state-normal');
+  const btnEmpty = document.getElementById('demo-state-empty');
+
+  function setEmptyState(isEmpty) {
+    if (isEmpty) {
+      contentNormal.classList.add('hidden');
+      contentEmpty.classList.remove('hidden');
+      classBanner.classList.add('hidden');
+      if (bulkBar) bulkBar.style.display = 'none';
+      btnNormal.classList.remove('bg-ink-900','text-white');
+      btnNormal.classList.add('text-ink-500');
+      btnEmpty.classList.add('bg-ink-900','text-white');
+      btnEmpty.classList.remove('text-ink-500');
+    } else {
+      contentNormal.classList.remove('hidden');
+      contentEmpty.classList.add('hidden');
+      classBanner.classList.remove('hidden');
+      if (bulkBar) bulkBar.style.display = '';
+      btnNormal.classList.add('bg-ink-900','text-white');
+      btnNormal.classList.remove('text-ink-500');
+      btnEmpty.classList.remove('bg-ink-900','text-white');
+      btnEmpty.classList.add('text-ink-500');
+    }
+  }
+
+  btnNormal.addEventListener('click', () => setEmptyState(false));
+  btnEmpty.addEventListener('click', () => setEmptyState(true));
+
+  // URL query support: ?students=0 (empty) or default (normal)
+  const urlStudents = new URLSearchParams(window.location.search).get('students');
+  if (urlStudents === '0') setEmptyState(true);
+
+  // ESC = return to dashboard (focus mode behavior)
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      const activeEl = document.activeElement;
+      // Don't intercept ESC when user is typing in search/input
+      if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA')) {
+        activeEl.blur();
+        return;
+      }
+      window.location.href = 'step_main_v4.html';
+    }
+  });
+</script>
+</body>
+</html>

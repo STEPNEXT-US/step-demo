@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Setup Required · STEP Manager</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Pretendard Variable','Pretendard','system-ui','sans-serif'],
+          mono: ['JetBrains Mono','monospace'],
+        },
+        colors: {
+          ink: { 900:'#0A0A0B', 800:'#18181B', 700:'#27272A', 600:'#52525B', 500:'#71717A', 400:'#A1A1AA', 300:'#D4D4D8', 200:'#E4E4E7', 100:'#F4F4F5', 50:'#F9FAFB' },
+          brand: { 50:'#EFF6FF', 100:'#DBEAFE', 500:'#3B82F6', 600:'#2563EB', 700:'#1D4ED8' },
+        },
+        boxShadow: {
+          card: '0 1px 2px rgba(16,24,40,0.04), 0 1px 3px rgba(16,24,40,0.06)',
+          elev: '0 4px 16px rgba(16,24,40,0.06), 0 2px 4px rgba(16,24,40,0.04)',
+          floating: '0 20px 50px rgba(16,24,40,0.10), 0 8px 16px rgba(16,24,40,0.06)',
+        },
+        animation: {
+          'pulse-soft': 'pulseSoft 2.4s ease-in-out infinite',
+          'fade-up': 'fadeUp .5s ease-out backwards',
+          'shimmer': 'shimmer 2.5s ease-in-out infinite',
+        },
+        keyframes: {
+          pulseSoft: { '0%,100%':{opacity:'1'},'50%':{opacity:'0.6'} },
+          fadeUp: { '0%':{transform:'translateY(16px)',opacity:'0'},'100%':{transform:'translateY(0)',opacity:'1'} },
+          shimmer: { '0%':{backgroundPosition:'-200% 0'},'100%':{backgroundPosition:'200% 0'} },
+        }
+      }
+    }
+  }
+</script>
+<style>
+  body { font-family: 'Pretendard Variable','Pretendard',system-ui,sans-serif; background:#F9FAFB; color:#18181B; -webkit-font-smoothing:antialiased; min-height:100vh; }
+  .mono { font-family:'JetBrains Mono',monospace; font-feature-settings:"tnum"; }
+
+  /* Background atmosphere */
+  .bg-atmosphere {
+    background:
+      radial-gradient(ellipse 800px 500px at 15% 0%, rgba(59,130,246,0.06), transparent 60%),
+      radial-gradient(ellipse 600px 400px at 85% 100%, rgba(99,102,241,0.05), transparent 60%),
+      #F9FAFB;
+  }
+
+  /* Header */
+  .global-header { height:56px; border-bottom:1px solid #E4E4E7; background:rgba(255,255,255,0.85); backdrop-filter:blur(12px); display:flex; align-items:center; justify-content:space-between; padding:0 24px; position:sticky; top:0; z-index:50; }
+
+  /* Step row */
+  .step-row { display:grid; grid-template-columns:44px 1fr auto; gap:16px; align-items:center; padding:14px 16px; border-radius:12px; transition:all .15s; border:1px solid transparent; }
+  .step-row.done { background:#F0FDF4; border-color:#BBF7D0; }
+  .step-row.current { background:#EFF6FF; border-color:#BFDBFE; box-shadow:0 0 0 4px rgba(59,130,246,0.06); }
+  .step-row.pending { background:#fff; border-color:#E4E4E7; }
+  .step-row.pending:hover { border-color:#D4D4D8; transform:translateX(2px); }
+
+  /* Step icon */
+  .step-icon { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:15px; flex-shrink:0; }
+  .step-icon.done { background:#10B981; color:#fff; }
+  .step-icon.current { background:#fff; color:#1D4ED8; border:2px solid #3B82F6; box-shadow:0 0 0 4px rgba(59,130,246,0.15); }
+  .step-icon.pending { background:#F4F4F5; color:#71717A; border:1px dashed #D4D4D8; }
+
+  /* Buttons */
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 20px; border-radius:12px; font-size:14px; font-weight:600; transition:all .15s; cursor:pointer; }
+  .btn-primary { background:#18181B; color:#fff; }
+  .btn-primary:hover { background:#27272A; transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,0,0,.12); }
+  .btn-brand { background:linear-gradient(135deg,#3B82F6 0%,#1D4ED8 100%); color:#fff; }
+  .btn-brand:hover { background:linear-gradient(135deg,#2563EB 0%,#1E40AF 100%); transform:translateY(-1px); box-shadow:0 8px 20px rgba(59,130,246,.25); }
+  .btn-ghost { background:transparent; color:#52525B; }
+  .btn-ghost:hover { background:#F4F4F5; color:#18181B; }
+  .btn-large { padding:14px 28px; font-size:15px; border-radius:14px; }
+
+  /* Xiro avatar with breath */
+  .xiro-orb { width:64px; height:64px; border-radius:50%; background:linear-gradient(135deg,#3B82F6 0%,#1D4ED8 100%); display:flex; align-items:center; justify-content:center; font-weight:800; font-size:24px; color:#fff; position:relative; flex-shrink:0; box-shadow:0 8px 24px rgba(59,130,246,.30); }
+  .xiro-orb::before { content:''; position:absolute; inset:-4px; border-radius:50%; border:2px solid rgba(59,130,246,.20); animation:pulseSoft 2.4s ease-in-out infinite; }
+  .xiro-orb::after { content:''; position:absolute; inset:-10px; border-radius:50%; border:1px solid rgba(59,130,246,.12); animation:pulseSoft 2.4s ease-in-out infinite .3s; }
+
+  /* Progress bar */
+  .progress-track { height:6px; background:#E4E4E7; border-radius:999px; overflow:hidden; }
+  .progress-fill { height:100%; background:linear-gradient(90deg,#3B82F6,#10B981); border-radius:999px; transition:width .8s ease-out; }
+
+  /* Card */
+  .card { background:#fff; border:1px solid #E4E4E7; border-radius:20px; padding:24px; }
+  .card-elev { background:#fff; border:1px solid #E4E4E7; border-radius:24px; padding:32px; box-shadow:0 12px 40px rgba(16,24,40,.04), 0 2px 6px rgba(16,24,40,.03); }
+
+  /* Belt color dots */
+  .belt-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; display:inline-block; }
+
+  /* Demo selector */
+  .demo-pill { padding:6px 12px; border-radius:8px; font-size:12px; font-weight:600; cursor:pointer; transition:all .12s; border:1px solid transparent; }
+  .demo-pill:not(.active) { color:#71717A; }
+  .demo-pill:not(.active):hover { background:#F4F4F5; color:#18181B; }
+  .demo-pill.active { background:#18181B; color:#fff; }
+
+  /* Connector line between steps */
+  .step-list { position:relative; }
+  .step-list::before { content:''; position:absolute; left:37px; top:30px; bottom:30px; width:2px; background:linear-gradient(to bottom, #BBF7D0, #BFDBFE 50%, #E4E4E7); z-index:0; }
+
+  /* Animation delays for staggered fade-up */
+  .stagger-1 { animation-delay:.05s; }
+  .stagger-2 { animation-delay:.10s; }
+  .stagger-3 { animation-delay:.15s; }
+  .stagger-4 { animation-delay:.20s; }
+  .stagger-5 { animation-delay:.25s; }
+
+  ::-webkit-scrollbar { width:8px; }
+  ::-webkit-scrollbar-thumb { background:#E4E4E7; border-radius:4px; }
+  ::-webkit-scrollbar-thumb:hover { background:#D4D4D8; }
+</style>
+</head>
+<body class="bg-atmosphere">
+
+<!-- ===== Header ===== -->
+<header class="global-header">
+  <div class="flex items-center gap-5">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white font-bold">S</div>
+      <div>
+        <div class="font-bold text-[14px] tracking-tight leading-tight">STEP Manager</div>
+        <div class="text-[10px] text-ink-500 leading-tight mono">PRO · Riverside Dojang</div>
+      </div>
+    </div>
+    <div class="w-px h-6 bg-ink-200"></div>
+    <nav class="flex items-center gap-2 text-sm">
+      <span class="text-ink-500">Setup</span>
+      <svg class="w-3 h-3 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+      <span class="font-semibold text-ink-900">Required</span>
+    </nav>
+  </div>
+
+  <!-- Demo case switcher (개발 중에만 표시) -->
+  <div class="flex items-center gap-1 px-2 py-1 bg-ink-100 rounded-lg border border-ink-200">
+    <span class="mono text-[10px] text-ink-500 font-bold px-2">DEMO</span>
+    <button class="demo-pill active" data-case="A">Case A · 시작 안 함</button>
+    <button class="demo-pill" data-case="B">Case B · 일부 완료</button>
+  </div>
+
+  <div class="flex items-center gap-2">
+    <a href="step_index.html" class="btn-ghost btn !py-2 !px-3 !text-xs">
+      <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+      Sitemap
+    </a>
+  </div>
+</header>
+
+<!-- ===== Main Content ===== -->
+<main class="max-w-[920px] mx-auto px-6 py-12 md:py-16">
+
+  <!-- Hero block -->
+  <div class="text-center mb-10 animate-fade-up">
+    <div class="flex justify-center mb-6">
+      <div class="xiro-orb">X</div>
+    </div>
+
+    <div class="inline-flex items-center gap-2 px-3 py-1 bg-amber-50 border border-amber-200 rounded-full mb-5">
+      <svg class="w-3.5 h-3.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+      <span class="text-xs font-bold text-amber-700 uppercase tracking-wider" id="banner-label">Setup Incomplete</span>
+    </div>
+
+    <h1 class="text-[34px] md:text-[40px] font-bold tracking-tight text-ink-900 leading-tight mb-3" id="hero-title">
+      도장 설정을 마저 끝내야 해요.
+    </h1>
+    <p class="text-[15px] md:text-[16px] text-ink-600 max-w-[560px] mx-auto leading-relaxed" id="hero-subtitle">
+      메인 화면을 정확하게 보여드리려면 기본 설정이 먼저 필요해요. <br class="hidden md:block">
+      Xiro가 어디까지 됐는지 확인했어요. 이어서 진행하시면 됩니다.
+    </p>
+  </div>
+
+  <!-- Xiro callout -->
+  <div class="card-elev mb-6 animate-fade-up stagger-1">
+    <div class="flex items-start gap-4">
+      <div class="w-10 h-10 rounded-full bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">X</div>
+      <div class="flex-1">
+        <div class="flex items-center gap-2 mb-1.5">
+          <span class="text-sm font-bold text-ink-900">Xiro</span>
+          <span class="text-[10px] mono font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">설정 검토 결과</span>
+        </div>
+        <p class="text-[14px] text-ink-700 leading-relaxed" id="xiro-message">
+          도장 설정을 아직 시작하지 않으셨어요. 기본 4단계만 마치면 메인 화면에서 도장을 운영하실 수 있어요. <strong class="text-ink-900">약 5분</strong>이면 충분합니다.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress summary -->
+  <div class="card mb-6 animate-fade-up stagger-2">
+    <div class="flex items-center justify-between mb-3">
+      <div class="flex items-center gap-2.5">
+        <span class="belt-dot bg-amber-400" id="current-belt-dot"></span>
+        <h3 class="text-sm font-bold text-ink-900">설정 진척률</h3>
+      </div>
+      <div class="flex items-center gap-2">
+        <span class="mono text-xs font-bold text-ink-900" id="progress-text">0/4</span>
+        <span class="text-xs text-ink-500" id="progress-label">기본 설정</span>
+      </div>
+    </div>
+    <div class="progress-track">
+      <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+    </div>
+    <div class="flex items-center justify-between mt-3 text-[11px] text-ink-500">
+      <span class="flex items-center gap-1.5"><span class="belt-dot bg-ink-200"></span>흰띠</span>
+      <span class="flex items-center gap-1.5"><span class="belt-dot bg-amber-300"></span>노란띠</span>
+      <span class="flex items-center gap-1.5"><span class="belt-dot bg-orange-400"></span>주황띠</span>
+      <span class="flex items-center gap-1.5"><span class="belt-dot bg-emerald-500"></span>초록띠</span>
+      <span class="flex items-center gap-1.5"><span class="belt-dot bg-ink-900"></span>검은띠</span>
+    </div>
+  </div>
+
+  <!-- Step checklist -->
+  <div class="card mb-6 animate-fade-up stagger-3">
+    <div class="flex items-center justify-between mb-5">
+      <h3 class="text-sm font-bold text-ink-900">기본 설정 (필수)</h3>
+      <span class="text-[11px] text-ink-500 mono" id="basic-summary">4단계 모두 필요</span>
+    </div>
+
+    <div class="step-list space-y-2 relative">
+      <!-- Step 1: 도장 정보 -->
+      <a href="step_setup_step1.html" class="step-row pending block relative z-10" data-step="1">
+        <div class="step-icon pending mono">1</div>
+        <div class="min-w-0">
+          <div class="text-[14px] font-bold text-ink-900 mb-0.5">도장 정보</div>
+          <div class="text-[12px] text-ink-500">로고, 도장 이름, 관장님 성함, 연락처, 주소</div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-[11px] mono text-ink-400">~1 min</span>
+          <svg class="w-4 h-4 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </div>
+      </a>
+
+      <!-- Step 2: 띠 체계 -->
+      <a href="step_setup_step2.html" class="step-row pending block relative z-10" data-step="2">
+        <div class="step-icon pending mono">2</div>
+        <div class="min-w-0">
+          <div class="text-[14px] font-bold text-ink-900 mb-0.5">띠 및 승급 체계</div>
+          <div class="text-[12px] text-ink-500">9단계 띠 (흰띠 → 검은띠) 구조 확인 및 수정</div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-[11px] mono text-ink-400">~1 min</span>
+          <svg class="w-4 h-4 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </div>
+      </a>
+
+      <!-- Step 3: 시간표 -->
+      <a href="step_setup_step3.html" class="step-row pending block relative z-10" data-step="3">
+        <div class="step-icon pending mono">3</div>
+        <div class="min-w-0">
+          <div class="text-[14px] font-bold text-ink-900 mb-0.5">수업 시간표</div>
+          <div class="text-[12px] text-ink-500">정규 수업 일정 등록 — 메인 화면 라이브 도장에 표시</div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-[11px] mono text-ink-400">~2 min</span>
+          <svg class="w-4 h-4 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </div>
+      </a>
+
+      <!-- Step 4: 학생 등록 -->
+      <a href="step_setup_step4.html" class="step-row pending block relative z-10" data-step="4">
+        <div class="step-icon pending mono">4</div>
+        <div class="min-w-0">
+          <div class="text-[14px] font-bold text-ink-900 mb-0.5">학생 등록</div>
+          <div class="text-[12px] text-ink-500">학생 명단 등록 — 출석/승급/결제 모든 데이터의 기준</div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-[11px] mono text-ink-400">~2 min</span>
+          <svg class="w-4 h-4 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <!-- Optional steps preview -->
+  <div class="card mb-8 animate-fade-up stagger-4 !bg-ink-50">
+    <div class="flex items-center justify-between mb-3">
+      <h3 class="text-sm font-bold text-ink-900 flex items-center gap-2">
+        <svg class="w-4 h-4 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        추가 설정 (나중에 해도 OK)
+      </h3>
+      <span class="text-[11px] text-ink-500">기본 끝낸 후 진행 가능</span>
+    </div>
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+      <div class="px-3 py-2.5 bg-white border border-ink-200 rounded-lg">
+        <div class="text-[12px] font-semibold text-ink-700">5. 직원 등록</div>
+        <div class="text-[10px] text-ink-400">사범, 매니저</div>
+      </div>
+      <div class="px-3 py-2.5 bg-white border border-ink-200 rounded-lg">
+        <div class="text-[12px] font-semibold text-ink-700">6. 용품 관리</div>
+        <div class="text-[10px] text-ink-400">도복, 띠, 보호구</div>
+      </div>
+      <div class="px-3 py-2.5 bg-white border border-ink-200 rounded-lg">
+        <div class="text-[12px] font-semibold text-ink-700">7. 재고 관리</div>
+        <div class="text-[10px] text-ink-400">현재 보유 수량</div>
+      </div>
+      <div class="px-3 py-2.5 bg-white border border-ink-200 rounded-lg">
+        <div class="text-[12px] font-semibold text-ink-700">8. 행사 일정</div>
+        <div class="text-[10px] text-ink-400">대회, 승급심사</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA buttons -->
+  <div class="flex flex-col-reverse md:flex-row items-stretch md:items-center justify-between gap-3 animate-fade-up stagger-5">
+    <div class="flex items-center gap-2">
+      <a href="step_setup_step0.html" class="btn btn-ghost !text-xs">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+        파일로 한 번에 등록
+      </a>
+      <span class="text-[11px] text-ink-400">·</span>
+      <button class="btn btn-ghost !text-xs">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        도움이 필요해요
+      </button>
+    </div>
+
+    <a href="step_setup_step1.html" id="primary-cta" class="btn btn-brand btn-large md:!min-w-[260px]">
+      <span id="cta-label">설정 시작하기</span>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+    </a>
+  </div>
+
+  <!-- Footer note -->
+  <div class="text-center mt-12 text-[12px] text-ink-400 animate-fade-up stagger-5">
+    <p>설정을 마치는 대로 메인 화면이 자동으로 활성화됩니다.</p>
+    <p class="mt-1">완료된 단계는 자동 저장되니 중간에 닫으셔도 괜찮아요.</p>
+  </div>
+
+</main>
+
+<script>
+  // ============================================
+  // Demo case scenarios
+  // ============================================
+  const SCENARIOS = {
+    'A': {
+      label: 'Setup Incomplete',
+      title: '도장 설정을 마저 끝내야 해요.',
+      subtitle: '메인 화면을 정확하게 보여드리려면 기본 설정이 먼저 필요해요.<br class="hidden md:block">Xiro가 어디까지 됐는지 확인했어요. 이어서 진행하시면 됩니다.',
+      xiroMessage: '도장 설정을 아직 시작하지 않으셨어요. 기본 4단계만 마치면 메인 화면에서 도장을 운영하실 수 있어요. <strong class="text-ink-900">약 5분</strong>이면 충분합니다.',
+      ctaLabel: '설정 시작하기',
+      ctaHref: 'step_setup_step1.html',
+      doneSteps: [],
+      currentStep: 1,
+      progressText: '0/4',
+      progressLabel: '시작 전',
+      progressPercent: 0,
+      beltColor: 'bg-ink-300',
+    },
+    'B': {
+      label: 'Resume Setup',
+      title: '여기까지 했어요! 이어서 진행할까요?',
+      subtitle: '기본 설정 4단계 중 <strong class="text-ink-900">2단계</strong>를 마쳤어요.<br class="hidden md:block">남은 단계만 끝내면 메인 화면이 활성화됩니다.',
+      xiroMessage: '도장 정보와 띠 체계는 등록 완료됐어요. 다음은 <strong class="text-ink-900">수업 시간표</strong>예요. 시간표가 있어야 라이브 도장과 출석 체크가 작동해요. 약 4분 남았어요.',
+      ctaLabel: 'Step 3 이어하기',
+      ctaHref: 'step_setup_step3.html',
+      doneSteps: [1, 2],
+      currentStep: 3,
+      progressText: '2/4',
+      progressLabel: '주황띠',
+      progressPercent: 50,
+      beltColor: 'bg-orange-400',
+    },
+  };
+
+  function applyScenario(caseKey) {
+    const s = SCENARIOS[caseKey];
+    if (!s) return;
+
+    document.getElementById('banner-label').textContent = s.label;
+    document.getElementById('hero-title').textContent = s.title;
+    document.getElementById('hero-subtitle').innerHTML = s.subtitle;
+    document.getElementById('xiro-message').innerHTML = s.xiroMessage;
+    document.getElementById('cta-label').textContent = s.ctaLabel;
+    document.getElementById('primary-cta').setAttribute('href', s.ctaHref);
+    document.getElementById('progress-text').textContent = s.progressText;
+    document.getElementById('progress-label').textContent = s.progressLabel;
+    document.getElementById('progress-fill').style.width = s.progressPercent + '%';
+
+    const beltDot = document.getElementById('current-belt-dot');
+    beltDot.className = 'belt-dot ' + s.beltColor;
+
+    // Update step rows
+    document.querySelectorAll('.step-row').forEach(row => {
+      const stepNum = parseInt(row.dataset.step);
+      const icon = row.querySelector('.step-icon');
+      const arrow = row.querySelector('svg:last-child');
+      const timeLabel = row.querySelector('.mono.text-ink-400');
+
+      row.classList.remove('done', 'current', 'pending');
+      icon.classList.remove('done', 'current', 'pending');
+
+      if (s.doneSteps.includes(stepNum)) {
+        row.classList.add('done');
+        icon.classList.add('done');
+        icon.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>';
+        if (timeLabel) timeLabel.textContent = '완료';
+        if (timeLabel) timeLabel.classList.remove('text-ink-400');
+        if (timeLabel) timeLabel.classList.add('text-emerald-600');
+        // hide arrow for done
+        if (arrow && arrow.parentElement.classList.contains('flex')) arrow.style.opacity = '0.3';
+      } else if (stepNum === s.currentStep) {
+        row.classList.add('current');
+        icon.classList.add('current');
+        icon.innerHTML = stepNum;
+        if (timeLabel) {
+          timeLabel.textContent = '다음 →';
+          timeLabel.classList.remove('text-ink-400');
+          timeLabel.classList.add('text-brand-600', 'font-bold');
+        }
+        if (arrow) arrow.style.opacity = '1';
+      } else {
+        row.classList.add('pending');
+        icon.classList.add('pending');
+        icon.innerHTML = stepNum;
+        const baseTime = ['~1 min','~1 min','~2 min','~2 min'][stepNum - 1];
+        if (timeLabel) {
+          timeLabel.textContent = baseTime;
+          timeLabel.classList.remove('text-emerald-600','text-brand-600','font-bold');
+          timeLabel.classList.add('text-ink-400');
+        }
+        if (arrow) arrow.style.opacity = '1';
+      }
+    });
+
+    // Basic summary
+    const remaining = 4 - s.doneSteps.length;
+    document.getElementById('basic-summary').textContent =
+      remaining === 4 ? '4단계 모두 필요' : `${remaining}단계 남음`;
+  }
+
+  // Demo pill switcher
+  document.querySelectorAll('.demo-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('.demo-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+      applyScenario(pill.dataset.case);
+    });
+  });
+
+  // URL query support: ?case=A or ?case=B
+  const urlCase = new URLSearchParams(window.location.search).get('case');
+  if (urlCase && SCENARIOS[urlCase]) {
+    document.querySelectorAll('.demo-pill').forEach(p => {
+      p.classList.toggle('active', p.dataset.case === urlCase);
+    });
+    applyScenario(urlCase);
+  } else {
+    applyScenario('A'); // default
+  }
+</script>
+
+</body>
+</html>
