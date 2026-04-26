@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>주간 업무일지 · STEP Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Pretendard Variable','Pretendard','system-ui','sans-serif'],
+          mono: ['JetBrains Mono','monospace'],
+        },
+        colors: {
+          ink: { 900:'#0A0A0B', 800:'#18181B', 700:'#27272A', 600:'#52525B', 500:'#71717A', 400:'#A1A1AA', 300:'#D4D4D8', 200:'#E4E4E7', 100:'#F4F4F5', 50:'#F9FAFB' },
+          brand: { 50:'#EFF6FF', 100:'#DBEAFE', 500:'#3B82F6', 600:'#2563EB', 700:'#1D4ED8' },
+        },
+        animation: {
+          'pulse-soft': 'pulseSoft 2.4s ease-in-out infinite',
+          'fade-up': 'fadeUp .4s ease-out backwards',
+          'slide-in': 'slideIn .35s ease-out backwards',
+          'shimmer': 'shimmer 1.6s linear infinite',
+          'bounce-subtle': 'bounceSubtle 1s ease-out',
+        },
+        keyframes: {
+          pulseSoft: { '0%,100%':{opacity:'1'},'50%':{opacity:'0.55'} },
+          fadeUp: { '0%':{transform:'translateY(8px)',opacity:'0'},'100%':{transform:'translateY(0)',opacity:'1'} },
+          slideIn: { '0%':{transform:'translateX(-12px)',opacity:'0'},'100%':{transform:'translateX(0)',opacity:'1'} },
+          shimmer: { '0%':{backgroundPosition:'-200% 0'},'100%':{backgroundPosition:'200% 0'} },
+          bounceSubtle: { '0%':{transform:'scale(.95)'},'50%':{transform:'scale(1.03)'},'100%':{transform:'scale(1)'} },
+        }
+      }
+    }
+  }
+</script>
+<style>
+  body { font-family: 'Pretendard Variable','Pretendard',system-ui,sans-serif; background:#F9FAFB; color:#18181B; -webkit-font-smoothing:antialiased; }
+  .mono { font-family:'JetBrains Mono',monospace; font-feature-settings:"tnum"; }
+
+  /* Sidebar */
+  .sidebar-item { display:flex; align-items:center; gap:11px; padding:10px 13px; border-radius:10px; color:#52525B; font-weight:500; font-size:14px; transition:all .15s; cursor:pointer; }
+  .sidebar-item:hover { background:#F4F4F5; color:#18181B; }
+  .sidebar-item.active { background:#EFF6FF; color:#1D4ED8; font-weight:600; }
+  .sidebar-item svg { width:16px; height:16px; flex-shrink:0; }
+
+  /* Header */
+  .global-header { height:56px; border-bottom:1px solid #E4E4E7; background:rgba(255,255,255,0.85); backdrop-filter:blur(12px); display:flex; align-items:center; justify-content:space-between; padding:0 24px; position:sticky; top:0; z-index:50; }
+
+  /* Cards */
+  .card { background:#fff; border:1px solid #E4E4E7; border-radius:16px; }
+  .card-elev { background:#fff; border:1px solid #E4E4E7; border-radius:18px; box-shadow:0 8px 28px rgba(16,24,40,.04), 0 2px 4px rgba(16,24,40,.03); }
+
+  /* Xiro orb */
+  .xiro-orb { width:36px; height:36px; border-radius:50%; background:linear-gradient(135deg,#3B82F6 0%,#1D4ED8 100%); color:#fff; font-weight:800; font-size:14px; display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 4px 14px rgba(59,130,246,.30); position:relative; }
+  .xiro-orb::before { content:''; position:absolute; inset:-3px; border-radius:50%; border:2px solid rgba(59,130,246,.18); animation:pulseSoft 2.4s ease-in-out infinite; }
+  .xiro-orb-lg { width:44px; height:44px; font-size:16px; }
+
+  /* Insight cards (right panel) */
+  .insight-card { background:#fff; border:1px solid #E4E4E7; border-radius:14px; padding:16px; transition:all .18s; position:relative; }
+  .insight-card:hover { border-color:#BFDBFE; box-shadow:0 4px 16px rgba(59,130,246,.08); }
+  .insight-card.inserted { background:linear-gradient(135deg,#F0FDF4 0%,#ECFDF5 100%); border-color:#86EFAC; }
+  .insight-card.inserted .insert-btn { background:#10B981; color:#fff; pointer-events:none; }
+  .insight-card.inserted .insert-btn .normal-icon { display:none; }
+  .insight-card.inserted .insert-btn .check-icon { display:inline-flex; }
+  .insight-icon { width:32px; height:32px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .insight-icon svg { width:16px; height:16px; }
+  .ic-attendance { background:#DBEAFE; color:#1D4ED8; }
+  .ic-notes { background:#FEF3C7; color:#A16207; }
+  .ic-payment { background:#D1FAE5; color:#047857; }
+  .ic-tasks { background:#EDE9FE; color:#6D28D9; }
+  .ic-promotion { background:#FEE2E2; color:#B91C1C; }
+
+  .insert-btn { display:inline-flex; align-items:center; gap:4px; padding:5px 10px; border-radius:8px; background:#F4F4F5; color:#27272A; font-size:11px; font-weight:600; cursor:pointer; transition:all .12s; border:none; }
+  .insert-btn:hover { background:#E4E4E7; }
+  .insert-btn .check-icon { display:none; }
+
+  /* Stats */
+  .stat-pill { display:inline-flex; align-items:center; gap:5px; padding:3px 9px; border-radius:999px; font-size:11px; font-weight:600; }
+  .stat-up { background:#D1FAE5; color:#047857; }
+  .stat-down { background:#FEE2E2; color:#B91C1C; }
+  .stat-flat { background:#F4F4F5; color:#52525B; }
+
+  /* Buttons */
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:7px; padding:10px 16px; border-radius:10px; font-size:14px; font-weight:600; transition:all .15s; cursor:pointer; border:none; text-decoration:none; }
+  .btn-primary { background:#18181B; color:#fff; }
+  .btn-primary:hover { background:#27272A; }
+  .btn-brand { background:linear-gradient(135deg,#3B82F6 0%,#1D4ED8 100%); color:#fff; }
+  .btn-brand:hover { background:linear-gradient(135deg,#2563EB 0%,#1E40AF 100%); }
+  .btn-ghost { background:transparent; color:#52525B; }
+  .btn-ghost:hover { background:#F4F4F5; color:#18181B; }
+  .btn-secondary { background:#fff; color:#27272A; border:1px solid #E4E4E7; }
+  .btn-secondary:hover { background:#F9FAFB; border-color:#D4D4D8; }
+  .btn-xiro {
+    background:linear-gradient(135deg,#3B82F6 0%,#1D4ED8 100%);
+    color:#fff;
+    position:relative;
+    overflow:hidden;
+  }
+  .btn-xiro:hover { background:linear-gradient(135deg,#2563EB 0%,#1E40AF 100%); transform:translateY(-1px); box-shadow:0 8px 20px rgba(59,130,246,.30); }
+  .btn-xiro .shine {
+    position:absolute; top:0; left:-30%; width:30%; height:100%;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,0.30), transparent);
+    animation:shimmer 2.6s linear infinite;
+  }
+
+  /* Form fields */
+  .field-input {
+    width:100%; padding:10px 12px; background:#fff; border:1px solid #E4E4E7;
+    border-radius:9px; font-size:14px; color:#0A0A0B; transition:all .12s;
+  }
+  .field-input:focus { outline:none; border-color:#3B82F6; box-shadow:0 0 0 3px rgba(59,130,246,.10); }
+  .field-textarea {
+    width:100%; padding:12px 14px; background:#fff; border:1px solid #E4E4E7;
+    border-radius:12px; font-size:14px; color:#0A0A0B; transition:all .12s;
+    resize:vertical; min-height:120px; line-height:1.65;
+    font-family:'Pretendard Variable','Pretendard',system-ui,sans-serif;
+  }
+  .field-textarea:focus { outline:none; border-color:#3B82F6; box-shadow:0 0 0 3px rgba(59,130,246,.10); }
+  .field-label { display:block; font-size:12px; font-weight:700; color:#52525B; margin-bottom:6px; letter-spacing:0.02em; text-transform:uppercase; }
+
+  /* Status pills */
+  .status-pill { padding:7px 14px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer; transition:all .12s; }
+  .status-pill.pending { background:#F4F4F5; color:#52525B; }
+  .status-pill.in-progress { background:#DBEAFE; color:#1D4ED8; }
+  .status-pill.review { background:#FEF3C7; color:#A16207; }
+  .status-pill.done { background:#D1FAE5; color:#047857; }
+  .status-pill.active { box-shadow:0 0 0 2px currentColor; transform:scale(1.02); }
+
+  /* Coach activity row */
+  .activity-row { display:flex; align-items:flex-start; gap:12px; padding:14px; border-radius:12px; transition:all .12s; }
+  .activity-row:hover { background:#F9FAFB; }
+  .coach-avatar { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff; flex-shrink:0; }
+
+  /* Loading shimmer (Xiro 초안 생성 중) */
+  .shimmer-line {
+    height:12px; border-radius:6px;
+    background:linear-gradient(90deg, #F4F4F5 0%, #E4E4E7 50%, #F4F4F5 100%);
+    background-size:200% 100%;
+    animation:shimmer 1.6s linear infinite;
+  }
+
+  /* Toast */
+  .toast {
+    position:fixed; bottom:24px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:#0A0A0B; color:#fff; padding:12px 18px; border-radius:12px;
+    font-size:13px; font-weight:600;
+    box-shadow:0 12px 32px rgba(0,0,0,.18);
+    opacity:0; pointer-events:none; transition:all .3s;
+    display:flex; align-items:center; gap:8px; z-index:100;
+  }
+  .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width:8px; height:8px; }
+  ::-webkit-scrollbar-thumb { background:#E4E4E7; border-radius:4px; }
+  ::-webkit-scrollbar-thumb:hover { background:#D4D4D8; }
+
+  /* Stagger delays */
+  .stagger-1 { animation-delay:.05s; }
+  .stagger-2 { animation-delay:.10s; }
+  .stagger-3 { animation-delay:.15s; }
+  .stagger-4 { animation-delay:.20s; }
+  .stagger-5 { animation-delay:.25s; }
+
+  /* Inserted highlight in textarea */
+  @keyframes highlight-pulse {
+    0% { background:#DBEAFE; }
+    100% { background:transparent; }
+  }
+  .field-textarea.just-inserted {
+    animation:highlight-pulse 1.5s ease-out;
+  }
+
+  /* ===== Task body 좌/우 분할 ===== */
+  .task-body-split {
+    display:grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap:0;
+  }
+  .task-body-left {
+    padding:14px 16px;
+    border-right:1px solid #F1F1F4;
+    background:#fff;
+  }
+  .task-body-right {
+    padding:14px 16px;
+    background:linear-gradient(180deg, #FAFBFF 0%, #F8FAFF 100%);
+  }
+  @media (max-width: 880px) {
+    .task-body-split {
+      grid-template-columns: 1fr;
+    }
+    .task-body-left { border-right:none; border-bottom:1px solid #F1F1F4; }
+  }
+
+  /* ===== Data points (Xiro 제공 데이터) - 컴팩트 인라인 ===== */
+  .data-points-list {
+    display:flex; flex-direction:column; gap:4px;
+    list-style:none; padding:0; margin:0;
+  }
+  .data-point-item {
+    display:flex; align-items:flex-start; gap:8px;
+    padding:4px 0;
+    line-height:1.5;
+  }
+  .data-point-dot {
+    width:5px; height:5px; border-radius:50%; background:#3B82F6;
+    margin-top:8px; flex-shrink:0;
+  }
+  .data-point-text {
+    font-size:13px; color:#27272A; flex:1; min-width:0;
+  }
+  .data-point-text strong {
+    color:#0A0A0B; font-weight:600;
+  }
+  .data-point-detail {
+    color:#71717A; font-feature-settings:"tnum";
+  }
+
+  /* Response badge */
+  .response-badge { transition:all .15s; }
+  .response-badge.has-response { color:#047857; font-weight:700; }
+
+  /* Save indicator (자동 저장 표시) */
+  #save-indicator { transition: color .25s; }
+  #save-indicator.saved { color:#047857; }
+
+  /* ===== Role-based visibility (관장/사범 권한 토글) ===== */
+  body[data-role="coach"] .master-only { display:none !important; }
+  body[data-role="master"] .coach-only { display:none !important; }
+  body[data-role="coach"] .task-actions { display:none; }
+  body[data-role="master"] .task-row { background:#FAFBFF; border-color:#DBEAFE; }
+  body[data-role="master"] .task-row:hover { background:#F5F8FF; border-color:#BFDBFE; }
+
+  /* Task action buttons (관장 권한일 때만 노출) */
+  .task-actions { display:flex; align-items:center; gap:2px; flex-shrink:0; }
+  .task-action-btn {
+    width:26px; height:26px; border-radius:6px;
+    display:flex; align-items:center; justify-content:center;
+    color:#A1A1AA; transition:all .12s; background:transparent; border:none; cursor:pointer;
+  }
+  .task-action-btn:hover { background:#F4F4F5; color:#27272A; }
+  .task-action-btn.delete:hover { background:#FEE2E2; color:#B91C1C; }
+
+  /* Modal */
+  .modal-backdrop {
+    position:fixed; inset:0; background:rgba(10,10,11,0.45); backdrop-filter:blur(2px);
+    z-index:200; display:none; align-items:center; justify-content:center; padding:20px;
+  }
+  .modal-backdrop.show { display:flex; animation:fadeUp .25s ease-out; }
+  .modal-card {
+    background:#fff; border-radius:20px; width:100%; max-width:520px;
+    box-shadow:0 24px 60px rgba(0,0,0,.20); overflow:hidden;
+    transform:scale(0.96); animation:modalIn .25s ease-out forwards;
+  }
+  @keyframes modalIn { to { transform:scale(1); } }
+  .modal-header { padding:20px 22px 0; }
+  .modal-body { padding:18px 22px; }
+  .modal-footer { padding:14px 22px 20px; display:flex; justify-content:space-between; gap:8px; align-items:center; }
+
+  .priority-pill {
+    padding:6px 12px; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer;
+    border:1.5px solid transparent; transition:all .12s;
+  }
+  .priority-pill[data-p="high"] { background:#FEE2E2; color:#991B1B; }
+  .priority-pill[data-p="mid"]  { background:#FEF3C7; color:#92400E; }
+  .priority-pill[data-p="low"]  { background:#F4F4F5; color:#52525B; }
+  .priority-pill.active { border-color:currentColor; box-shadow:0 0 0 2px rgba(0,0,0,.05); }
+</style>
+</head>
+<body data-role="master">
+
+<div class="flex h-screen overflow-hidden">
+
+  <!-- ===== Left Sidebar (7-menu) ===== -->
+  <aside class="w-[224px] bg-white border-r border-ink-200 flex flex-col flex-shrink-0">
+    <div class="h-14 px-5 flex items-center border-b border-ink-200">
+      <div class="flex items-center gap-2">
+        <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white font-bold text-sm">S</div>
+        <div>
+          <div class="font-bold text-sm tracking-tight">STEP Manager</div>
+          <div class="text-[11px] text-ink-500 -mt-0.5">PRO · APEX Dojang</div>
+        </div>
+      </div>
+    </div>
+
+    <nav class="flex-1 p-3 space-y-1 overflow-y-auto">
+      <div class="text-[11px] font-bold text-ink-400 uppercase tracking-wider px-3 mt-2 mb-1">Operate</div>
+      <div class="sidebar-item">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+        Dashboard
+      </div>
+      <div class="sidebar-item">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+        Calendar
+      </div>
+      <div class="sidebar-item">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+        Attendance
+      </div>
+      <div class="sidebar-item active">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+        Tasks · SOP
+      </div>
+      <div class="sidebar-item">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+        Notes
+      </div>
+
+      <div class="text-[11px] font-bold text-ink-400 uppercase tracking-wider px-3 mt-4 mb-1">Manage</div>
+      <div class="sidebar-item">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+        Members
+      </div>
+      <div class="sidebar-item">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        Management
+      </div>
+    </nav>
+
+    <div class="p-3 border-t border-ink-200">
+      <div class="bg-gradient-to-br from-brand-50 to-indigo-50 border border-brand-100 rounded-xl p-3 flex items-center gap-2">
+        <div class="xiro-orb !w-8 !h-8 !text-[13px]">X</div>
+        <div class="flex-1 min-w-0">
+          <div class="text-[13px] font-semibold text-ink-900">Xiro</div>
+          <div class="text-[11px] text-ink-500">분석 준비됨</div>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== Main Area ===== -->
+  <div class="flex-1 flex flex-col overflow-hidden">
+
+    <!-- Global header -->
+    <header class="global-header">
+      <div class="flex items-center gap-3">
+        <nav class="flex items-center gap-2 text-sm">
+          <span class="text-ink-500">Tasks</span>
+          <svg class="w-3 h-3 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+          <span class="text-ink-500">정규업무</span>
+          <svg class="w-3 h-3 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+          <span class="font-semibold text-ink-900">주간 업무일지</span>
+        </nav>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-ink-100 rounded-lg text-[13px] text-ink-500 cursor-pointer hover:bg-ink-200">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <span>Search</span>
+          <span class="mono px-1.5 py-0.5 bg-white rounded text-[11px] border border-ink-200">⌘K</span>
+        </div>
+        <button class="w-9 h-9 rounded-lg hover:bg-ink-100 flex items-center justify-center text-ink-600 relative">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+          <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full ring-2 ring-white"></span>
+        </button>
+        <div class="w-9 h-9 rounded-full bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center text-white text-sm font-bold cursor-pointer">SK</div>
+      </div>
+    </header>
+
+    <!-- Page header -->
+    <div class="px-8 pt-6 pb-4 bg-white border-b border-ink-200 flex-shrink-0">
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex-1 min-w-0">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-[12px] font-bold text-brand-700 bg-brand-50 px-2 py-1 rounded">주간업무일지</span>
+            <span class="text-[12px] mono text-ink-500">Week 17 · 2026</span>
+          </div>
+          <h1 class="text-[26px] font-bold tracking-tight text-ink-900 mb-1">주간 업무일지 작성</h1>
+          <p class="text-[14px] text-ink-500">
+            <span class="mono">2026.04.20 (월) — 2026.04.26 (일)</span>
+            <span class="mx-2 text-ink-300">·</span>
+            APEX Dojang · Master Kim
+          </p>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button class="btn btn-secondary !text-[13px]">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/></svg>
+            템플릿
+          </button>
+          <button class="btn btn-secondary !text-[13px]">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            지난 주
+          </button>
+          <button class="btn btn-primary">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            완료 저장
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Content: 2-column -->
+    <div class="flex-1 overflow-hidden flex">
+
+      <!-- ===== Left: 일지 작성 영역 ===== -->
+      <div class="flex-1 overflow-y-auto px-8 py-6 space-y-5">
+
+        <!-- 기본정보 -->
+        <div class="card-elev p-6 animate-fade-up">
+          <div class="flex items-center justify-between mb-4">
+            <div class="flex items-center gap-2">
+              <h3 class="text-sm font-bold text-ink-900">기본 정보</h3>
+              <span class="status-pill in-progress">● 진행중</span>
+            </div>
+            <button class="btn btn-secondary !text-[13px] !py-1.5 !px-3">
+              <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+              수정하기
+            </button>
+          </div>
+
+          <div class="grid grid-cols-2 gap-4">
+            <div class="col-span-2">
+              <label class="field-label">업무명</label>
+              <input type="text" class="field-input" value="주간 업무일지 — Week 17 (4/20 — 4/26)">
+            </div>
+            <div>
+              <label class="field-label">담당자</label>
+              <div class="flex items-center gap-2">
+                <div class="coach-avatar bg-gradient-to-br from-amber-400 to-orange-500">SK</div>
+                <span class="text-sm font-medium text-ink-900">Seo Coach</span>
+              </div>
+            </div>
+            <div>
+              <label class="field-label">작성일</label>
+              <span class="text-sm font-medium text-ink-900 mono">2026.04.26 (일)</span>
+            </div>
+            <div>
+              <label class="field-label">우선순위</label>
+              <div class="flex gap-2">
+                <button class="px-3 py-1.5 text-[13px] font-semibold rounded-md bg-ink-100 text-ink-500">선택</button>
+                <button class="px-3 py-1.5 text-[13px] font-semibold rounded-md bg-rose-500 text-white">긴급</button>
+                <button class="px-3 py-1.5 text-[13px] font-semibold rounded-md bg-ink-100 text-ink-500">기본</button>
+              </div>
+            </div>
+            <div>
+              <label class="field-label">마감일</label>
+              <span class="text-sm font-medium text-ink-900 mono">04-30-2026</span>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- ===== 업무리스트 14개 (관장 지시 + Xiro 제안 통합) ===== -->
+        <div class="card-elev p-6 animate-fade-up stagger-2">
+
+          <!-- Header row 1: 제목 + 지시자/권한 + 진행률 -->
+          <div class="flex items-center justify-between mb-3">
+            <div class="flex items-center gap-2">
+              <svg class="w-4 h-4 text-ink-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/></svg>
+              <h3 class="text-sm font-bold text-ink-900">업무리스트</h3>
+              <span class="text-[11px] mono font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">14개 항목</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-[12px] mono text-ink-400" id="save-indicator">자동 저장 대기 중</span>
+              <span class="text-ink-300">·</span>
+              <span class="text-[12px] mono text-ink-500" id="task-progress">0개 작성 · 0/14 체크</span>
+            </div>
+          </div>
+
+          <!-- Header row 2: 지시자 컨텍스트 + 권한 토글 -->
+          <div class="flex items-center justify-between mb-4 px-3 py-2.5 bg-ink-50 rounded-lg border border-ink-100">
+            <div class="flex items-center gap-3 text-[13px]">
+              <div class="flex items-center gap-1.5">
+                <svg class="w-3 h-3 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                <span class="text-ink-500">지시자</span>
+                <span class="font-semibold text-ink-900">Master Kim</span>
+              </div>
+              <span class="text-ink-300">·</span>
+              <div class="flex items-center gap-1.5">
+                <svg class="w-3 h-3 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span class="text-ink-500">지시일</span>
+                <span class="font-semibold text-ink-900 mono">2026.04.20</span>
+              </div>
+              <span class="text-ink-300">·</span>
+              <span class="text-ink-500">도장별 맞춤 가능</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] mono text-ink-500">권한</span>
+              <div class="flex items-center bg-white rounded-md p-0.5 border border-ink-200" id="role-toggle">
+                <button class="role-btn px-2.5 py-1 text-[12px] font-semibold rounded text-ink-500 hover:text-ink-900 transition" data-role="coach">사범</button>
+                <button class="role-btn px-2.5 py-1 text-[12px] font-semibold rounded bg-ink-900 text-white" data-role="master">관장</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Xiro 분석 안내 -->
+          <div class="bg-gradient-to-r from-brand-50/60 to-indigo-50/60 border border-brand-100 rounded-xl p-4 mb-4">
+            <div class="flex items-start gap-2.5">
+              <div class="xiro-orb !w-7 !h-7 !text-[13px]">X</div>
+              <div class="flex-1">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-[13px] font-bold text-ink-900">Xiro 분석 완료</span>
+                  <span class="text-[11px] mono font-bold text-brand-700 bg-white px-1.5 py-0.5 rounded">142건 데이터</span>
+                </div>
+                <p class="text-[13px] text-ink-700 leading-relaxed">
+                  각 항목마다 <strong>작성 가이드</strong>와 <strong>일지 작성에 참고하실 데이터</strong>가 좌우로 함께 표시돼요. 데이터를 보면서 직접 작성하거나, <strong>"데이터 가져오기"</strong> 버튼으로 한 번에 가져올 수 있어요.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Task list -->
+          <div class="space-y-1.5" id="task-list">
+            <!-- JS로 렌더링됨 -->
+          </div>
+
+          <!-- Add task button (관장 권한일 때만 표시) -->
+          <button id="btn-add-task" class="master-only mt-3 w-full py-2.5 border-2 border-dashed border-ink-200 hover:border-brand-300 hover:bg-brand-50 rounded-xl text-[13px] font-semibold text-ink-500 hover:text-brand-700 transition flex items-center justify-center gap-1.5">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+            업무 항목 추가
+          </button>
+
+          <!-- Action footer -->
+          <div class="flex items-center justify-between pt-4 mt-4 border-t border-ink-100">
+            <div class="flex items-center gap-2 text-[12px] text-ink-500">
+              <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>높음 4</span>
+              <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>중간 7</span>
+              <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-ink-300"></span>낮음 3</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button class="master-only btn btn-secondary !text-[13px] !py-1.5 !px-3" id="btn-notify-coach">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                사범에게 알림 발송
+              </button>
+              <button class="coach-only btn btn-secondary !text-[13px] !py-1.5 !px-3" id="btn-submit-report">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                관장에게 제출
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 활동기록 (Coach별 일일 로그) -->
+        <div class="card p-6 animate-fade-up stagger-3">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-bold text-ink-900">Coach 활동 기록 (이번 주)</h3>
+            <span class="text-[12px] text-ink-500 mono">7일 · 24개 활동</span>
+          </div>
+
+          <div class="space-y-1">
+            <div class="activity-row">
+              <div class="coach-avatar bg-gradient-to-br from-blue-400 to-blue-600">SK</div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-[13px] font-bold text-ink-900">Seo Coach</span>
+                  <span class="mono text-[11px] text-ink-400">04.26 (일) 18:00</span>
+                </div>
+                <ul class="text-[13px] text-ink-700 space-y-1 leading-relaxed">
+                  <li>• 학생 상태 업데이트 (5명) <span class="text-brand-600">[BNC]</span></li>
+                  <li>• 이메일 / 전화 응대 (8건) <span class="text-brand-600">[BNC]</span></li>
+                  <li>• 일일 수업 운영 — Class 5개, Trial 2회, 이벤트 1건 공유</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="activity-row">
+              <div class="coach-avatar bg-gradient-to-br from-emerald-400 to-emerald-600">PC</div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-[13px] font-bold text-ink-900">Park Coach</span>
+                  <span class="mono text-[11px] text-ink-400">04.25 (토) 17:30</span>
+                </div>
+                <ul class="text-[13px] text-ink-700 space-y-1 leading-relaxed">
+                  <li>• 학생 상태 업데이트 (3명) <span class="text-brand-600">[BNC]</span></li>
+                  <li>• 결제 누락 확인 — 미납 $110 회수 완료 <span class="text-brand-600">[BNC]</span></li>
+                  <li>• Renewal 리스트 업데이트 (8명)</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="activity-row">
+              <div class="coach-avatar bg-gradient-to-br from-purple-400 to-purple-600">LC</div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-[13px] font-bold text-ink-900">Lee Coach</span>
+                  <span class="mono text-[11px] text-ink-400">04.24 (금) 19:00</span>
+                </div>
+                <ul class="text-[13px] text-ink-700 space-y-1 leading-relaxed">
+                  <li>• 4월 승급 심사 준비 — 대상자 2명 확정</li>
+                  <li>• 띠별 분류 정리 + 학부모 안내 발송</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <button class="w-full mt-3 py-2 text-[13px] font-semibold text-ink-500 hover:bg-ink-50 rounded-lg transition">
+            21개 활동 더보기 ↓
+          </button>
+        </div>
+
+        <!-- 피드백 / 댓글 -->
+        <div class="card p-6 animate-fade-up stagger-4">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-bold text-ink-900">피드백 / 댓글</h3>
+            <span class="text-[12px] text-ink-500 mono">2 comments</span>
+          </div>
+
+          <div class="flex gap-2 mb-4">
+            <input type="text" class="field-input flex-1" placeholder="피드백을 남기세요...">
+            <button class="btn btn-brand !text-[13px]">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/></svg>
+              등록
+            </button>
+          </div>
+
+          <div class="space-y-3">
+            <div class="flex gap-3">
+              <div class="coach-avatar bg-gradient-to-br from-blue-400 to-blue-600">SK</div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-[13px] font-bold text-ink-900">Seo Coach</span>
+                  <span class="mono text-[11px] text-ink-400">2026.04.25 13:30</span>
+                </div>
+                <p class="text-[14px] text-ink-700">학생 관리 강화 필요 — 결석 학생 2명 학부모 컨택 다음 주 진행하겠습니다.</p>
+              </div>
+            </div>
+            <div class="flex gap-3">
+              <div class="coach-avatar bg-gradient-to-br from-amber-400 to-orange-500">MK</div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2 mb-1">
+                  <span class="text-[13px] font-bold text-ink-900">Master Kim</span>
+                  <span class="mono text-[11px] text-ink-400">2026.04.25 14:10</span>
+                </div>
+                <p class="text-[14px] text-ink-700">컨택 진행 후 Notes에도 기록 부탁해요. 다음 주 미팅 때 함께 봅시다.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 상태관리 -->
+        <div class="card p-6 animate-fade-up stagger-5 mb-8">
+          <div class="flex items-center justify-between mb-3">
+            <h3 class="text-sm font-bold text-ink-900">상태 관리</h3>
+            <div class="flex items-center gap-2">
+              <button class="btn btn-secondary !text-[13px]">취소</button>
+              <button class="btn btn-primary !text-[13px]">등록</button>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="status-pill pending">대기</button>
+            <button class="status-pill in-progress active">진행중</button>
+            <button class="status-pill review">검토</button>
+            <button class="status-pill done">완료</button>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Toast notification -->
+<div id="toast" class="toast">
+  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+  <span id="toast-msg">본문에 추가됐어요</span>
+</div>
+
+<script>
+
+  // 14개 업무리스트 항목 - 각 항목별 Xiro의 데이터 기반 제안
+  let TASK_LIST = [
+    {
+      id: 'leads', label: 'Leads', desc: '신규 리드 발굴', priority: 'high',
+      prompt: '이번 주 신규 리드 현황과 전환 활동을 정리해주세요. 어떤 채널이 효과적이었나요?',
+      dataPoints: [
+        { label: '신규 리드 총 4명', detail: '전주 대비 +1명' },
+        { label: 'Instagram 광고', detail: '3명 (가장 효과적 채널)' },
+        { label: 'Walk-in', detail: '1명' },
+        { label: 'Trial 수업 예약', detail: '4명 중 3명 완료' },
+        { label: '예상 전환율', detail: '75% (최근 4주 평균 기준)' },
+      ],
+    },
+    {
+      id: 'cancellation', label: 'Cancellation', desc: '해지 관리', priority: 'high',
+      prompt: '이번 주 해지/이탈 현황을 점검하고, 위험 신호가 있는 학생을 기록해주세요.',
+      dataPoints: [
+        { label: '실제 해지', detail: '0건' },
+        { label: '결석 누적 위험 학생', detail: '3명: 김민준(5회), 이서연(4회), 박지훈(3회)' },
+        { label: '학부모 미응답', detail: '2건 (1주 이상)' },
+        { label: '갱신 거부 의사 표명', detail: '0건' },
+      ],
+    },
+    {
+      id: 'renewal', label: 'Renewal', desc: '갱신 관리', priority: 'high',
+      prompt: '다음 갱신 예정 학생들의 응대 계획을 작성해주세요.',
+      dataPoints: [
+        { label: '갱신 예정 8명', detail: '총 $1,640' },
+        { label: '자동 결제 (Stripe)', detail: '5명' },
+        { label: '수동 결제', detail: '3명 (사전 안내 필요)' },
+        { label: '갱신 시점', detail: '5/3 ~ 5/10' },
+      ],
+    },
+    {
+      id: 'net-change', label: 'Net Membership Change', desc: '순회원 변화', priority: 'mid',
+      prompt: '이번 주 회원 수 변화를 점검하고, 4월 목표 대비 달성률을 정리해주세요.',
+      dataPoints: [
+        { label: '신규 등록', detail: '+4명' },
+        { label: '해지', detail: '-0명' },
+        { label: '주간 순증', detail: '+4명' },
+        { label: '4월 누적', detail: '+12명 (목표 +10명, 120% 달성)' },
+        { label: '5월 잠정 목표', detail: '+15명 (검토 필요)' },
+      ],
+    },
+    {
+      id: 'external', label: 'External', desc: '외부 요인', priority: 'mid',
+      prompt: '도장 운영에 영향을 준 외부 요인이 있다면 기록해주세요.',
+      dataPoints: [
+        { label: '학기 중 학원 일정 변경기', detail: '수요일 출석 저하 영향 추정' },
+        { label: '인근 신규 도장', detail: '없음' },
+        { label: '지역 이벤트', detail: '5/2 마을 페스티벌 (마케팅 기회)' },
+        { label: '날씨', detail: '비 2일 (주중)' },
+      ],
+    },
+    {
+      id: 'internal', label: 'Internal factors', desc: '내부 요인', priority: 'mid',
+      prompt: '내부 운영에서 개선이 필요한 부분이 있다면 기록해주세요.',
+      dataPoints: [
+        { label: 'Coach별 학부모 컨택 빈도', detail: 'Park 8건 / Seo 2건 / Lee 1건' },
+        { label: 'Coach 휴가/병가', detail: '없음' },
+        { label: '수업 결강', detail: '0건' },
+        { label: 'SOP 완료율', detail: '주간 82%' },
+      ],
+    },
+    {
+      id: 'who', label: 'Who', desc: '대상자', priority: 'mid',
+      prompt: '이번 주 집중 대응이 필요한 대상자를 정리해주세요.',
+      dataPoints: [
+        { label: '결석 위험 학생', detail: '3명' },
+        { label: '갱신 대상', detail: '8명' },
+        { label: '승급 심사 대상', detail: '2명 (Jacob Lee, Sophia Park)' },
+        { label: '신규 학생', detail: '4명 (정착 단계)' },
+      ],
+    },
+    {
+      id: 'how', label: 'How', desc: '실행 방법', priority: 'mid',
+      prompt: '효과적이었던 실행 방법이나 시도해볼 새로운 접근이 있다면 기록해주세요.',
+      dataPoints: [
+        { label: 'Park Coach 직접 통화', detail: '미납 100% 회수 성공 (Success pattern)' },
+        { label: '문자 안내', detail: '응답률 60%' },
+        { label: '이메일 안내', detail: '응답률 35%' },
+        { label: '직접 통화', detail: '응답률 92% (가장 효과적)' },
+      ],
+    },
+    {
+      id: 'success', label: 'Success cases', desc: '성공 사례', priority: 'low',
+      prompt: '이번 주 의미 있는 성공 사례를 기록해주세요.',
+      dataPoints: [
+        { label: '미납 $110 전액 회수', detail: 'Park Coach 직접 통화 (3명)' },
+        { label: 'Liam Martinez 자세 교정', detail: '교정 후 집중력 향상 관찰' },
+        { label: '신규 4명 정착', detail: 'Trial 출석률 100%' },
+      ],
+    },
+    {
+      id: 'failure', label: 'Failure cases', desc: '실패/이월 사례', priority: 'high',
+      prompt: '이번 주 미완료된 업무나 개선이 필요한 사례를 기록해주세요.',
+      dataPoints: [
+        { label: '결석생 학부모 컨택', detail: '3건 미진행 (다음 주 이월)' },
+        { label: '추정 원인', detail: 'Coach 시간 배분 문제' },
+        { label: '주간 SOP 미완료', detail: '14/17 (학부모 소통 영역)' },
+      ],
+    },
+    {
+      id: 'retention', label: 'Retention', desc: '유지율', priority: 'high',
+      prompt: '회원 유지율과 개선 방안을 점검해주세요.',
+      dataPoints: [
+        { label: '주간 Retention', detail: '96% (전주 대비 -2%p)' },
+        { label: '월간 Retention', detail: '94% (4월 평균)' },
+        { label: '위험 학생 영향', detail: '3명이 다음 달 해지 후보' },
+        { label: '예상 회복 효과', detail: '선제 컨택 시 +2%p' },
+      ],
+    },
+    {
+      id: 'action', label: 'Action items', desc: '다음 주 액션', priority: 'high',
+      prompt: '다음 주 우선순위와 구체적 실행 항목을 작성해주세요.',
+      dataPoints: [
+        { label: '1순위', detail: '결석 위험 학생 3명 학부모 컨택' },
+        { label: '2순위', detail: '갱신 안내 (수동 결제 3명)' },
+        { label: '3순위', detail: 'Sarah Kim 부모 면담 일정 조율' },
+        { label: '4순위', detail: '5/20 승급심사 학부모 사전 안내' },
+        { label: '5순위', detail: '수요일 클래스 시간 검토' },
+      ],
+    },
+    {
+      id: 'master', label: 'Master review', desc: '관장 검토 필요', priority: 'mid',
+      prompt: '관장님 검토/승인이 필요한 사항을 정리해주세요.',
+      dataPoints: [
+        { label: '검토 사항 1', detail: '수요일 클래스 시간 조정 (화·목 분산 운영안)' },
+        { label: '검토 사항 2', detail: '학부모 컨택 SOP 재설계 (주간 분산)' },
+      ],
+    },
+    {
+      id: 'plan', label: 'Next week plan', desc: '다음 주 계획', priority: 'mid',
+      prompt: '다음 주 핵심 계획 3가지를 작성해주세요.',
+      dataPoints: [
+        { label: '핵심 1', detail: 'Retention 회복 (위험 학생 컨택 3건)' },
+        { label: '핵심 2', detail: 'Renewal 8명 안정 처리' },
+        { label: '핵심 3', detail: '5월 승급 심사 사전 준비' },
+      ],
+    },
+  ];
+
+  // Coach가 작성한 응답 저장 (key: task.id, value: text)
+  // ============================================
+  // 작성 응답 저장 (localStorage 자동 저장 + 복원)
+  // ============================================
+  const STORAGE_KEY = 'step_weekly_report_w17_responses';
+  const SAVE_DEBOUNCE_MS = 500;
+
+  // 페이지 로드 시 복원
+  let TASK_RESPONSES = {};
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) TASK_RESPONSES = JSON.parse(saved);
+  } catch (err) {
+    console.warn('Failed to restore responses:', err);
+  }
+
+  // 자동 저장 (디바운스)
+  let saveTimer = null;
+  function saveResponses() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(TASK_RESPONSES));
+        updateLastSaved();
+      } catch (err) {
+        console.warn('Failed to save:', err);
+      }
+    }, SAVE_DEBOUNCE_MS);
+  }
+
+  // 마지막 저장 시각 표시
+  function updateLastSaved() {
+    const indicator = document.getElementById('save-indicator');
+    if (!indicator) return;
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    indicator.textContent = `${hh}:${mm}에 자동 저장됨`;
+    indicator.classList.add('saved');
+    setTimeout(() => indicator.classList.remove('saved'), 1500);
+  }
+
+
+  // ============================================
+  // Functions
+  // ============================================
+
+  // Status pill toggle
+  document.querySelectorAll('.status-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      document.querySelectorAll('.status-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
+    });
+  });
+
+  // ============================================
+  // 업무리스트 14개 렌더링 + Xiro 제안
+  // ============================================
+  const taskList = document.getElementById('task-list');
+  const taskProgress = document.getElementById('task-progress');
+  const btnSubmitReport = document.getElementById('btn-submit-report');
+
+  // 우선순위 색상
+  const PRIORITY_COLOR = {
+    high: { dot:'bg-rose-500', label:'높음', text:'text-rose-700', bg:'bg-rose-50' },
+    mid: { dot:'bg-amber-400', label:'중간', text:'text-amber-700', bg:'bg-amber-50' },
+    low: { dot:'bg-ink-300', label:'낮음', text:'text-ink-500', bg:'bg-ink-50' },
+  };
+
+  // 렌더링 함수 (재사용 가능)
+  function renderTaskList() {
+    taskList.innerHTML = '';
+    TASK_LIST.forEach((task, idx) => {
+      const p = PRIORITY_COLOR[task.priority];
+      const row = document.createElement('div');
+      row.className = 'task-row group bg-white border border-ink-200 rounded-xl transition-all overflow-hidden';
+      row.dataset.taskId = task.id;
+
+      // 데이터 포인트 HTML 생성 (Xiro가 제공) - 인라인 컴팩트 형식
+      const dataPointsHTML = (task.dataPoints || []).map(dp => `
+        <li class="data-point-item">
+          <span class="data-point-dot"></span>
+          <span class="data-point-text"><strong>${dp.label}</strong> <span class="data-point-detail">${dp.detail}</span></span>
+        </li>
+      `).join('');
+
+      // 저장된 응답 가져오기
+      const savedResponse = TASK_RESPONSES[task.id] || '';
+
+      row.innerHTML = `
+        <!-- Header (compact, always visible) -->
+        <div class="task-header flex items-center gap-3 px-4 py-2.5 border-b border-ink-100">
+          <input type="checkbox" class="task-check w-4 h-4 rounded border-ink-300 text-brand-600 focus:ring-brand-500 flex-shrink-0 cursor-pointer">
+          <span class="w-1.5 h-1.5 rounded-full ${p.dot} flex-shrink-0" title="우선순위 ${p.label}"></span>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-baseline gap-2 flex-wrap">
+              <span class="text-[14px] font-semibold text-ink-900 task-label">${task.label}</span>
+              <span class="text-[12px] text-ink-400">${task.desc}</span>
+              <span class="response-badge text-[11px] mono ${savedResponse ? 'has-response' : ''}">${savedResponse ? '✓ 작성됨' : ''}</span>
+            </div>
+          </div>
+          <div class="task-actions">
+            <button class="task-action-btn edit" title="항목 수정">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+            </button>
+            <button class="task-action-btn delete" title="항목 삭제">
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M9 7V4a2 2 0 012-2h2a2 2 0 012 2v3"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Body (좌/우 분할: 작성 영역 | Xiro 데이터) -->
+        <div class="task-body-split">
+          <!-- 좌측: Coach 작성 영역 -->
+          <div class="task-body-left">
+            <div class="text-[11px] font-bold text-ink-500 uppercase tracking-wider mb-1.5">작성 가이드</div>
+            <p class="text-[13px] text-ink-700 leading-snug mb-2">${task.prompt}</p>
+            <textarea
+              class="task-response field-textarea !text-[14px] !min-h-[88px] !py-2 !px-3"
+              data-task-id="${task.id}"
+              rows="4"
+              placeholder="이 항목에 대한 내용을 작성해주세요..."
+            >${savedResponse}</textarea>
+            <div class="flex items-center justify-between mt-1.5">
+              <span class="text-[11px] text-ink-400 char-count">${savedResponse.length}자</span>
+              <button class="apply-data-btn text-[11px] font-bold text-brand-600 hover:text-brand-700 inline-flex items-center gap-0.5">
+                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+                데이터 가져오기
+              </button>
+            </div>
+          </div>
+
+          <!-- 우측: Xiro 제공 데이터 -->
+          <div class="task-body-right">
+            <div class="flex items-center gap-1.5 mb-2">
+              <div class="xiro-orb !w-5 !h-5 !text-[10px] !shadow-none">X</div>
+              <span class="text-[12px] font-bold text-ink-900">일지 작성에 참고하실 데이터</span>
+              <span class="text-[11px] mono text-ink-400 ml-auto">${(task.dataPoints || []).length}건</span>
+            </div>
+            <ul class="data-points-list">
+              ${dataPointsHTML}
+            </ul>
+          </div>
+        </div>
+      `;
+      taskList.appendChild(row);
+
+      // textarea 변경 시 응답 저장 + 글자 수 + 작성됨 배지
+      const textarea = row.querySelector('.task-response');
+      const charCount = row.querySelector('.char-count');
+      const badge = row.querySelector('.response-badge');
+      textarea.addEventListener('input', () => {
+        TASK_RESPONSES[task.id] = textarea.value;
+        saveResponses(); // localStorage 자동 저장 (디바운스)
+        charCount.textContent = textarea.value.length + '자';
+        if (textarea.value.trim()) {
+          badge.textContent = '✓ 작성됨';
+          badge.classList.add('has-response');
+        } else {
+          badge.textContent = '';
+          badge.classList.remove('has-response');
+        }
+        updateTaskProgress();
+      });
+
+      // Xiro 데이터를 작성에 활용
+      row.querySelector('.apply-data-btn').addEventListener('click', e => {
+        e.stopPropagation();
+        if (textarea.value.trim()) {
+          if (!confirm('현재 작성 중인 내용 뒤에 Xiro 데이터를 추가할까요?')) return;
+        }
+        const dataText = (task.dataPoints || []).map(dp => `- ${dp.label}: ${dp.detail}`).join('\n');
+        const current = textarea.value.trim();
+        textarea.value = current ? current + '\n\n' + dataText : dataText;
+        textarea.dispatchEvent(new Event('input'));
+        textarea.focus();
+      });
+
+      // 수정 버튼 (관장 권한)
+      row.querySelector('.task-action-btn.edit').addEventListener('click', e => {
+        e.stopPropagation();
+        openTaskModal(task.id);
+      });
+
+      // 삭제 버튼 (관장 권한)
+      row.querySelector('.task-action-btn.delete').addEventListener('click', e => {
+        e.stopPropagation();
+        if (confirm(`"${task.label}" 항목을 삭제할까요?`)) {
+          TASK_LIST = TASK_LIST.filter(t => t.id !== task.id);
+          delete TASK_RESPONSES[task.id];
+          saveResponses();
+          renderTaskList();
+          updateTaskProgress();
+          updatePriorityCounts();
+          showToast(`"${task.label}" 항목이 삭제됐어요`);
+        }
+      });
+
+      // 체크박스 진행률 업데이트
+      row.querySelector('.task-check').addEventListener('change', updateTaskProgress);
+    });
+  }
+
+  renderTaskList();
+
+  // 페이지 진입 시 복원된 응답 알림 + 진행률 갱신
+  const restoredCount = Object.values(TASK_RESPONSES).filter(v => v && v.trim()).length;
+  if (restoredCount > 0) {
+    setTimeout(() => {
+      updateTaskProgress();
+      showToast(`이전 작성 내용 ${restoredCount}개를 복원했어요`);
+    }, 300);
+  }
+
+  function updateTaskProgress() {
+    const checked = document.querySelectorAll('.task-check:checked').length;
+    const responded = Object.values(TASK_RESPONSES).filter(v => v && v.trim()).length;
+    const total = TASK_LIST.length;
+    taskProgress.textContent = `${responded}개 작성 · ${checked}/${total} 체크`;
+    if (responded === total && total > 0) {
+      taskProgress.classList.add('!text-emerald-600', '!font-bold');
+    } else {
+      taskProgress.classList.remove('!text-emerald-600', '!font-bold');
+    }
+  }
+
+  // 우선순위 카운트 업데이트 (footer 표시)
+  function updatePriorityCounts() {
+    const counts = { high:0, mid:0, low:0 };
+    TASK_LIST.forEach(t => counts[t.priority]++);
+    const footer = document.querySelector('.task-row')?.closest('.card-elev')?.querySelector('.flex.items-center.gap-2.text-\\[11px\\].text-ink-500');
+    if (footer) {
+      footer.innerHTML = `
+        <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>높음 ${counts.high}</span>
+        <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-amber-400"></span>중간 ${counts.mid}</span>
+        <span class="flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-ink-300"></span>낮음 ${counts.low}</span>
+      `;
+    }
+  }
+
+  // 관장에게 제출 (사범 권한 액션)
+  btnSubmitReport.addEventListener('click', () => {
+    const responded = Object.values(TASK_RESPONSES).filter(v => v && v.trim()).length;
+    const total = TASK_LIST.length;
+    if (responded === 0) {
+      showToast('작성된 항목이 없어요');
+      return;
+    }
+    if (responded < total) {
+      if (!confirm(`${total}개 항목 중 ${responded}개만 작성됐어요. 그래도 제출할까요?`)) return;
+    }
+    showToast(`주간 업무일지를 Master Kim에게 제출했어요 · ${responded}/${total}개 항목`);
+  });
+
+  // ============================================
+  // 권한 토글 (관장 ↔ 사범)
+  // ============================================
+  document.querySelectorAll('.role-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const role = btn.dataset.role;
+      document.body.dataset.role = role;
+      document.querySelectorAll('.role-btn').forEach(b => {
+        b.classList.remove('bg-ink-900', 'text-white');
+        b.classList.add('text-ink-500');
+      });
+      btn.classList.remove('text-ink-500');
+      btn.classList.add('bg-ink-900', 'text-white');
+      showToast(role === 'master' ? '관장 권한으로 전환됐어요' : '사범 권한으로 전환됐어요');
+    });
+  });
+
+  // ============================================
+  // 항목 편집 모달
+  // ============================================
+  const modal = document.getElementById('task-modal');
+  const modalTitle = document.getElementById('modal-title');
+  const modalLabel = document.getElementById('modal-label');
+  const modalDesc = document.getElementById('modal-desc');
+  const modalPrompt = document.getElementById('modal-prompt');
+  let modalEditingId = null;
+
+  function openTaskModal(taskId = null) {
+    modalEditingId = taskId;
+    if (taskId) {
+      const task = TASK_LIST.find(t => t.id === taskId);
+      modalTitle.textContent = '업무 항목 수정';
+      modalLabel.value = task.label;
+      modalDesc.value = task.desc;
+      modalPrompt.value = task.prompt || '';
+      setModalPriority(task.priority);
+    } else {
+      modalTitle.textContent = '업무 항목 추가';
+      modalLabel.value = '';
+      modalDesc.value = '';
+      modalPrompt.value = '';
+      setModalPriority('mid');
+    }
+    document.getElementById('btn-modal-delete').style.display = taskId ? '' : 'none';
+    modal.classList.add('show');
+    setTimeout(() => modalLabel.focus(), 100);
+  }
+
+  function closeModal() { modal.classList.remove('show'); }
+
+  function setModalPriority(p) {
+    document.querySelectorAll('.priority-pill').forEach(pill => {
+      pill.classList.toggle('active', pill.dataset.p === p);
+    });
+  }
+
+  function getModalPriority() {
+    const active = document.querySelector('.priority-pill.active');
+    return active ? active.dataset.p : 'mid';
+  }
+
+  document.querySelectorAll('.priority-pill').forEach(pill => {
+    pill.addEventListener('click', () => setModalPriority(pill.dataset.p));
+  });
+
+  document.getElementById('btn-modal-cancel').addEventListener('click', closeModal);
+  modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+  document.getElementById('btn-modal-save').addEventListener('click', () => {
+    const label = modalLabel.value.trim();
+    if (!label) { modalLabel.focus(); showToast('항목 이름을 입력해주세요'); return; }
+
+    const data = {
+      label,
+      desc: modalDesc.value.trim() || '—',
+      prompt: modalPrompt.value.trim() || `${modalLabel.value.trim()} 항목에 대한 내용을 작성해주세요.`,
+      priority: getModalPriority(),
+    };
+
+    if (modalEditingId) {
+      const idx = TASK_LIST.findIndex(t => t.id === modalEditingId);
+      if (idx >= 0) TASK_LIST[idx] = { ...TASK_LIST[idx], ...data };
+      showToast(`"${label}" 항목이 수정됐어요`);
+    } else {
+      data.id = 'custom-' + Date.now();
+      TASK_LIST.push(data);
+      showToast(`"${label}" 항목이 추가됐어요`);
+    }
+
+    renderTaskList();
+    updateTaskProgress();
+    updatePriorityCounts();
+    closeModal();
+  });
+
+  document.getElementById('btn-modal-delete').addEventListener('click', () => {
+    if (!modalEditingId) return;
+    const task = TASK_LIST.find(t => t.id === modalEditingId);
+    if (confirm(`"${task.label}" 항목을 삭제할까요?`)) {
+      TASK_LIST = TASK_LIST.filter(t => t.id !== modalEditingId);
+      renderTaskList();
+      updateTaskProgress();
+      updatePriorityCounts();
+      closeModal();
+      showToast(`"${task.label}" 항목이 삭제됐어요`);
+    }
+  });
+
+  // ============================================
+  // 항목 추가 + 사범에게 알림 발송
+  // ============================================
+  document.getElementById('btn-add-task').addEventListener('click', () => openTaskModal(null));
+
+  document.getElementById('btn-notify-coach').addEventListener('click', () => {
+    showToast(`Seo Coach에게 ${TASK_LIST.length}개 업무 지시 알림을 발송했어요 · 앱 푸시 + 이메일`);
+  });
+
+  // ESC 모달 닫기
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && modal.classList.contains('show')) closeModal();
+  });
+
+  // Initial state
+  updateCharCount();
+</script>
+
+<!-- ===== Task Edit Modal (관장 권한) ===== -->
+<div id="task-modal" class="modal-backdrop">
+  <div class="modal-card">
+    <div class="modal-header">
+      <div class="flex items-start justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-[11px] mono font-bold text-brand-700 bg-brand-50 px-2 py-0.5 rounded">관장 권한</span>
+            <span class="text-[11px] text-ink-500">Master Kim</span>
+          </div>
+          <h3 id="modal-title" class="text-[18px] font-bold text-ink-900">업무 항목 수정</h3>
+          <p class="text-[13px] text-ink-500 mt-0.5">사범에게 지시할 업무 항목과 작성 가이드를 설정하세요.</p>
+        </div>
+        <button id="btn-modal-cancel-x" class="w-8 h-8 rounded-lg hover:bg-ink-100 flex items-center justify-center text-ink-400 hover:text-ink-700 transition" onclick="document.getElementById('task-modal').classList.remove('show')">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="modal-body space-y-4">
+      <div>
+        <label class="field-label">항목 이름</label>
+        <input id="modal-label" type="text" class="field-input" placeholder="예: Leads, 신규 상담, SNS 관리...">
+      </div>
+      <div>
+        <label class="field-label">간단 설명</label>
+        <input id="modal-desc" type="text" class="field-input" placeholder="예: 신규 리드 발굴 / 학부모 상담 응대">
+      </div>
+      <div>
+        <label class="field-label">우선순위</label>
+        <div class="flex items-center gap-2">
+          <button class="priority-pill" data-p="high">● 높음</button>
+          <button class="priority-pill active" data-p="mid">● 중간</button>
+          <button class="priority-pill" data-p="low">● 낮음</button>
+        </div>
+      </div>
+      <div>
+        <label class="field-label">작성 가이드 (질문)</label>
+        <textarea id="modal-prompt" class="field-textarea !min-h-[80px] !text-[13px]" rows="3" placeholder="사범이 이 항목을 작성할 때 답해야 할 질문을 적어주세요."></textarea>
+        <div class="text-[12px] text-ink-400 mt-1.5 flex items-center gap-1.5">
+          <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          예: "이번 주 신규 리드 현황과 전환 활동을 정리해주세요"
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button id="btn-modal-delete" class="text-[13px] font-semibold text-rose-600 hover:text-rose-700 transition flex items-center gap-1">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M9 7V4a2 2 0 012-2h2a2 2 0 012 2v3"/></svg>
+        삭제
+      </button>
+      <div class="flex items-center gap-2">
+        <button id="btn-modal-cancel" class="btn btn-ghost !text-[13px]">취소</button>
+        <button id="btn-modal-save" class="btn btn-primary !text-[13px]">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+          저장
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>파일로 학생 일괄 등록 · STEP Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Pretendard Variable','Pretendard','system-ui','sans-serif'],
+          mono: ['JetBrains Mono','monospace'],
+        },
+        colors: {
+          ink: { 900:'#0A0A0B', 800:'#18181B', 700:'#27272A', 600:'#52525B', 500:'#71717A', 400:'#A1A1AA', 300:'#D4D4D8', 200:'#E4E4E7', 100:'#F4F4F5', 50:'#F9FAFB' },
+          brand: { 50:'#EFF6FF', 100:'#DBEAFE', 500:'#3B82F6', 600:'#2563EB', 700:'#1D4ED8' },
+        },
+        animation: {
+          'pulse-soft': 'pulseSoft 2s ease-in-out infinite',
+          'fade-up': 'fadeUp .5s ease-out backwards',
+          'slide-in': 'slideIn .4s ease-out backwards',
+          'scan': 'scan 1.8s ease-in-out infinite',
+        },
+        keyframes: {
+          pulseSoft: { '0%,100%':{opacity:'1'},'50%':{opacity:'0.5'} },
+          fadeUp: { '0%':{transform:'translateY(12px)',opacity:'0'},'100%':{transform:'translateY(0)',opacity:'1'} },
+          slideIn: { '0%':{transform:'translateX(-12px)',opacity:'0'},'100%':{transform:'translateX(0)',opacity:'1'} },
+          scan: { '0%':{transform:'translateY(-100%)'},'50%':{transform:'translateY(100%)'},'100%':{transform:'translateY(-100%)'} },
+        }
+      }
+    }
+  }
+</script>
+<style>
+  body { font-family: 'Pretendard Variable','Pretendard',system-ui,sans-serif; background:#F9FAFB; color:#18181B; -webkit-font-smoothing:antialiased; min-height:100vh; }
+  .mono { font-family:'JetBrains Mono',monospace; font-feature-settings:"tnum"; }
+
+  /* Header */
+  .global-header { height:56px; border-bottom:1px solid #E4E4E7; background:rgba(255,255,255,0.85); backdrop-filter:blur(12px); display:flex; align-items:center; justify-content:space-between; padding:0 24px; position:sticky; top:0; z-index:50; }
+
+  /* Stepper */
+  .stepper-bar { background:#fff; border-bottom:1px solid #E4E4E7; padding:18px 24px; }
+  .stepper { display:flex; align-items:center; max-width:780px; margin:0 auto; gap:8px; }
+  .step { display:flex; align-items:center; gap:10px; flex:1; }
+  .step-num { width:32px; height:32px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:13px; flex-shrink:0; transition:all .25s; }
+  .step.done .step-num { background:#10B981; color:#fff; }
+  .step.active .step-num { background:#18181B; color:#fff; box-shadow:0 0 0 4px rgba(24,24,27,0.10); }
+  .step.pending .step-num { background:#F4F4F5; color:#A1A1AA; border:1px dashed #D4D4D8; }
+  .step-label { display:flex; flex-direction:column; min-width:0; }
+  .step-eyebrow { font-family:'JetBrains Mono',monospace; font-size:9px; font-weight:700; color:#A1A1AA; letter-spacing:0.05em; }
+  .step.active .step-eyebrow { color:#3B82F6; }
+  .step.done .step-eyebrow { color:#10B981; }
+  .step-title { font-size:13px; font-weight:600; color:#52525B; transition:color .2s; }
+  .step.active .step-title { color:#0A0A0B; font-weight:700; }
+  .step.done .step-title { color:#27272A; }
+  .step-line { flex:0 0 32px; height:2px; background:#E4E4E7; border-radius:1px; }
+  .step-line.done { background:#10B981; }
+
+  /* Xiro orb */
+  .xiro-orb { width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg,#3B82F6 0%,#1D4ED8 100%); color:#fff; font-weight:800; font-size:18px; display:flex; align-items:center; justify-content:center; flex-shrink:0; box-shadow:0 6px 20px rgba(59,130,246,.30); position:relative; }
+  .xiro-orb::before { content:''; position:absolute; inset:-3px; border-radius:50%; border:2px solid rgba(59,130,246,.20); animation:pulseSoft 2.4s ease-in-out infinite; }
+
+  /* Cards */
+  .card { background:#fff; border:1px solid #E4E4E7; border-radius:20px; }
+  .card-elev { background:#fff; border:1px solid #E4E4E7; border-radius:24px; box-shadow:0 12px 40px rgba(16,24,40,.04), 0 2px 6px rgba(16,24,40,.03); }
+
+  /* Drop zone */
+  .dropzone { background:#fff; border:2px dashed #D4D4D8; border-radius:20px; padding:56px 32px; text-align:center; transition:all .2s; cursor:pointer; }
+  .dropzone:hover { border-color:#3B82F6; background:#F8FBFF; }
+  .dropzone.dragging { border-color:#3B82F6; background:#EFF6FF; transform:scale(1.01); }
+
+  /* Buttons */
+  .btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:12px 20px; border-radius:12px; font-size:14px; font-weight:600; transition:all .15s; cursor:pointer; border:none; text-decoration:none; }
+  .btn-primary { background:#18181B; color:#fff; }
+  .btn-primary:hover { background:#27272A; transform:translateY(-1px); box-shadow:0 8px 20px rgba(0,0,0,.12); }
+  .btn-brand { background:linear-gradient(135deg,#3B82F6 0%,#1D4ED8 100%); color:#fff; }
+  .btn-brand:hover { background:linear-gradient(135deg,#2563EB 0%,#1E40AF 100%); transform:translateY(-1px); box-shadow:0 8px 20px rgba(59,130,246,.25); }
+  .btn-ghost { background:transparent; color:#52525B; }
+  .btn-ghost:hover { background:#F4F4F5; color:#18181B; }
+  .btn-secondary { background:#fff; color:#27272A; border:1px solid #E4E4E7; }
+  .btn-secondary:hover { background:#F9FAFB; border-color:#D4D4D8; }
+  .btn-large { padding:14px 28px; font-size:15px; border-radius:14px; }
+
+  /* Mapping table */
+  .map-row { display:grid; grid-template-columns:1fr auto 1fr 100px; gap:12px; align-items:center; padding:12px; border-radius:10px; transition:all .15s; }
+  .map-row:hover { background:#F9FAFB; }
+  .map-arrow { width:24px; height:24px; border-radius:50%; background:#EFF6FF; color:#1D4ED8; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+  .map-source { background:#F4F4F5; padding:8px 12px; border-radius:8px; font-size:13px; font-family:'JetBrains Mono',monospace; color:#27272A; }
+  .map-target { background:#fff; border:1px solid #E4E4E7; border-radius:8px; padding:8px 12px; font-size:13px; color:#0A0A0B; font-weight:500; display:flex; align-items:center; justify-content:space-between; }
+  .map-confidence { display:inline-flex; align-items:center; gap:4px; font-size:10px; font-family:'JetBrains Mono',monospace; font-weight:700; padding:3px 8px; border-radius:999px; }
+  .conf-high { background:#D1FAE5; color:#047857; }
+  .conf-mid { background:#FEF3C7; color:#A16207; }
+  .conf-low { background:#FEE2E2; color:#B91C1C; }
+
+  /* Validation table */
+  .vtable { width:100%; border-collapse:separate; border-spacing:0; }
+  .vtable th { font-size:11px; font-weight:700; color:#71717A; text-align:left; padding:10px 12px; background:#F9FAFB; border-bottom:1px solid #E4E4E7; letter-spacing:0.02em; text-transform:uppercase; }
+  .vtable th:first-child { border-top-left-radius:10px; }
+  .vtable th:last-child { border-top-right-radius:10px; }
+  .vtable td { font-size:13px; padding:10px 12px; border-bottom:1px solid #F4F4F5; color:#27272A; }
+  .vtable tr.error-row td { background:#FEF2F2; }
+  .vtable tr.error-row td:first-child { border-left:3px solid #EF4444; }
+  .vtable tr.fixed-row td { background:#F0FDF4; }
+  .vtable tr.fixed-row td:first-child { border-left:3px solid #10B981; }
+  .vtable tr.duplicate-row td { background:#FFFBEB; }
+  .vtable tr.duplicate-row td:first-child { border-left:3px solid #F59E0B; }
+
+  /* Belt badges */
+  .belt { display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:6px; font-size:11px; font-weight:600; }
+  .belt-white { background:#F4F4F5; color:#52525B; border:1px solid #E4E4E7; }
+  .belt-yellow { background:#FEF3C7; color:#A16207; }
+  .belt-orange { background:#FED7AA; color:#9A3412; }
+  .belt-green { background:#D1FAE5; color:#047857; }
+  .belt-blue { background:#DBEAFE; color:#1D4ED8; }
+  .belt-red { background:#FEE2E2; color:#B91C1C; }
+  .belt-black { background:#18181B; color:#fff; }
+
+  /* Stats card */
+  .stat-card { background:#fff; border:1px solid #E4E4E7; border-radius:16px; padding:18px; }
+  .stat-num { font-family:'JetBrains Mono',monospace; font-size:28px; font-weight:700; color:#0A0A0B; line-height:1; margin-bottom:6px; }
+  .stat-label { font-size:11px; color:#71717A; font-weight:500; }
+
+  /* Confirm screen */
+  .success-orb { width:88px; height:88px; border-radius:50%; background:linear-gradient(135deg,#10B981 0%,#047857 100%); color:#fff; display:flex; align-items:center; justify-content:center; box-shadow:0 16px 40px rgba(16,185,129,.30); margin:0 auto 20px; position:relative; }
+  .success-orb::before { content:''; position:absolute; inset:-6px; border-radius:50%; border:2px solid rgba(16,185,129,.25); animation:pulseSoft 2.4s ease-in-out infinite; }
+  .success-orb::after { content:''; position:absolute; inset:-12px; border-radius:50%; border:1px solid rgba(16,185,129,.12); animation:pulseSoft 2.4s ease-in-out infinite .3s; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width:8px; height:8px; }
+  ::-webkit-scrollbar-thumb { background:#E4E4E7; border-radius:4px; }
+  ::-webkit-scrollbar-thumb:hover { background:#D4D4D8; }
+
+  /* Animations stagger */
+  .stagger-1 { animation-delay:.05s; }
+  .stagger-2 { animation-delay:.10s; }
+  .stagger-3 { animation-delay:.15s; }
+  .stagger-4 { animation-delay:.20s; }
+
+  /* Hide scrollbar in stepper on mobile */
+  .stepper-wrap::-webkit-scrollbar { display:none; }
+
+  /* Step content visibility */
+  .step-content { display:none; }
+  .step-content.active { display:block; animation:fadeUp .4s ease-out; }
+
+  /* Demo nav */
+  .demo-nav { position:fixed; bottom:24px; right:24px; background:#0A0A0B; color:#fff; padding:8px 12px; border-radius:12px; display:flex; align-items:center; gap:6px; font-size:11px; z-index:100; box-shadow:0 12px 32px rgba(0,0,0,.18); }
+  .demo-nav span { opacity:.6; font-family:'JetBrains Mono',monospace; }
+  .demo-nav a { padding:4px 9px; border-radius:6px; text-decoration:none; color:#fff; font-weight:600; transition:all .12s; }
+  .demo-nav a:hover { background:rgba(255,255,255,.10); }
+  .demo-nav a.active { background:#3B82F6; }
+
+  /* Scan effect */
+  .scanning { position:relative; overflow:hidden; }
+  .scanning::after { content:''; position:absolute; left:0; right:0; height:80px; background:linear-gradient(180deg, transparent, rgba(59,130,246,.15), transparent); animation:scan 1.8s ease-in-out infinite; pointer-events:none; }
+</style>
+</head>
+<body>
+
+<!-- ===== Header ===== -->
+<header class="global-header">
+  <div class="flex items-center gap-5">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-brand-700 flex items-center justify-center text-white font-bold">S</div>
+      <div>
+        <div class="font-bold text-[14px] tracking-tight leading-tight">STEP Manager</div>
+        <div class="text-[10px] text-ink-500 leading-tight mono">PRO · Riverside Dojang</div>
+      </div>
+    </div>
+    <div class="w-px h-6 bg-ink-200"></div>
+    <nav class="flex items-center gap-2 text-sm">
+      <a href="step_setup_step4.html" class="w-7 h-7 rounded-md hover:bg-ink-100 flex items-center justify-center text-ink-500 hover:text-ink-900 transition -ml-1" title="Back">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+      </a>
+      <span class="text-ink-500">학생 등록</span>
+      <svg class="w-3 h-3 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+      <span class="font-semibold text-ink-900">파일 일괄 등록</span>
+    </nav>
+  </div>
+
+  <div class="flex items-center gap-2">
+    <a href="step_main_v4.html" class="w-9 h-9 rounded-lg hover:bg-ink-100 flex items-center justify-center text-ink-500 hover:text-ink-900 transition" title="닫기">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+    </a>
+  </div>
+</header>
+
+<!-- ===== Stepper ===== -->
+<div class="stepper-bar">
+  <div class="stepper-wrap overflow-x-auto">
+    <div class="stepper" id="stepper">
+      <div class="step active" data-step="1">
+        <div class="step-num">1</div>
+        <div class="step-label">
+          <span class="step-eyebrow">STEP 1</span>
+          <span class="step-title">파일 업로드</span>
+        </div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step pending" data-step="2">
+        <div class="step-num">2</div>
+        <div class="step-label">
+          <span class="step-eyebrow">STEP 2</span>
+          <span class="step-title">컬럼 매핑</span>
+        </div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step pending" data-step="3">
+        <div class="step-num">3</div>
+        <div class="step-label">
+          <span class="step-eyebrow">STEP 3</span>
+          <span class="step-title">검증 및 수정</span>
+        </div>
+      </div>
+      <div class="step-line"></div>
+      <div class="step pending" data-step="4">
+        <div class="step-num">4</div>
+        <div class="step-label">
+          <span class="step-eyebrow">STEP 4</span>
+          <span class="step-title">등록 완료</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== Main Content ===== -->
+<main class="max-w-[860px] mx-auto px-6 py-10">
+
+  <!-- ============================================
+       STEP 1: UPLOAD
+       ============================================ -->
+  <div class="step-content active" data-content="1">
+    <div class="text-center mb-8 animate-fade-up">
+      <h1 class="text-[28px] font-bold tracking-tight text-ink-900 mb-2">엑셀 파일을 업로드해주세요.</h1>
+      <p class="text-[14px] text-ink-600">Xiro가 파일을 자동으로 분석해서 학생 정보를 정리해드릴게요.</p>
+    </div>
+
+    <!-- Drop zone -->
+    <div class="dropzone mb-6 animate-fade-up stagger-1" id="dropzone">
+      <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-brand-50 flex items-center justify-center">
+        <svg class="w-8 h-8 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+      </div>
+      <h3 class="text-[16px] font-bold text-ink-900 mb-1.5">파일을 끌어다 놓거나 클릭해서 선택</h3>
+      <p class="text-[13px] text-ink-500 mb-5">엑셀(.xlsx), CSV (.csv) · 최대 10MB</p>
+      <button class="btn btn-brand" onclick="simulateUpload()">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        파일 선택하기
+      </button>
+    </div>
+
+    <!-- Sample template -->
+    <div class="card p-5 mb-6 animate-fade-up stagger-2">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center flex-shrink-0">
+          <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+        </div>
+        <div class="flex-1 min-w-0">
+          <h4 class="text-sm font-bold text-ink-900">처음이세요? 샘플 양식 다운로드</h4>
+          <p class="text-[12px] text-ink-500">권장 컬럼 구조와 예시 데이터가 포함된 엑셀 양식이에요.</p>
+        </div>
+        <button class="btn btn-secondary !text-xs">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+          .xlsx 다운로드
+        </button>
+      </div>
+    </div>
+
+    <!-- Tips -->
+    <div class="bg-brand-50 border border-brand-100 rounded-2xl p-5 animate-fade-up stagger-3">
+      <div class="flex items-start gap-3">
+        <div class="xiro-orb !w-9 !h-9 !text-sm">X</div>
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-1.5">
+            <span class="text-sm font-bold text-ink-900">Xiro</span>
+            <span class="text-[10px] mono font-bold text-brand-700 bg-white px-2 py-0.5 rounded">팁</span>
+          </div>
+          <p class="text-[13px] text-ink-700 leading-relaxed mb-2">
+            엑셀에 컬럼 이름이 한국어든 영어든 상관없어요. <strong>이름·전화·생년월일·띠</strong> 같은 키워드만 들어 있으면 자동으로 매칭해드릴게요.
+          </p>
+          <p class="text-[12px] text-ink-500">
+            지원 컬럼: 이름, 보호자, 연락처, 생년월일, 학교, 띠, 등록일, 결제 상태 등
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       STEP 2: COLUMN MAPPING
+       ============================================ -->
+  <div class="step-content" data-content="2">
+    <div class="text-center mb-6 animate-fade-up">
+      <div class="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 border border-emerald-200 rounded-full mb-4">
+        <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        <span class="text-xs font-bold text-emerald-700">파일 분석 완료</span>
+      </div>
+      <h1 class="text-[28px] font-bold tracking-tight text-ink-900 mb-2">컬럼 매핑을 확인해주세요.</h1>
+      <p class="text-[14px] text-ink-600">Xiro가 자동으로 매칭한 결과예요. 다른 게 있으면 클릭해서 변경하시면 됩니다.</p>
+    </div>
+
+    <!-- File info -->
+    <div class="card p-4 mb-6 flex items-center gap-3 animate-fade-up stagger-1">
+      <div class="w-10 h-10 rounded-lg bg-emerald-50 flex items-center justify-center flex-shrink-0">
+        <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+      </div>
+      <div class="flex-1 min-w-0">
+        <div class="text-sm font-bold text-ink-900">student_roster_2026.xlsx</div>
+        <div class="text-[11px] text-ink-500 mono">24명 발견 · 8개 컬럼 · 184 KB</div>
+      </div>
+      <button class="btn btn-secondary !text-xs">
+        다른 파일
+      </button>
+    </div>
+
+    <!-- Xiro callout -->
+    <div class="card-elev p-5 mb-5 animate-fade-up stagger-2">
+      <div class="flex items-start gap-3">
+        <div class="xiro-orb !w-10 !h-10 !text-base">X</div>
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-1.5">
+            <span class="text-sm font-bold text-ink-900">Xiro</span>
+            <span class="text-[10px] mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">자동 매핑</span>
+          </div>
+          <p class="text-[13px] text-ink-700 leading-relaxed">
+            8개 컬럼 중 <strong class="text-emerald-700">7개를 자동으로 매핑</strong>했어요. 1개는 신뢰도가 낮아서 확인이 필요해요.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mapping table -->
+    <div class="card p-5 mb-6 animate-fade-up stagger-3">
+      <div class="grid grid-cols-[1fr_auto_1fr_100px] gap-3 px-3 pb-3 border-b border-ink-100 text-[11px] font-bold text-ink-500 uppercase tracking-wider">
+        <div>엑셀 컬럼</div>
+        <div></div>
+        <div>STEP 필드</div>
+        <div class="text-right">신뢰도</div>
+      </div>
+
+      <div class="space-y-1 mt-3">
+        <div class="map-row">
+          <div class="map-source">이름</div>
+          <div class="map-arrow"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></div>
+          <div class="map-target">
+            <span>학생 이름</span>
+            <svg class="w-4 h-4 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="text-right"><span class="map-confidence conf-high">100%</span></div>
+        </div>
+        <div class="map-row">
+          <div class="map-source">생년월일</div>
+          <div class="map-arrow"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></div>
+          <div class="map-target">
+            <span>생년월일</span>
+            <svg class="w-4 h-4 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="text-right"><span class="map-confidence conf-high">100%</span></div>
+        </div>
+        <div class="map-row">
+          <div class="map-source">성별</div>
+          <div class="map-arrow"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></div>
+          <div class="map-target">
+            <span>성별</span>
+            <svg class="w-4 h-4 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="text-right"><span class="map-confidence conf-high">100%</span></div>
+        </div>
+        <div class="map-row">
+          <div class="map-source">현재 띠</div>
+          <div class="map-arrow"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></div>
+          <div class="map-target">
+            <span>띠 등급</span>
+            <svg class="w-4 h-4 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="text-right"><span class="map-confidence conf-high">98%</span></div>
+        </div>
+        <div class="map-row">
+          <div class="map-source">학교</div>
+          <div class="map-arrow"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></div>
+          <div class="map-target">
+            <span>재학 학교</span>
+            <svg class="w-4 h-4 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="text-right"><span class="map-confidence conf-high">96%</span></div>
+        </div>
+        <div class="map-row">
+          <div class="map-source">보호자명</div>
+          <div class="map-arrow"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></div>
+          <div class="map-target">
+            <span>보호자 이름</span>
+            <svg class="w-4 h-4 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="text-right"><span class="map-confidence conf-high">95%</span></div>
+        </div>
+        <div class="map-row">
+          <div class="map-source">연락처</div>
+          <div class="map-arrow"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></div>
+          <div class="map-target">
+            <span>보호자 전화번호</span>
+            <svg class="w-4 h-4 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="text-right"><span class="map-confidence conf-high">94%</span></div>
+        </div>
+        <div class="map-row" style="background:#FFFBEB;">
+          <div class="map-source">참고</div>
+          <div class="map-arrow" style="background:#FEF3C7; color:#A16207;"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg></div>
+          <div class="map-target" style="border-color:#FCD34D;">
+            <span class="text-amber-700">메모 (추정)</span>
+            <svg class="w-4 h-4 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <div class="text-right"><span class="map-confidence conf-mid">62%</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preview -->
+    <div class="card p-5 mb-6 animate-fade-up stagger-4">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-bold text-ink-900">미리보기 (처음 3행)</h3>
+        <span class="text-[11px] text-ink-500 mono">총 24행</span>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="vtable">
+          <thead>
+            <tr>
+              <th>이름</th>
+              <th>생년월일</th>
+              <th>성별</th>
+              <th>띠</th>
+              <th>학교</th>
+              <th>보호자</th>
+              <th>연락처</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="font-semibold">Kim Ethan</td>
+              <td class="mono">2014-03-15</td>
+              <td>남</td>
+              <td><span class="belt belt-blue">파란띠</span></td>
+              <td>Barton Creek Elementary</td>
+              <td>Kim David</td>
+              <td class="mono">512-555-1234</td>
+            </tr>
+            <tr>
+              <td class="font-semibold">Kim Sophie</td>
+              <td class="mono">2017-08-22</td>
+              <td>여</td>
+              <td><span class="belt belt-yellow">노란띠</span></td>
+              <td>Barton Creek Elementary</td>
+              <td>Kim David</td>
+              <td class="mono">512-555-1234</td>
+            </tr>
+            <tr>
+              <td class="font-semibold">Johnson Olivia</td>
+              <td class="mono">2014-11-03</td>
+              <td>여</td>
+              <td><span class="belt belt-red">빨간띠</span></td>
+              <td>Eanes Elementary</td>
+              <td>Johnson Michael</td>
+              <td class="mono">512-555-2345</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       STEP 3: VALIDATION
+       ============================================ -->
+  <div class="step-content" data-content="3">
+    <div class="text-center mb-6 animate-fade-up">
+      <div class="inline-flex items-center gap-2 px-3 py-1 bg-amber-50 border border-amber-200 rounded-full mb-4">
+        <svg class="w-3.5 h-3.5 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M5.07 19h13.86c1.54 0 2.5-1.67 1.73-3L13.73 4a2 2 0 00-3.46 0L3.34 16c-.77 1.33.19 3 1.73 3z"/></svg>
+        <span class="text-xs font-bold text-amber-700">검증 결과</span>
+      </div>
+      <h1 class="text-[28px] font-bold tracking-tight text-ink-900 mb-2">5건의 항목을 확인해주세요.</h1>
+      <p class="text-[14px] text-ink-600">Xiro가 발견한 오류와 중복이에요. 자동 수정 가능한 건은 <strong class="text-emerald-700">한 번에 처리</strong>할 수 있어요.</p>
+    </div>
+
+    <!-- Stats summary -->
+    <div class="grid grid-cols-4 gap-3 mb-6 animate-fade-up stagger-1">
+      <div class="stat-card !border-emerald-200 !bg-emerald-50/40">
+        <div class="stat-num text-emerald-700">19</div>
+        <div class="stat-label">정상 등록 가능</div>
+      </div>
+      <div class="stat-card !border-rose-200 !bg-rose-50/40">
+        <div class="stat-num text-rose-700">3</div>
+        <div class="stat-label">오류 (자동 수정 가능)</div>
+      </div>
+      <div class="stat-card !border-amber-200 !bg-amber-50/40">
+        <div class="stat-num text-amber-700">2</div>
+        <div class="stat-label">중복 (이미 등록됨)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">24</div>
+        <div class="stat-label">전체 행</div>
+      </div>
+    </div>
+
+    <!-- Xiro auto-fix offer -->
+    <div class="card-elev p-5 mb-5 animate-fade-up stagger-2" style="border-color:#3B82F6; background:linear-gradient(135deg,#EFF6FF 0%,#FFFFFF 100%);">
+      <div class="flex items-start gap-3">
+        <div class="xiro-orb !w-10 !h-10 !text-base">X</div>
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-1.5">
+            <span class="text-sm font-bold text-ink-900">Xiro</span>
+            <span class="text-[10px] mono font-bold text-brand-700 bg-white px-2 py-0.5 rounded">자동 수정 제안</span>
+          </div>
+          <p class="text-[13px] text-ink-700 leading-relaxed mb-3">
+            <strong>전화번호 형식 오류 3건</strong>을 자동으로 수정할 수 있어요. <code class="bg-white px-1.5 py-0.5 rounded text-[11px] mono">5125551234</code> → <code class="bg-white px-1.5 py-0.5 rounded text-[11px] mono">512-555-1234</code> 형식으로 변환합니다.
+          </p>
+          <button class="btn btn-brand !text-xs !py-2 !px-3.5" onclick="applyAutoFix()">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/></svg>
+            한 번에 자동 수정
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Validation table -->
+    <div class="card p-5 mb-6 animate-fade-up stagger-3">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-bold text-ink-900">검증 상세</h3>
+        <div class="flex items-center gap-1.5 text-[11px]">
+          <button class="px-2.5 py-1 rounded-md bg-ink-900 text-white font-semibold">전체 5</button>
+          <button class="px-2.5 py-1 rounded-md text-ink-500 hover:bg-ink-100 font-semibold">오류 3</button>
+          <button class="px-2.5 py-1 rounded-md text-ink-500 hover:bg-ink-100 font-semibold">중복 2</button>
+        </div>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="vtable">
+          <thead>
+            <tr>
+              <th class="!w-12">행</th>
+              <th>이름</th>
+              <th>문제</th>
+              <th>현재 값</th>
+              <th>제안</th>
+              <th class="text-right">동작</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="error-row" id="row-3">
+              <td class="mono text-rose-700 font-bold">3</td>
+              <td class="font-semibold">Park Liam</td>
+              <td><span class="text-rose-700 text-[11px] font-bold">전화번호 형식</span></td>
+              <td class="mono text-ink-500">5125553456</td>
+              <td class="mono text-emerald-700 font-semibold">512-555-3456</td>
+              <td class="text-right">
+                <button class="text-[11px] font-bold text-brand-600 hover:text-brand-700">수정</button>
+              </td>
+            </tr>
+            <tr class="error-row" id="row-7">
+              <td class="mono text-rose-700 font-bold">7</td>
+              <td class="font-semibold">Lee Mia</td>
+              <td><span class="text-rose-700 text-[11px] font-bold">전화번호 형식</span></td>
+              <td class="mono text-ink-500">5125554567</td>
+              <td class="mono text-emerald-700 font-semibold">512-555-4567</td>
+              <td class="text-right">
+                <button class="text-[11px] font-bold text-brand-600 hover:text-brand-700">수정</button>
+              </td>
+            </tr>
+            <tr class="error-row" id="row-12">
+              <td class="mono text-rose-700 font-bold">12</td>
+              <td class="font-semibold">Choi Daniel</td>
+              <td><span class="text-rose-700 text-[11px] font-bold">전화번호 형식</span></td>
+              <td class="mono text-ink-500">5125555678</td>
+              <td class="mono text-emerald-700 font-semibold">512-555-5678</td>
+              <td class="text-right">
+                <button class="text-[11px] font-bold text-brand-600 hover:text-brand-700">수정</button>
+              </td>
+            </tr>
+            <tr class="duplicate-row">
+              <td class="mono text-amber-700 font-bold">18</td>
+              <td class="font-semibold">Chen Emma</td>
+              <td><span class="text-amber-700 text-[11px] font-bold">이미 등록됨</span></td>
+              <td class="text-ink-500">DB에 동일 인물 있음</td>
+              <td class="text-amber-700">건너뛰기 권장</td>
+              <td class="text-right">
+                <select class="text-[11px] font-bold text-amber-700 bg-amber-50 border border-amber-200 rounded px-2 py-1">
+                  <option>건너뛰기</option>
+                  <option>덮어쓰기</option>
+                </select>
+              </td>
+            </tr>
+            <tr class="duplicate-row">
+              <td class="mono text-amber-700 font-bold">21</td>
+              <td class="font-semibold">Wilson Ava</td>
+              <td><span class="text-amber-700 text-[11px] font-bold">이미 등록됨</span></td>
+              <td class="text-ink-500">DB에 동일 인물 있음</td>
+              <td class="text-amber-700">건너뛰기 권장</td>
+              <td class="text-right">
+                <select class="text-[11px] font-bold text-amber-700 bg-amber-50 border border-amber-200 rounded px-2 py-1">
+                  <option>건너뛰기</option>
+                  <option>덮어쓰기</option>
+                </select>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Belt distribution preview -->
+    <div class="card p-5 mb-6 animate-fade-up stagger-4">
+      <div class="flex items-center justify-between mb-3">
+        <h3 class="text-sm font-bold text-ink-900 flex items-center gap-1.5">
+          <svg class="w-4 h-4 text-ink-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+          띠별 분포 (자동 분류)
+        </h3>
+        <span class="text-[11px] text-ink-500 mono">22명 기준 (중복 제외)</span>
+      </div>
+      <div class="grid grid-cols-7 gap-2">
+        <div class="text-center">
+          <div class="belt belt-white !text-xs !py-1 mb-1.5 w-full justify-center">흰띠</div>
+          <div class="mono text-sm font-bold text-ink-900">3</div>
+        </div>
+        <div class="text-center">
+          <div class="belt belt-yellow !text-xs !py-1 mb-1.5 w-full justify-center">노란띠</div>
+          <div class="mono text-sm font-bold text-ink-900">5</div>
+        </div>
+        <div class="text-center">
+          <div class="belt belt-orange !text-xs !py-1 mb-1.5 w-full justify-center">주황띠</div>
+          <div class="mono text-sm font-bold text-ink-900">4</div>
+        </div>
+        <div class="text-center">
+          <div class="belt belt-green !text-xs !py-1 mb-1.5 w-full justify-center">초록띠</div>
+          <div class="mono text-sm font-bold text-ink-900">5</div>
+        </div>
+        <div class="text-center">
+          <div class="belt belt-blue !text-xs !py-1 mb-1.5 w-full justify-center">파란띠</div>
+          <div class="mono text-sm font-bold text-ink-900">3</div>
+        </div>
+        <div class="text-center">
+          <div class="belt belt-red !text-xs !py-1 mb-1.5 w-full justify-center">빨간띠</div>
+          <div class="mono text-sm font-bold text-ink-900">1</div>
+        </div>
+        <div class="text-center">
+          <div class="belt belt-black !text-xs !py-1 mb-1.5 w-full justify-center">검은띠</div>
+          <div class="mono text-sm font-bold text-ink-900">1</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================
+       STEP 4: CONFIRM (SUCCESS)
+       ============================================ -->
+  <div class="step-content" data-content="4">
+    <div class="text-center mb-8 animate-fade-up">
+      <div class="success-orb">
+        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+      </div>
+      <div class="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 border border-emerald-200 rounded-full mb-3">
+        <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+        <span class="text-xs font-bold text-emerald-700">등록 완료</span>
+      </div>
+      <h1 class="text-[32px] font-bold tracking-tight text-ink-900 mb-2 leading-tight">22명의 학생이 등록됐어요.</h1>
+      <p class="text-[14px] text-ink-600">파일 업로드부터 등록까지 <strong class="mono text-ink-900">47초</strong> 걸렸어요.</p>
+    </div>
+
+    <!-- Result stats -->
+    <div class="grid grid-cols-3 gap-3 mb-6 animate-fade-up stagger-1">
+      <div class="stat-card !border-emerald-200 !bg-emerald-50/40">
+        <div class="stat-num text-emerald-700">22</div>
+        <div class="stat-label">신규 등록 완료</div>
+      </div>
+      <div class="stat-card !border-amber-200 !bg-amber-50/40">
+        <div class="stat-num text-amber-700">2</div>
+        <div class="stat-label">건너뛴 중복</div>
+      </div>
+      <div class="stat-card !border-brand-100 !bg-brand-50/40">
+        <div class="stat-num text-brand-700">3</div>
+        <div class="stat-label">자동 수정 적용</div>
+      </div>
+    </div>
+
+    <!-- Xiro summary -->
+    <div class="card-elev p-6 mb-6 animate-fade-up stagger-2">
+      <div class="flex items-start gap-3 mb-4">
+        <div class="xiro-orb !w-11 !h-11 !text-base">X</div>
+        <div class="flex-1">
+          <div class="flex items-center gap-2 mb-1.5">
+            <span class="text-sm font-bold text-ink-900">Xiro</span>
+            <span class="text-[10px] mono font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">완료 보고</span>
+          </div>
+          <p class="text-[14px] text-ink-700 leading-relaxed">
+            22명을 7개 띠 등급으로 자동 분류해서 등록 완료했어요. 다음 작업으로 <strong>수업 배정</strong>이나 <strong>수강료 플랜 연결</strong>을 추천해요.
+          </p>
+        </div>
+      </div>
+
+      <!-- Timeline -->
+      <div class="bg-ink-50 rounded-xl p-4">
+        <div class="text-[11px] font-bold text-ink-500 uppercase tracking-wider mb-3">처리 타임라인</div>
+        <div class="space-y-2.5">
+          <div class="flex items-center gap-3 text-[12px]">
+            <span class="mono text-emerald-700 font-bold w-12">+0:00</span>
+            <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <span class="text-ink-700">파일 업로드 (184 KB)</span>
+          </div>
+          <div class="flex items-center gap-3 text-[12px]">
+            <span class="mono text-emerald-700 font-bold w-12">+0:08</span>
+            <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <span class="text-ink-700">Xiro 컬럼 자동 매핑 (8개 컬럼 → 7개 매칭)</span>
+          </div>
+          <div class="flex items-center gap-3 text-[12px]">
+            <span class="mono text-emerald-700 font-bold w-12">+0:23</span>
+            <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <span class="text-ink-700">검증 (오류 3건 자동 수정 + 중복 2건 감지)</span>
+          </div>
+          <div class="flex items-center gap-3 text-[12px]">
+            <span class="mono text-emerald-700 font-bold w-12">+0:47</span>
+            <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+            <span class="text-ink-700 font-semibold">데이터베이스 등록 완료</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Next actions -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6 animate-fade-up stagger-3">
+      <a href="step_setup_step3.html" class="card p-5 hover:shadow-lg transition-all group">
+        <div class="flex items-start gap-3">
+          <div class="w-10 h-10 rounded-xl bg-purple-50 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+          </div>
+          <div class="flex-1">
+            <h4 class="text-sm font-bold text-ink-900 mb-1">수업 배정</h4>
+            <p class="text-[12px] text-ink-500 leading-snug">학생들을 적절한 수업에 자동/수동 배정해요.</p>
+          </div>
+          <svg class="w-4 h-4 text-ink-400 group-hover:text-ink-700 group-hover:translate-x-0.5 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </div>
+      </a>
+      <a href="step_setup_step4.html" class="card p-5 hover:shadow-lg transition-all group">
+        <div class="flex items-start gap-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center flex-shrink-0">
+            <svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="1.8"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+          </div>
+          <div class="flex-1">
+            <h4 class="text-sm font-bold text-ink-900 mb-1">수강료 플랜 연결</h4>
+            <p class="text-[12px] text-ink-500 leading-snug">Stripe Connect로 학부모 자동 결제 설정.</p>
+          </div>
+          <svg class="w-4 h-4 text-ink-400 group-hover:text-ink-700 group-hover:translate-x-0.5 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </div>
+      </a>
+    </div>
+
+    <!-- Primary action -->
+    <div class="text-center animate-fade-up stagger-4">
+      <a href="step_main_v4.html" class="btn btn-brand btn-large !min-w-[280px]">
+        메인 화면으로 돌아가기
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+      </a>
+      <p class="text-[12px] text-ink-400 mt-3">
+        <button class="hover:text-ink-700">또 다른 파일 등록하기 →</button>
+      </p>
+    </div>
+  </div>
+
+</main>
+
+<!-- ===== Footer Action Bar (steps 1-3 only) ===== -->
+<div id="action-bar" class="sticky bottom-0 left-0 right-0 bg-white border-t border-ink-200 px-6 py-4 hidden">
+  <div class="max-w-[860px] mx-auto flex items-center justify-between">
+    <button id="btn-back" class="btn btn-ghost">
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+      이전
+    </button>
+    <div class="flex items-center gap-2 text-[12px] text-ink-500" id="step-indicator">
+      <span class="mono">1 / 4</span>
+    </div>
+    <button id="btn-next" class="btn btn-brand">
+      <span id="btn-next-label">다음</span>
+      <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- ===== DEMO Nav (시연용) ===== -->
+<div class="demo-nav">
+  <span>DEMO</span>
+  <a href="?step=1" class="demo-step-link" data-demo="1">1</a>
+  <a href="?step=2" class="demo-step-link" data-demo="2">2</a>
+  <a href="?step=3" class="demo-step-link" data-demo="3">3</a>
+  <a href="?step=4" class="demo-step-link" data-demo="4">4</a>
+</div>
+
+<script>
+  // ============================================
+  // Step state management
+  // ============================================
+  let currentStep = 1;
+
+  function goToStep(n) {
+    if (n < 1 || n > 4) return;
+    currentStep = n;
+
+    // Hide all step contents
+    document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+    document.querySelector(`[data-content="${n}"]`).classList.add('active');
+
+    // Update stepper visual state
+    document.querySelectorAll('.step').forEach(s => {
+      const stepNum = parseInt(s.dataset.step);
+      s.classList.remove('active', 'done', 'pending');
+      if (stepNum < n) s.classList.add('done');
+      else if (stepNum === n) s.classList.add('active');
+      else s.classList.add('pending');
+    });
+
+    // Update step lines
+    const lines = document.querySelectorAll('.step-line');
+    lines.forEach((line, i) => {
+      line.classList.toggle('done', i < n - 1);
+    });
+
+    // Update action bar
+    const actionBar = document.getElementById('action-bar');
+    const btnBack = document.getElementById('btn-back');
+    const btnNext = document.getElementById('btn-next');
+    const btnNextLabel = document.getElementById('btn-next-label');
+    const stepIndicator = document.getElementById('step-indicator');
+
+    if (n === 4) {
+      actionBar.classList.add('hidden');
+    } else {
+      actionBar.classList.remove('hidden');
+      btnBack.style.visibility = n === 1 ? 'hidden' : 'visible';
+      stepIndicator.innerHTML = `<span class="mono">${n} / 4</span>`;
+
+      if (n === 1) btnNextLabel.textContent = '파일 분석 시작';
+      else if (n === 2) btnNextLabel.textContent = '검증 진행';
+      else if (n === 3) btnNextLabel.textContent = '등록 실행';
+    }
+
+    // Update demo nav active state
+    document.querySelectorAll('.demo-step-link').forEach(link => {
+      link.classList.toggle('active', parseInt(link.dataset.demo) === n);
+    });
+
+    // Update URL without reload
+    const url = new URL(window.location);
+    url.searchParams.set('step', n);
+    window.history.replaceState({}, '', url);
+
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Navigation buttons
+  document.getElementById('btn-back').addEventListener('click', () => goToStep(currentStep - 1));
+  document.getElementById('btn-next').addEventListener('click', () => goToStep(currentStep + 1));
+
+  // Demo nav links - intercept default navigation
+  document.querySelectorAll('.demo-step-link').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      goToStep(parseInt(link.dataset.demo));
+    });
+  });
+
+  // Drop zone
+  const dropzone = document.getElementById('dropzone');
+  if (dropzone) {
+    dropzone.addEventListener('dragover', e => {
+      e.preventDefault();
+      dropzone.classList.add('dragging');
+    });
+    dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragging'));
+    dropzone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropzone.classList.remove('dragging');
+      simulateUpload();
+    });
+    dropzone.addEventListener('click', () => simulateUpload());
+  }
+
+  // Simulate upload + analysis
+  function simulateUpload() {
+    dropzone.classList.add('scanning');
+    setTimeout(() => {
+      dropzone.classList.remove('scanning');
+      goToStep(2);
+    }, 800);
+  }
+
+  // Auto-fix demo
+  function applyAutoFix() {
+    ['row-3', 'row-7', 'row-12'].forEach(id => {
+      const row = document.getElementById(id);
+      if (row) {
+        row.classList.remove('error-row');
+        row.classList.add('fixed-row');
+      }
+    });
+    // Update Xiro callout (find the auto-fix card)
+    const allCards = document.querySelectorAll('[data-content="3"] .card-elev');
+    allCards.forEach(card => {
+      if (card.textContent.includes('자동 수정 제안')) {
+        card.style.opacity = '0.55';
+        card.style.pointerEvents = 'none';
+      }
+    });
+  }
+
+  // URL param entry: ?step=2 등
+  const urlStep = parseInt(new URLSearchParams(window.location.search).get('step'));
+  if (urlStep && urlStep >= 1 && urlStep <= 4) {
+    goToStep(urlStep);
+  } else {
+    goToStep(1);
+  }
+
+  // ESC = return to dashboard
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      const activeEl = document.activeElement;
+      if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.tagName === 'SELECT')) {
+        activeEl.blur();
+        return;
+      }
+      window.location.href = 'step_main_v4.html';
+    }
+  });
+</script>
+
+</body>
+</html>
