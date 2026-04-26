@@ -150,3 +150,5 @@ xdg-open index.html   # Linux
 이 저장소는 STEP NEXT Inc.의 데모 목적으로 공개되며, 코드는 비상업적 검토용으로 제공됩니다.
 
 © 2026 STEP NEXT Inc. All rights reserved.
+
+## ?? GitHub �ڵ� ���� ���� �Ϸ� (2026-04-26)
