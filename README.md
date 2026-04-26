@@ -152,3 +152,7 @@ xdg-open index.html   # Linux
 짤 2026 STEP NEXT Inc. All rights reserved.
 
 ## ?? GitHub 자동 배포 연결 완료 (2026-04-26)
+
+## ?? GitHub-Vercel 자동 배포 연결 완료 (2026-04-26)
+
+## ?? GitHub-Vercel 자동 배포 연결 완료 (2026-04-26)
