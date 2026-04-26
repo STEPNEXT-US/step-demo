@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STEP 0 · AI 분석 시작 | STEP Manager</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Pretendard', system-ui, sans-serif; -webkit-font-smoothing: antialiased; background: #FAFAFB; color: #0A0A0F; letter-spacing: -0.011em; font-size: 15px; }
+  .num { font-family: 'JetBrains Mono', monospace; font-feature-settings: "tnum"; }
+  a { text-decoration: none; color: inherit; }
+  button { font-family: inherit; cursor: pointer; border: 0; }
+  input { font-family: inherit; }
+
+  .top-progress { height: 3px; background: #F1F1F4; }
+  .top-progress-fill { height: 100%; background: linear-gradient(90deg, #10B981 0%, #2563EB 100%); width: 0%; }
+
+  .top-bar {
+    background: white;
+    border-bottom: 1px solid #F1F1F4;
+    padding: 14px 32px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .top-bar-back { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #6B6B78; }
+  .top-bar-back:hover { color: #0A0A0F; }
+  .top-bar-logo { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 700; }
+  .logo-mark { width: 26px; height: 26px; border-radius: 7px; background: linear-gradient(135deg, #2563EB 0%, #3B82F6 100%); display: flex; align-items: center; justify-content: center; }
+  .top-bar-skip { font-size: 13px; color: #6B6B78; padding: 6px 12px; border-radius: 8px; }
+  .top-bar-skip:hover { color: #0A0A0F; background: #F1F1F4; }
+
+  .container { max-width: 920px; margin: 0 auto; padding: 56px 24px 80px; }
+
+  .top-notice {
+    background: #EFF6FF;
+    border: 1px solid #DBEAFE;
+    border-radius: 12px;
+    padding: 12px 18px;
+    display: flex; align-items: center; gap: 10px;
+    margin-bottom: 56px;
+    font-size: 13px;
+    color: #2A2A35;
+  }
+  .top-notice .strong { font-weight: 600; color: #0A0A0F; }
+  .top-notice svg { color: #2563EB; flex-shrink: 0; }
+
+  /* Hero */
+  .hero { text-align: center; margin-bottom: 48px; }
+  .xiro-mark {
+    width: 64px; height: 64px;
+    margin: 0 auto 24px;
+    border-radius: 9999px;
+    background: linear-gradient(135deg, #2563EB 0%, #60A5FA 100%);
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 8px 24px -4px rgba(37, 99, 235, 0.3);
+    animation: float-soft 3s ease-in-out infinite;
+  }
+  @keyframes float-soft {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+  }
+  .hero h1 {
+    font-size: 32px; font-weight: 700;
+    letter-spacing: -0.025em; line-height: 1.25;
+    margin-bottom: 12px;
+  }
+  .hero h1 .accent { color: #2563EB; }
+  .hero p {
+    font-size: 16px; color: #6B6B78;
+    max-width: 580px; margin: 0 auto;
+    line-height: 1.65;
+  }
+
+  /* File guidance */
+  details.guide {
+    background: linear-gradient(135deg, #EFF6FF 0%, #F0F9FF 100%);
+    border: 1px solid #DBEAFE;
+    border-radius: 14px;
+    padding: 18px 20px;
+    margin-bottom: 40px;
+  }
+  details.guide summary {
+    display: flex; align-items: center; justify-content: space-between;
+    cursor: pointer; list-style: none;
+  }
+  details.guide summary::-webkit-details-marker { display: none; }
+  details.guide summary .left { display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: #0A0A0F; }
+  details.guide summary svg.chev { transition: transform 0.2s; color: #6B6B78; }
+  details.guide[open] summary svg.chev { transform: rotate(180deg); }
+  details.guide .body { margin-top: 16px; }
+  details.guide .item {
+    display: flex; gap: 12px; align-items: flex-start;
+    margin-bottom: 12px;
+    font-size: 13px; color: #2A2A35;
+  }
+  details.guide .item:last-child { margin-bottom: 0; }
+  details.guide .item-icon {
+    width: 28px; height: 28px;
+    background: white; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  details.guide .item .desc { color: #6B6B78; }
+  details.guide .footer-note {
+    margin-top: 16px; padding-top: 16px;
+    border-top: 1px solid rgba(219, 234, 254, 0.6);
+    display: flex; align-items: center; gap: 8px;
+    font-size: 12px; color: #6B6B78;
+  }
+  details.guide .footer-note a { color: #2563EB; font-weight: 500; text-decoration: underline; }
+
+  /* File cards */
+  .section-label { font-size: 14px; font-weight: 600; color: #0A0A0F; margin-bottom: 16px; }
+  .section-label .optional { color: #9B9BA8; font-weight: 400; font-size: 13px; }
+  .file-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 32px; }
+  .file-card {
+    background: white;
+    border: 2px dashed #E5E5EA;
+    border-radius: 14px;
+    padding: 22px 16px;
+    text-align: center;
+    transition: all 0.15s ease;
+    cursor: pointer;
+  }
+  .file-card:hover { border-color: #2563EB; background: #EFF6FF; }
+  .file-card.uploaded { border-color: #10B981; background: #ECFDF5; border-style: solid; }
+  .file-card.uploaded .icon-wrap { background: #10B981; color: white; }
+  .file-card .icon-wrap {
+    width: 40px; height: 40px;
+    background: #F1F1F4; border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 10px;
+    color: #6B6B78;
+  }
+  .file-card .title { font-size: 13px; font-weight: 600; color: #0A0A0F; margin-bottom: 2px; }
+  .file-card .desc { font-size: 11px; color: #6B6B78; }
+  .file-card .uploaded-msg { font-size: 11px; color: #10B981; margin-top: 4px; font-weight: 500; }
+  .file-card .pick-btn { margin-top: 10px; font-size: 11px; color: #2563EB; font-weight: 500; }
+
+  /* CTAs */
+  .ctas { text-align: center; }
+  .btn-primary {
+    background: #2563EB;
+    color: white;
+    padding: 18px 32px;
+    font-size: 17px;
+    font-weight: 600;
+    border-radius: 12px;
+    width: 100%;
+    transition: all 0.15s ease;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-bottom: 12px;
+    text-decoration: none;
+  }
+  .btn-primary:hover { background: #1D4ED8; }
+  .btn-secondary {
+    background: white;
+    color: #2A2A35;
+    padding: 14px 28px;
+    font-size: 15px;
+    font-weight: 500;
+    border-radius: 12px;
+    border: 1px solid #E5E5EA;
+    width: 100%;
+    transition: all 0.15s ease;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    text-decoration: none;
+  }
+  .btn-secondary:hover { border-color: #2563EB; color: #2563EB; }
+  .ctas .note { margin-top: 16px; font-size: 13px; color: #9B9BA8; }
+
+  /* Help float */
+  .help-float {
+    position: fixed; bottom: 24px; right: 24px;
+    background: white; border: 1px solid #E5E5EA;
+    border-radius: 9999px; padding: 12px 18px;
+    box-shadow: 0 8px 24px -4px rgba(0,0,0,0.12);
+    display: flex; align-items: center; gap: 8px;
+    z-index: 40;
+  }
+  .help-float-icon { width: 28px; height: 28px; border-radius: 9999px; background: #EFF6FF; display: flex; align-items: center; justify-content: center; }
+  .help-float-text-1 { font-size: 12px; font-weight: 600; color: #0A0A0F; }
+  .help-float-text-2 { font-size: 10px; color: #6B6B78; }
+
+  @media (max-width: 768px) {
+    .file-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<div class="top-progress"><div class="top-progress-fill"></div></div>
+
+<div class="top-bar">
+  <a class="top-bar-back" href="step_index.html">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    인덱스로
+  </a>
+  <a class="top-bar-logo">
+    <div class="logo-mark"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+    STEP Manager · 도장 초기 설정
+  </a>
+  <div style="width: 80px;"></div>
+</div>
+
+<div class="container">
+
+  <div class="top-notice">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+    <span>원활한 도장 운영을 위해 <span class="strong">초기 세팅이 필요합니다.</span> 아래 자료를 주시면 Xiro가 대부분 자동으로 정리해드릴게요.</span>
+  </div>
+
+  <div class="hero">
+    <div class="xiro-mark">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2">
+        <circle cx="12" cy="12" r="3" fill="white"/>
+        <path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/>
+      </svg>
+    </div>
+    <h1>파일만 주시면<br><span class="accent">Xiro가 다 정리해드릴게요.</span></h1>
+    <p>지금까지 사용하신 엑셀, 워드, PDF 파일을 올려주세요.<br>Xiro가 알아서 분석하고 도장 세팅을 자동으로 만들어 드립니다.</p>
+  </div>
+
+  <details class="guide" open>
+    <summary>
+      <div class="left">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: #2563EB;"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+        어떤 파일을 올려야 하나요?
+      </div>
+      <svg class="chev" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+    </summary>
+    <div class="body">
+      <div class="item">
+        <div class="item-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+        <div>다른 도장 관리 프로그램을 쓰고 계신가요? <span class="desc">엑셀로 내보낸 다음 여기에 올려주세요.</span></div>
+      </div>
+      <div class="item">
+        <div class="item-icon" style="color: #10B981;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="9" y1="3" x2="9" y2="21"/><line x1="15" y1="3" x2="15" y2="21"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg></div>
+        <div>엑셀이나 구글 시트를 쓰고 계신가요? <span class="desc">.xlsx 파일이나 PDF로 내보내서 올려주세요.</span></div>
+      </div>
+      <div class="item">
+        <div class="item-icon" style="color: #F59E0B;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+        <div>띠 커리큘럼이나 시간표 PDF가 있으신가요? <span class="desc">그대로 올려주시면 됩니다.</span></div>
+      </div>
+      <div class="footer-note">
+        <a>샘플 양식 다운로드</a>
+        <span>— 어떤 형식이 좋은지 미리 확인하세요</span>
+      </div>
+    </div>
+  </details>
+
+  <div class="section-label">핵심 정보 <span class="optional">(있으면 좋아요)</span></div>
+  <div class="file-grid">
+    <div class="file-card uploaded">
+      <div class="icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></div>
+      <div class="title">도장 로고</div>
+      <div class="uploaded-msg">logo.png 등록됨</div>
+    </div>
+    <div class="file-card">
+      <div class="icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+      <div class="title">띠 커리큘럼</div>
+      <div class="desc">띠 등급, 심사 기준</div>
+      <div class="pick-btn">파일 선택</div>
+    </div>
+    <div class="file-card">
+      <div class="icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+      <div class="title">학생 명단</div>
+      <div class="desc">엑셀 또는 PDF</div>
+      <div class="pick-btn">파일 선택</div>
+    </div>
+    <div class="file-card">
+      <div class="icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+      <div class="title">수업 시간표</div>
+      <div class="desc">시간, 반 구성 자료</div>
+      <div class="pick-btn">파일 선택</div>
+    </div>
+  </div>
+
+  <div class="section-label">추가 정보 <span class="optional">(없어도 괜찮아요)</span></div>
+  <div class="file-grid">
+    <div class="file-card">
+      <div class="icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+      <div class="title">직원 명단</div>
+      <div class="desc">사범, 매니저 정보</div>
+      <div class="pick-btn">파일 선택</div>
+    </div>
+    <div class="file-card">
+      <div class="icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></div>
+      <div class="title">용품 자료</div>
+      <div class="desc">도복, 띠, 보호구 목록</div>
+      <div class="pick-btn">파일 선택</div>
+    </div>
+    <div class="file-card">
+      <div class="icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+      <div class="title">연간 행사</div>
+      <div class="desc">대회, 승급심사 일정</div>
+      <div class="pick-btn">파일 선택</div>
+    </div>
+    <div class="file-card">
+      <div class="icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+      <div class="title">기타 자료</div>
+      <div class="desc">참고할 다른 파일</div>
+      <div class="pick-btn">파일 선택</div>
+    </div>
+  </div>
+
+  <div class="ctas">
+    <a class="btn-primary" href="step_setup_step1.html">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3"/></svg>
+      Xiro에게 분석 맡기기
+    </a>
+    <a class="btn-secondary" href="step_setup_step1.html">
+      파일 없이 직접 입력할게요 →
+    </a>
+    <p class="note">파일이 없으셔도 괜찮아요. 다음 단계에서 Xiro가 도와드릴게요.</p>
+  </div>
+</div>
+
+<a class="help-float">
+  <div class="help-float-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="color: #2563EB;"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+  <div>
+    <div class="help-float-text-1">막히셨나요?</div>
+    <div class="help-float-text-2">전화로 도와드릴게요</div>
+  </div>
+</a>
+
+</body>
+</html>

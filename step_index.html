@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STEP Manager · Mockup Index</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Pretendard', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background: #FAFAFB;
+    color: #0A0A0F;
+    letter-spacing: -0.011em;
+    font-size: 15px;
+  }
+  .num { font-family: 'JetBrains Mono', monospace; font-feature-settings: "tnum"; }
+  .container { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+  a { text-decoration: none; color: inherit; }
+
+  header.top {
+    background: white;
+    border-bottom: 1px solid #F1F1F4;
+    padding: 18px 0;
+    position: sticky; top: 0; z-index: 10;
+  }
+  .top-inner { display: flex; align-items: center; justify-content: space-between; }
+  .logo { display: flex; align-items: center; gap: 10px; font-size: 17px; font-weight: 700; }
+  .logo-mark {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #2563EB 0%, #3B82F6 100%);
+    display: flex; align-items: center; justify-content: center;
+  }
+  .top-meta { display: flex; align-items: center; gap: 16px; font-size: 12px; color: #6B6B78; }
+  .badge { background: #EFF6FF; color: #1D4ED8; padding: 4px 10px; border-radius: 9999px; font-size: 11px; font-weight: 600; }
+
+  section.hero { padding: 72px 0 40px; text-align: center; }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: #EFF6FF; color: #1D4ED8;
+    padding: 6px 14px; border-radius: 9999px;
+    font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em;
+    margin-bottom: 20px;
+  }
+  .hero h1 { font-size: 48px; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; margin-bottom: 16px; }
+  .hero h1 .highlight {
+    background: linear-gradient(135deg, #2563EB 0%, #3B82F6 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero p { font-size: 17px; color: #6B6B78; max-width: 640px; margin: 0 auto; line-height: 1.6; }
+
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 40px 0 60px; }
+  .stat { background: white; border: 1px solid #F1F1F4; border-radius: 16px; padding: 24px; text-align: center; }
+  .stat-num { font-family: 'JetBrains Mono', monospace; font-size: 32px; font-weight: 700; color: #2563EB; line-height: 1; margin-bottom: 8px; }
+  .stat-label { font-size: 13px; color: #6B6B78; }
+
+  section.flow { padding: 56px 0; background: white; border-top: 1px solid #F1F1F4; border-bottom: 1px solid #F1F1F4; }
+  .section-eyebrow { font-size: 11px; font-weight: 600; color: #1D4ED8; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 12px; }
+  .section-title { font-size: 32px; font-weight: 700; letter-spacing: -0.025em; line-height: 1.2; margin-bottom: 12px; }
+  .section-desc { font-size: 15px; color: #6B6B78; margin-bottom: 40px; }
+
+  .flow-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .flow-item {
+    background: #FAFAFB;
+    border: 1px solid #F1F1F4;
+    border-radius: 16px;
+    padding: 24px;
+    transition: all 0.15s ease;
+    position: relative;
+  }
+  .flow-item:hover { border-color: #2563EB; box-shadow: 0 4px 16px -2px rgba(37, 99, 235, 0.08); transform: translateY(-2px); }
+  .flow-step-num {
+    width: 28px; height: 28px; border-radius: 9999px;
+    background: white; border: 2px solid #2563EB; color: #1D4ED8;
+    font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; margin-bottom: 14px;
+  }
+  .flow-item h3 { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .flow-item p { font-size: 13px; color: #6B6B78; line-height: 1.5; margin-bottom: 16px; }
+  .flow-item .meta { display: flex; align-items: center; gap: 8px; font-size: 11px; color: #9B9BA8; font-family: 'JetBrains Mono', monospace; }
+
+  section.pages { padding: 60px 0 80px; }
+  .group-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 24px; margin-top: 56px; }
+  .group-header:first-of-type { margin-top: 0; }
+  .group-title { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
+  .group-meta { font-size: 13px; color: #6B6B78; }
+
+  .pages-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+  .page-card {
+    background: white; border: 1px solid #F1F1F4; border-radius: 16px;
+    overflow: hidden; transition: all 0.2s ease; display: flex; flex-direction: column;
+  }
+  .page-card:hover { border-color: #2563EB; box-shadow: 0 8px 24px -4px rgba(37, 99, 235, 0.1); transform: translateY(-2px); }
+  .page-thumb {
+    background: linear-gradient(135deg, #EFF6FF 0%, #F0F9FF 100%);
+    height: 140px; position: relative;
+    display: flex; align-items: center; justify-content: center;
+    border-bottom: 1px solid #F1F1F4;
+  }
+  .page-thumb-icon {
+    width: 52px; height: 52px; background: white; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05); color: #2563EB;
+  }
+  .step-tag {
+    position: absolute; top: 12px; left: 12px;
+    background: white; color: #1D4ED8;
+    padding: 4px 10px; border-radius: 6px;
+    font-size: 10px; font-weight: 600; font-family: 'JetBrains Mono', monospace;
+  }
+  .progress-tag {
+    position: absolute; top: 12px; right: 12px;
+    background: #0A0A0F; color: white;
+    padding: 4px 10px; border-radius: 6px;
+    font-size: 10px; font-weight: 600; font-family: 'JetBrains Mono', monospace;
+  }
+  .page-card-body { padding: 18px 20px; flex: 1; display: flex; flex-direction: column; }
+  .page-card-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+  .page-card-desc { font-size: 13px; color: #6B6B78; line-height: 1.55; margin-bottom: 16px; flex: 1; }
+  .page-card-foot { display: flex; align-items: center; justify-content: space-between; padding-top: 14px; border-top: 1px solid #F1F1F4; }
+  .page-card-link { color: #2563EB; font-size: 13px; font-weight: 600; }
+  .page-card-file { font-size: 10px; font-family: 'JetBrains Mono', monospace; color: #9B9BA8; }
+
+  .thumb-purple { background: linear-gradient(135deg, #F5F3FF 0%, #FAF5FF 100%); }
+  .thumb-purple .page-thumb-icon { color: #7C3AED; }
+  .thumb-green { background: linear-gradient(135deg, #ECFDF5 0%, #F0FDF4 100%); }
+  .thumb-green .page-thumb-icon { color: #10B981; }
+  .thumb-amber { background: linear-gradient(135deg, #FFFBEB 0%, #FEFCE8 100%); }
+  .thumb-amber .page-thumb-icon { color: #D97706; }
+  .thumb-rose { background: linear-gradient(135deg, #FFF1F2 0%, #FEF2F2 100%); }
+  .thumb-rose .page-thumb-icon { color: #E11D48; }
+  .thumb-cyan { background: linear-gradient(135deg, #ECFEFF 0%, #F0FDFA 100%); }
+  .thumb-cyan .page-thumb-icon { color: #0891B2; }
+
+  /* Onboarding wide card */
+  .onboard-card {
+    grid-column: span 3;
+    display: flex;
+    background: white;
+    border: 1px solid #F1F1F4;
+    border-radius: 16px;
+    overflow: hidden;
+    transition: all 0.2s ease;
+  }
+  .onboard-card:hover { border-color: #2563EB; box-shadow: 0 8px 24px -4px rgba(37, 99, 235, 0.1); transform: translateY(-2px); }
+  .onboard-thumb { width: 280px; flex-shrink: 0; border-right: 1px solid #F1F1F4; }
+  .onboard-body { padding: 24px 28px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+  .onboard-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+  .onboard-tag { font-size: 11px; padding: 3px 8px; background: #F9FAFB; border-radius: 6px; color: #2A2A35; }
+  .onboard-tag.special { background: #EFF6FF; color: #1D4ED8; font-weight: 500; }
+
+  footer.bottom { background: #0A0A0F; color: white; padding: 40px 0 28px; }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 28px; }
+  .footer-grid h4 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #9B9BA8; margin-bottom: 12px; }
+  .footer-grid p, .footer-grid a { font-size: 13px; color: #C8C8D0; line-height: 1.8; display: block; }
+  .footer-grid a:hover { color: white; }
+  .footer-bottom { border-top: 1px solid #2A2A35; padding-top: 18px; display: flex; justify-content: space-between; font-size: 11px; color: #9B9BA8; font-family: 'JetBrains Mono', monospace; }
+
+  @media (max-width: 1024px) {
+    .pages-grid { grid-template-columns: repeat(2, 1fr); }
+    .flow-grid { grid-template-columns: repeat(2, 1fr); }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .onboard-card { grid-column: span 2; }
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="container top-inner">
+    <a class="logo">
+      <div class="logo-mark">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </div>
+      STEP Manager
+    </a>
+    <div class="top-meta">
+      <span class="badge">Mockup v1.0</span>
+      <span class="num">2026.04.25</span>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">
+      <span style="width: 6px; height: 6px; border-radius: 50%; background: #2563EB;"></span>
+      Design Review · Multi-page Mockups
+    </div>
+    <h1>STEP Manager의<br><span class="highlight">모든 화면을 한 곳에서.</span></h1>
+    <p>가격 페이지부터 도장 운영까지 — 실제 서비스처럼 흐름이 연결되어 있어요. <strong style="color: #2563EB;">가격 → 온보딩 → 설정 → 메인</strong> 순서로 체험해보세요.</p>
+
+    <div class="stats">
+      <div class="stat"><div class="stat-num">14</div><div class="stat-label">총 페이지 수</div></div>
+      <div class="stat"><div class="stat-num">4</div><div class="stat-label">주요 흐름</div></div>
+      <div class="stat"><div class="stat-num">10</div><div class="stat-label">도장 설정 단계</div></div>
+      <div class="stat"><div class="stat-num">✓</div><div class="stat-label">실제 흐름 연결</div></div>
+    </div>
+  </div>
+</section>
+
+<section class="flow">
+  <div class="container">
+    <div class="section-eyebrow">User Journey</div>
+    <h2 class="section-title">사용자 여정 흐름</h2>
+    <p class="section-desc">관장님이 STEP을 처음 만나는 순간부터 도장 운영을 시작하기까지의 전체 흐름입니다.</p>
+    <div class="flow-grid">
+      <a class="flow-item" href="step_pricing_page_v2.html">
+        <div class="flow-step-num">1</div>
+        <h3>가격 안내</h3>
+        <p>STEP의 가치와 가격을 소개. Tiered Reveal 적용.</p>
+        <div class="meta">2 페이지 · 도입</div>
+      </a>
+      <a class="flow-item" href="step_onboarding_v1.html">
+        <div class="flow-step-num">2</div>
+        <h3>온보딩</h3>
+        <p>5분 안에 도장 등록과 결제 정보 입력까지.</p>
+        <div class="meta">7 단계 · 가입</div>
+      </a>
+      <a class="flow-item" href="step_setup_step0.html">
+        <div class="flow-step-num">3</div>
+        <h3>도장 초기 설정</h3>
+        <p>본격적인 도장 운영을 위한 8 단계 세팅.</p>
+        <div class="meta">10 페이지 · 운영 준비</div>
+      </a>
+      <a class="flow-item" href="step_main_v4.html">
+        <div class="flow-step-num">4</div>
+        <h3>메인 라이브 도장 현황판</h3>
+        <p>일상 운영의 시작. AI 브리핑 + 라이브 수업 + KPI.</p>
+        <div class="meta">1 페이지 · 운영 시작</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="pages">
+  <div class="container">
+
+    <div class="group-header">
+      <div>
+        <div class="section-eyebrow">Group 1</div>
+        <h2 class="group-title">가격 페이지</h2>
+      </div>
+      <div class="group-meta">2 페이지 · 사용자 도입</div>
+    </div>
+    <div class="pages-grid">
+      <a class="page-card" href="step_pricing_page_v1.html">
+        <div class="page-thumb thumb-purple">
+          <div class="step-tag">v1 · IR</div>
+          <div class="progress-tag">3티어</div>
+          <div class="page-thumb-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+          </div>
+        </div>
+        <div class="page-card-body">
+          <div class="page-card-title">가격 페이지 v1 (IR/내부용)</div>
+          <div class="page-card-desc">Core / Pro / Grow 3티어 전체 노출. 투자자와 내부 로드맵 공유용.</div>
+          <div class="page-card-foot"><span class="page-card-link">열기 →</span><span class="page-card-file">pricing_v1.html</span></div>
+        </div>
+      </a>
+      <a class="page-card" href="step_pricing_page_v2.html">
+        <div class="page-thumb thumb-purple">
+          <div class="step-tag">v2 · 사용자</div>
+          <div class="progress-tag">2+1 hint</div>
+          <div class="page-thumb-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </div>
+        </div>
+        <div class="page-card-body">
+          <div class="page-card-title">가격 페이지 v2 (사용자용)</div>
+          <div class="page-card-desc">Core / Pro만 노출. Grow는 "Future hint"로 호기심 자극. Tiered Reveal 전략.</div>
+          <div class="page-card-foot"><span class="page-card-link">열기 →</span><span class="page-card-file">pricing_v2.html</span></div>
+        </div>
+      </a>
+    </div>
+
+    <div class="group-header">
+      <div>
+        <div class="section-eyebrow">Group 2</div>
+        <h2 class="group-title">온보딩 (가입)</h2>
+      </div>
+      <div class="group-meta">7 단계 · 단일 페이지에서 흐름 확인</div>
+    </div>
+    <div class="pages-grid">
+      <a class="onboard-card" href="step_onboarding_v1.html">
+        <div class="onboard-thumb page-thumb thumb-cyan" style="height: auto;">
+          <div class="step-tag">7 단계</div>
+          <div class="progress-tag">5분 안에</div>
+          <div class="page-thumb-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3" fill="currentColor"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg>
+          </div>
+        </div>
+        <div class="onboard-body">
+          <div>
+            <div class="page-card-title">7 단계 온보딩 (단일 페이지)</div>
+            <div class="page-card-desc">URL 입력 → AI 분석 → SEO 인사이트 → 결제 등록까지. STEP의 진짜 차별화 = "5분 안에 디지털 도장."</div>
+            <div class="onboard-tags">
+              <span class="onboard-tag">URL 입력</span>
+              <span class="onboard-tag">주소 (시간대 자동)</span>
+              <span class="onboard-tag">AI 분석</span>
+              <span class="onboard-tag">검수</span>
+              <span class="onboard-tag">SEO 인사이트</span>
+              <span class="onboard-tag special">카드 등록 (Today $0)</span>
+              <span class="onboard-tag">완료</span>
+            </div>
+          </div>
+          <div class="page-card-foot"><span class="page-card-link">단일 페이지로 흐름 보기 →</span><span class="page-card-file">onboarding_v1.html</span></div>
+        </div>
+      </a>
+    </div>
+
+    <div class="group-header">
+      <div>
+        <div class="section-eyebrow">Group 3 · 이번 작업</div>
+        <h2 class="group-title">도장 초기 설정</h2>
+      </div>
+      <div class="group-meta">10 페이지 · 각 페이지 별도 링크 연결</div>
+    </div>
+    <div class="pages-grid">
+
+      <a class="page-card" href="step_setup_step0.html">
+        <div class="page-thumb">
+          <div class="step-tag">STEP 0</div><div class="progress-tag">선택</div>
+          <div class="page-thumb-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3" fill="currentColor"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3"/></svg></div>
+        </div>
+        <div class="page-card-body">
+          <div class="page-card-title">AI 분석 시작</div>
+          <div class="page-card-desc">파일 업로드로 Xiro에게 도장 정보 자동 분석 맡기기.</div>
+          <div class="page-card-foot"><span class="page-card-link">열기 →</span><span class="page-card-file">setup_step0.html</span></div>
+        </div>
+      </a>
+
+      <a class="page-card" href="step_setup_step1.html">
+        <div class="page-thumb">
+          <div class="step-tag">STEP 1</div><div class="progress-tag">12.5%</div>
+          <div class="page-thumb-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 21V8l9-5 9 5v13M9 21V12h6v9"/></svg></div>
+        </div>
+        <div class="page-card-body">
+          <div class="page-card-title">도장 정보</div>
+          <div class="page-card-desc">로고, 도장 이름, 관장님 성함, 연락처, 주소 입력.</div>
+          <div class="page-card-foot"><span class="page-card-link">열기 →</span><span class="page-card-file">setup_step1.html</span></div>
+        </div>
+      </a>
+
+      <a class="page-card" href="step_setup_step2.html">
+        <div class="page-thumb thumb-amber">
+          <div class="step-tag">STEP 2</div><div class="progress-tag">25%</div>
+          <div class="page-thumb-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg></div>
+        </div>
+        <div class="page-card-body">
+          <div class="page-card-title">띠 및 승급 체계</div>
+          <div class="page-card-desc">9단계 띠 (흰띠 → 검은띠) 자동 제안, 도장에 맞게 수정.</div>
+          <div class="page-card-foot"><span class="page-card-link">열기 →</span><span class="page-card-file">setup_step2.html</span></div>
+        </div>
+      </a>
+
+      <a class="page-card" href="step_setup_step3.html">
+        <div class="page-thumb thumb-cyan">
+          <div class="step-tag">STEP 3</div><div class="progress-tag">37.5%</div>
+          <div class="page-thumb-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        </div>
+        <div class="page-card-body">
+          <div class="page-card-title">수업 시간표</div>
+          <div class="page-card-desc">정규 수업 일정 등록. AI 추천 + 빈 칸 클릭으로 추가.</div>
+          <div class="page-card-foot"><span class="page-card-link">열기 →</span><span class="page-card-file">setup_step3.html</span></div>
+        </div>
+      </a>
+
+      <a class="page-card" href="step_setup_step4.html">
+        <div class="page-thumb thumb-rose">
+          <div class="step-tag">STEP 4</div><div class="progress-tag">50% ⭐</div>
+          <div class="page-thumb-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+        </div>
+        <div class="page-card-body">
+          <div class="page-card-title">학생 등록 <span style="color: #2563EB; font-size: 11px;">(분기점)</span></div>
+          <div class="page-card-desc">학생 명단 등록 후 "기본만" / "추가까지" 선택 분기.</div>
+          <div class="page-card-foot"><span class="page-card-link">열기 →</span><span class="page-card-file">setup_step4.html</span></div>
+        </div>
+      </a>
+
+      <a class="page-card" href="step_setup_step5.html">
+        <div class="page-thumb thumb-green">
+          <div class="step-tag">STEP 5</div><div class="progress-tag">62.5%</div>
+          <div class="page-thumb-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 11l-3 3-2-2"/></svg></div>
+        </div>
+        <div class="page-card-body">
+          <div class="page-card-title">직원 등록</div>
+          <div class="page-card-desc">사범, 매니저 정보 등록 + 자동 초대 메일 발송.</div>
+          <div class="page-card-foot"><span class="page-card-link">열기 →</span><span class="page-card-file">setup_step5.html</span></div>
+        </div>
+      </a>
+
+      <a class="page-card" href="step_setup_step6.html">
+        <div class="page-thumb">
+          <div class="step-tag">STEP 6</div><div class="progress-tag">75%</div>
+          <div class="page-thumb-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.47a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.47a2 2 0 00-1.34-2.23z"/></svg></div>
+        </div>
+        <div class="page-card-body">
+          <div class="page-card-title">용품 관리</div>
+          <div class="page-card-desc">도복, 띠, 보호구 등 도장에서 다루는 용품 등록.</div>
+          <div class="page-card-foot"><span class="page-card-link">열기 →</span><span class="page-card-file">setup_step6.html</span></div>
+        </div>
+      </a>
+
+      <a class="page-card" href="step_setup_step7.html">
+        <div class="page-thumb thumb-amber">
+          <div class="step-tag">STEP 7</div><div class="progress-tag">87.5%</div>
+          <div class="page-thumb-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div>
+        </div>
+        <div class="page-card-body">
+          <div class="page-card-title">재고 관리</div>
+          <div class="page-card-desc">현재 보유 중인 용품 수량 입력. 부족 시 자동 알림.</div>
+          <div class="page-card-foot"><span class="page-card-link">열기 →</span><span class="page-card-file">setup_step7.html</span></div>
+        </div>
+      </a>
+
+      <a class="page-card" href="step_setup_step8.html">
+        <div class="page-thumb thumb-rose">
+          <div class="step-tag">STEP 8</div><div class="progress-tag">100%</div>
+          <div class="page-thumb-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        </div>
+        <div class="page-card-body">
+          <div class="page-card-title">행사 일정</div>
+          <div class="page-card-desc">올해 대회, 승급심사, 캠프 등 주요 행사 등록.</div>
+          <div class="page-card-foot"><span class="page-card-link">열기 →</span><span class="page-card-file">setup_step8.html</span></div>
+        </div>
+      </a>
+
+      <a class="page-card" href="step_setup_step9.html">
+        <div class="page-thumb thumb-green">
+          <div class="step-tag">STEP 9</div><div class="progress-tag">완료 🎉</div>
+          <div class="page-thumb-icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div>
+        </div>
+        <div class="page-card-body">
+          <div class="page-card-title">설정 완료 (검은띠 달성)</div>
+          <div class="page-card-desc">설정 결과 통계 + Xiro의 첫 인사 + STEP Manager 시작.</div>
+          <div class="page-card-foot"><span class="page-card-link">열기 →</span><span class="page-card-file">setup_step9.html</span></div>
+        </div>
+      </a>
+
+    </div>
+
+    <div class="group-header">
+      <div>
+        <div class="section-eyebrow">Group 4 · 운영 시작</div>
+        <h2 class="group-title">메인 라이브 도장 현황판</h2>
+      </div>
+      <div class="group-meta">1 페이지 · 일상 운영의 첫 화면</div>
+    </div>
+    <div class="pages-grid">
+      <a class="page-card" href="step_main_v4.html" style="grid-column: span 3;">
+        <div style="display: flex; align-items: stretch;">
+          <div class="page-thumb" style="width: 280px; flex-shrink: 0; border-right: 1px solid #F1F1F4; border-bottom: 0; background: linear-gradient(135deg, #EFF6FF 0%, #F0F9FF 100%);">
+            <div class="step-tag">v4 · 라이브</div>
+            <div class="progress-tag">최신</div>
+            <div class="page-thumb-icon">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="9" x2="9" y2="21"/></svg>
+            </div>
+          </div>
+          <div class="page-card-body" style="padding: 24px 28px;">
+            <div class="page-card-title">메인 라이브 도장 현황판 v4</div>
+            <div class="page-card-desc">Xiro 일일 브리핑 + 핵심 KPI 3개 + Alarm Center + 라이브 도장 + Event Hub + 빠른 액션 7개. 시안 기반 디자인 (Xiro/$/Toss 스타일/IA 2-Layer 적용).</div>
+            <div style="display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 16px;">
+              <span style="font-size: 11px; padding: 3px 8px; background: #F9FAFB; border-radius: 6px; color: #2A2A35;">Briefing 카드</span>
+              <span style="font-size: 11px; padding: 3px 8px; background: #F9FAFB; border-radius: 6px; color: #2A2A35;">출석률 84%</span>
+              <span style="font-size: 11px; padding: 3px 8px; background: #F9FAFB; border-radius: 6px; color: #2A2A35;">매출 $18,420</span>
+              <span style="font-size: 11px; padding: 3px 8px; background: #F9FAFB; border-radius: 6px; color: #2A2A35;">라이브 도장 (수업 중)</span>
+              <span style="font-size: 11px; padding: 3px 8px; background: #EFF6FF; color: #1D4ED8; border-radius: 6px;">Mark Attendance</span>
+              <span style="font-size: 11px; padding: 3px 8px; background: #EFF6FF; color: #1D4ED8; border-radius: 6px;">Briefing Details</span>
+              <span style="font-size: 11px; padding: 3px 8px; background: #F9FAFB; border-radius: 6px; color: #2A2A35;">Ask Xiro</span>
+            </div>
+            <div class="page-card-foot"><span class="page-card-link">열기 →</span><span class="page-card-file">main_v4.html</span></div>
+          </div>
+        </div>
+      </a>
+    </div>
+
+  </div>
+</section>
+
+<footer class="bottom">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <h4>STEP Manager</h4>
+        <p style="margin-top: 8px; font-size: 13px; color: #C8C8D0; line-height: 1.6;">
+          태권도 도장을 위한 운영 OS.<br>AI Xiro와 함께 도장의 모든 것을 관리합니다.
+        </p>
+      </div>
+      <div>
+        <h4>제품</h4>
+        <a>STEP Manager</a><a>Play STEP</a><a>Event STEP</a><a>STEP Partner</a>
+      </div>
+      <div>
+        <h4>회사</h4>
+        <a>About</a><a>Careers</a><a>Press</a><a>Contact</a>
+      </div>
+      <div>
+        <h4>지원</h4>
+        <a>도움말</a><a>고객지원</a><a>개인정보처리방침</a><a>이용약관</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 STEP NEXT Inc. All rights reserved.</span>
+      <span>Mockup v1.0 · Updated 2026.04.25</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

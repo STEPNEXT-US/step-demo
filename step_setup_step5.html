@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STEP 5 · 직원 등록 | STEP Manager</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Pretendard', system-ui, sans-serif; -webkit-font-smoothing: antialiased; background: #FFFFFF; color: #0A0A0F; letter-spacing: -0.011em; font-size: 15px; }
+  .num { font-family: 'JetBrains Mono', monospace; font-feature-settings: "tnum"; }
+  a { text-decoration: none; color: inherit; }
+  button { font-family: inherit; cursor: pointer; border: 0; }
+  input, select, textarea { font-family: inherit; }
+
+  .top-progress { height: 3px; background: #F1F1F4; }
+  .top-progress-fill { height: 100%; background: linear-gradient(90deg, #10B981 0%, #2563EB 100%); }
+
+  .app-shell { display: grid; grid-template-columns: 240px 1fr; min-height: calc(100vh - 3px); }
+
+  .sidebar { background: #FAFAFB; border-right: 1px solid #F1F1F4; padding: 24px 16px; position: sticky; top: 3px; height: calc(100vh - 3px); overflow-y: auto; }
+  .sidebar-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; padding: 0 6px; }
+  .sidebar-title { font-size: 13px; font-weight: 700; }
+  .sidebar-reset { font-size: 10px; color: #EF4444; background: none; padding: 0; margin-top: 2px; }
+  .sidebar-section-label { font-size: 10px; font-weight: 600; color: #9B9BA8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; padding: 0 8px; }
+  .sidebar-section-label.extra { margin: 24px 0 8px; }
+  .hint-text { color: #C8C8D0; font-weight: 400; text-transform: none; letter-spacing: 0; }
+
+  .sidebar-step { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 10px; margin-bottom: 4px; transition: all 0.15s ease; color: #2A2A35; }
+  .sidebar-step:hover { background: #F1F1F4; }
+  .sidebar-step.active { background: #DBEAFE; color: #1D4ED8; }
+  .sidebar-step.completed { color: #10B981; }
+  .sidebar-step.muted .label { color: #6B6B78; }
+  .sidebar-step .label { font-size: 13px; flex: 1; }
+  .sidebar-step.active .label { font-weight: 500; }
+
+  .step-num { width: 22px; height: 22px; border-radius: 9999px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; background: #E5E5EA; color: #6B6B78; flex-shrink: 0; }
+  .sidebar-step.active .step-num { background: #2563EB; color: white; }
+  .sidebar-step.completed .step-num { background: #10B981; color: white; }
+
+  .pulse-dot { width: 6px; height: 6px; border-radius: 9999px; background: #2563EB; animation: pulse-soft 1.5s ease-in-out infinite; }
+  @keyframes pulse-soft { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .belt-progress { margin-top: 32px; padding-top: 24px; border-top: 1px solid #F1F1F4; }
+  .belt-progress-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .belt-circle { width: 24px; height: 24px; border-radius: 9999px; flex-shrink: 0; background: #10B981; border: 2px solid #10B981; }
+  .belt-bar { height: 6px; background: #F1F1F4; border-radius: 9999px; overflow: hidden; margin-bottom: 8px; }
+  .belt-bar-fill { height: 100%; background: #2563EB; border-radius: 9999px; }
+  .belt-progress-meta { display: flex; justify-content: space-between; font-size: 10px; }
+  .belt-progress-meta .left { color: #6B6B78; }
+  .belt-progress-meta .right { color: #2563EB; font-weight: 500; }
+
+  .main-area { display: flex; flex-direction: column; }
+  .top-bar-spacer { padding: 32px 64px 0; }
+  .banners-stack { display: flex; flex-direction: column; gap: 12px; }
+
+  .ai-banner { background: linear-gradient(135deg, #EFF6FF 0%, #F0F9FF 100%); border: 1px solid #DBEAFE; border-radius: 14px; padding: 18px 20px; display: flex; align-items: flex-start; gap: 12px; }
+  .xiro-mark { width: 28px; height: 28px; border-radius: 9999px; background: linear-gradient(135deg, #2563EB 0%, #60A5FA 100%); display: flex; align-items: center; justify-content: center; flex-shrink: 0; box-shadow: 0 4px 12px -2px rgba(37, 99, 235, 0.3); margin-top: 2px; }
+  .ai-banner-content { flex: 1; }
+  .ai-banner-text { font-size: 14px; color: #2A2A35; line-height: 1.6; margin: 0; }
+  .ai-banner-text .strong { font-weight: 600; color: #0A0A0F; }
+  .ai-banner-link { display: inline-block; margin-top: 8px; font-size: 12px; color: #2563EB; font-weight: 500; text-decoration: underline; }
+  .ai-banner-close { background: none; color: #9B9BA8; padding: 0; }
+
+  .delegate-banner { background: white; border: 1px solid #E5E5EA; border-radius: 12px; padding: 14px 18px; display: flex; align-items: center; gap: 12px; }
+  .delegate-icon { width: 36px; height: 36px; border-radius: 8px; background: #EFF6FF; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #2563EB; }
+  .delegate-content { flex: 1; }
+  .delegate-title { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
+  .delegate-desc { font-size: 12px; color: #6B6B78; }
+  .delegate-btn { background: white; color: #2A2A35; padding: 10px 16px; font-size: 13px; font-weight: 500; border-radius: 10px; border: 1px solid #E5E5EA; transition: all 0.15s; white-space: nowrap; }
+  .delegate-btn:hover { border-color: #2563EB; color: #2563EB; }
+
+  .section-content { padding: 48px 64px 80px; max-width: 1080px; }
+  .step-indicator { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
+  .step-indicator .num-current { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; color: #2563EB; }
+  .step-indicator .num-total { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #9B9BA8; }
+  .section-title { font-size: 32px; font-weight: 700; letter-spacing: -0.025em; margin: 0 0 8px; line-height: 1.2; }
+  .section-subtitle { font-size: 15px; color: #6B6B78; margin: 0 0 32px; line-height: 1.6; }
+
+  .table-header { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 32px; gap: 12px; padding: 0 12px 8px; font-size: 11px; font-weight: 600; color: #9B9BA8; }
+  .table-header .req { color: #EF4444; }
+
+  .add-row { width: 100%; padding: 14px; margin-bottom: 12px; border: 2px dashed #E5E5EA; background: #F9FAFB; border-radius: 12px; font-size: 14px; color: #2A2A35; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.15s; }
+  .add-row:hover { border-color: #93C5FD; background: #EFF6FF; color: #1D4ED8; }
+
+  .staff-row { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 32px; gap: 12px; align-items: center; padding: 8px 12px; background: #FAFAFB; border-radius: 12px; margin-bottom: 8px; }
+  .staff-input { width: 100%; padding: 12px 14px; font-size: 14px; background: white; border: 1px solid transparent; border-radius: 10px; }
+  .staff-input:focus { outline: none; border-color: #2563EB; }
+  .icon-btn { background: none; padding: 6px; color: #9B9BA8; border-radius: 6px; }
+  .icon-btn:hover { color: #EF4444; background: white; }
+
+  .role-guide { background: #F9FAFB; border: 1px solid #F1F1F4; border-radius: 16px; padding: 24px; margin-top: 32px; }
+  .role-guide-title { font-size: 13px; font-weight: 600; margin-bottom: 16px; }
+  .role-cards { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .role-card { background: white; border: 1px solid #F1F1F4; border-radius: 12px; padding: 16px; }
+  .role-card-title { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+  .role-dot { width: 8px; height: 8px; border-radius: 9999px; }
+  .role-dot.red { background: #EF4444; }
+  .role-dot.blue { background: #2563EB; }
+  .role-dot.green { background: #10B981; }
+  .role-card-desc { font-size: 12px; color: #6B6B78; line-height: 1.55; }
+
+  .reassure { background: #ECFDF5; border: 1px solid #A7F3D0; color: #047857; padding: 10px 14px; border-radius: 10px; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; margin-top: 24px; }
+
+  .step-footer { background: #FAFAFB; border-top: 1px solid #F1F1F4; padding: 20px 64px; display: flex; justify-content: space-between; align-items: center; position: sticky; bottom: 0; z-index: 5; }
+  .step-footer-right { display: flex; align-items: center; gap: 12px; }
+  .btn-primary { background: #2563EB; color: white; padding: 14px 24px; font-size: 15px; font-weight: 600; border-radius: 12px; }
+  .btn-primary:hover { background: #1D4ED8; }
+  .btn-ghost { color: #6B6B78; padding: 12px 18px; font-size: 14px; font-weight: 500; border-radius: 8px; background: none; }
+  .btn-ghost:hover { color: #2A2A35; background: #F1F1F4; }
+
+  .help-float { position: fixed; bottom: 84px; right: 24px; background: white; border: 1px solid #E5E5EA; border-radius: 9999px; padding: 12px 18px; box-shadow: 0 8px 24px -4px rgba(0,0,0,0.12); display: flex; align-items: center; gap: 8px; z-index: 40; }
+  .help-float-icon { width: 28px; height: 28px; border-radius: 9999px; background: #EFF6FF; display: flex; align-items: center; justify-content: center; }
+  .help-float-text-1 { font-size: 12px; font-weight: 600; }
+  .help-float-text-2 { font-size: 10px; color: #6B6B78; }
+</style>
+</head>
+<body>
+
+<div class="top-progress"><div class="top-progress-fill" style="width: 62.5%;"></div></div>
+
+<div class="app-shell">
+
+<aside class="sidebar">
+  <div class="sidebar-header">
+    <div>
+      <div class="sidebar-title">도장 초기 설정</div>
+      <button class="sidebar-reset">↻ 처음부터</button>
+    </div>
+  </div>
+  <div class="sidebar-section-label">기본 설정</div>
+  <a class="sidebar-step completed" href="step_setup_step1.html"><span class="step-num"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="label">도장 정보</span></a>
+  <a class="sidebar-step completed" href="step_setup_step2.html"><span class="step-num"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="label">띠 체계</span></a>
+  <a class="sidebar-step completed" href="step_setup_step3.html"><span class="step-num"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="label">수업 시간표</span></a>
+  <a class="sidebar-step completed" href="step_setup_step4.html"><span class="step-num"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="label">학생 등록</span></a>
+  <div class="sidebar-section-label extra">추가 설정</div>
+  <a class="sidebar-step active" href="step_setup_step5.html"><span class="step-num">5</span><span class="label">직원 등록</span><span class="pulse-dot"></span></a>
+  <a class="sidebar-step muted" href="step_setup_step6.html"><span class="step-num">6</span><span class="label">용품 관리</span></a>
+  <a class="sidebar-step muted" href="step_setup_step7.html"><span class="step-num">7</span><span class="label">재고 관리</span></a>
+  <a class="sidebar-step muted" href="step_setup_step8.html"><span class="step-num">8</span><span class="label">행사 일정</span></a>
+
+  <div class="belt-progress">
+    <div class="belt-progress-header">
+      <div class="belt-circle"></div>
+      <div>
+        <div style="font-size: 11px; color: #6B6B78;">지금 단계</div>
+        <div style="font-size: 13px; font-weight: 700;">초록띠</div>
+      </div>
+    </div>
+    <div class="belt-bar"><div class="belt-bar-fill" style="width: 25%;"></div></div>
+    <div class="belt-progress-meta">
+      <span class="left">1/4 완료</span>
+      <span class="right">→ 파란띠</span>
+    </div>
+  </div>
+</aside>
+
+<div class="main-area">
+  <div class="top-bar-spacer">
+    <div class="banners-stack">
+      <div class="ai-banner">
+        <div class="xiro-mark">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><circle cx="12" cy="12" r="3" fill="white"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3"/></svg>
+        </div>
+        <div class="ai-banner-content">
+          <p class="ai-banner-text">직원 정보를 등록해주세요. <span class="strong">등록과 동시에 초대 이메일이 발송됩니다.</span></p>
+          <a class="ai-banner-link">파일로 직원 명단 가져오기 →</a>
+        </div>
+        <button class="ai-banner-close"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+      <div class="delegate-banner">
+        <div class="delegate-icon">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <div class="delegate-content">
+          <div class="delegate-title">직접 입력하기 어려우시면, 매니저에게 부탁할 수 있어요</div>
+          <div class="delegate-desc">남은 설정 작업을 매니저에게 부탁하면 자동으로 알림이 가요.</div>
+        </div>
+        <button class="delegate-btn">매니저에게 부탁하기</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-content">
+    <div class="step-indicator">
+      <span class="num-current">STEP 5</span>
+      <span class="num-total">/ 8</span>
+    </div>
+    <h1 class="section-title">같이 일하는 사범과 매니저를 알려주세요.</h1>
+    <p class="section-subtitle">등록하시면 각자 역할에 맞게 STEP을 사용할 수 있도록 초대 메일이 발송됩니다.</p>
+
+    <div class="table-header">
+      <div>이름</div>
+      <div>역할 <span class="req">*</span></div>
+      <div>이메일 <span class="req">*</span></div>
+      <div>연락처</div>
+      <div></div>
+    </div>
+
+    <button class="add-row">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+      직원 추가하기
+    </button>
+
+    <div class="staff-row">
+      <input type="text" value="김관장" class="staff-input">
+      <select class="staff-input"><option>관장 (Owner)</option></select>
+      <input type="email" value="master@tkd.com" class="staff-input">
+      <input type="tel" value="02-1234-5678" class="staff-input num">
+      <button class="icon-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
+    </div>
+    <div class="staff-row">
+      <input type="text" value="박사범" class="staff-input">
+      <select class="staff-input"><option>사범 (Coach)</option></select>
+      <input type="email" value="park@tkd.com" class="staff-input">
+      <input type="tel" value="010-1111-2222" class="staff-input num">
+      <button class="icon-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
+    </div>
+    <div class="staff-row">
+      <input type="text" value="이매니저" class="staff-input">
+      <select class="staff-input"><option>매니저 (Manager)</option></select>
+      <input type="email" value="lee@tkd.com" class="staff-input">
+      <input type="tel" value="010-3333-4444" class="staff-input num">
+      <button class="icon-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
+    </div>
+
+    <div class="role-guide">
+      <div class="role-guide-title">역할별 권한 안내</div>
+      <div class="role-cards">
+        <div class="role-card">
+          <div class="role-card-title"><span class="role-dot red"></span>관장 (Owner)</div>
+          <div class="role-card-desc">도장 운영의 모든 결정과 비용을 관리합니다.</div>
+        </div>
+        <div class="role-card">
+          <div class="role-card-title"><span class="role-dot blue"></span>매니저 (Manager)</div>
+          <div class="role-card-desc">도장의 운영을 관리하고 업무를 도와줍니다.</div>
+        </div>
+        <div class="role-card">
+          <div class="role-card-title"><span class="role-dot green"></span>사범 (Coach)</div>
+          <div class="role-card-desc">수업과 수련생 관리를 담당합니다.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="reassure">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+      직원 등록이 완료되면, 등록된 모든 직원에게 STEP 가입을 위한 초대 이메일이 자동으로 발송됩니다.
+    </div>
+  </div>
+
+  <div class="step-footer">
+    <a class="btn-ghost" href="step_setup_step4.html">← 이전</a>
+    <div class="step-footer-right">
+      <a class="btn-ghost" href="step_setup_step6.html">건너뛰기</a>
+      <a class="btn-primary" href="step_setup_step6.html">초대장 보내고 다음 →</a>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<a class="help-float">
+  <div class="help-float-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="color: #2563EB;"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+  <div>
+    <div class="help-float-text-1">막히셨나요?</div>
+    <div class="help-float-text-2">전화로 도와드릴게요</div>
+  </div>
+</a>
+
+</body>
+</html>

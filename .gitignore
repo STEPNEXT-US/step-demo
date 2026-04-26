@@ -1,0 +1,62 @@
+# =====================================
+# OS / System files
+# =====================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# =====================================
+# Editor / IDE files
+# =====================================
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+
+# =====================================
+# Node modules (if you add tooling later)
+# =====================================
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# =====================================
+# Vercel
+# =====================================
+.vercel
+
+# =====================================
+# Environment / Secrets
+# =====================================
+.env
+.env.local
+.env.*.local
+
+# =====================================
+# Build / Cache
+# =====================================
+dist/
+build/
+.cache/
+*.log
+
+# =====================================
+# Backup / Temporary
+# =====================================
+*.bak
+*.tmp
+*.old
+~$*
+
+.vercel
+
+*.zip

@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>STEP Pricing · Run and Manage your dojang</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Inter', 'Pretendard', 'system-ui', 'sans-serif'],
+          kr: ['Pretendard', 'system-ui', 'sans-serif'],
+          mono: ['JetBrains Mono', 'monospace'],
+        },
+        colors: {
+          ink: {
+            900: '#0A0A0F', 800: '#1A1A22', 700: '#2A2A35', 500: '#6B6B78',
+            400: '#9B9BA8', 300: '#C8C8D0', 200: '#E5E5EA', 100: '#F1F1F4', 50: '#F9FAFB',
+          },
+          pro: {
+            900: '#3D2785', 700: '#5A3FB8', 500: '#7C5CFF', 300: '#B5A0FF',
+            100: '#EDE7FF', 50: '#F7F4FF',
+          },
+          ok: '#0F9D58', warn: '#F0A800', danger: '#E5484D',
+        },
+      }
+    }
+  }
+</script>
+<style>
+  body {
+    font-family: 'Inter', 'Pretendard', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background: #FFFFFF;
+    letter-spacing: -0.011em;
+  }
+  .num { font-family: 'JetBrains Mono', monospace; font-feature-settings: "tnum"; }
+  .kr { font-family: 'Pretendard', system-ui, sans-serif; }
+
+  .pro-gradient { background: linear-gradient(135deg, #7C5CFF 0%, #5A3FB8 100%); }
+  .pro-text-gradient {
+    background: linear-gradient(135deg, #7C5CFF 0%, #5A3FB8 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero-bg {
+    background:
+      radial-gradient(ellipse 1000px 400px at 50% 0%, rgba(124, 92, 255, 0.06) 0%, transparent 60%),
+      #FFFFFF;
+  }
+
+  .pro-card-glow {
+    box-shadow: 0 20px 60px -20px rgba(124, 92, 255, 0.25), 0 8px 16px -8px rgba(124, 92, 255, 0.1);
+  }
+
+  .tier-card {
+    transition: all 0.25s ease;
+  }
+  .tier-card:hover {
+    transform: translateY(-4px);
+  }
+
+  /* Future hint card — distinct treatment */
+  .future-card {
+    background:
+      radial-gradient(ellipse 400px 200px at 50% 50%, rgba(124, 92, 255, 0.08) 0%, transparent 70%),
+      #FAFAFE;
+    border: 1px dashed #B5A0FF;
+    transition: all 0.25s ease;
+  }
+  .future-card:hover {
+    border-color: #7C5CFF;
+    background:
+      radial-gradient(ellipse 400px 200px at 50% 50%, rgba(124, 92, 255, 0.12) 0%, transparent 70%),
+      #FAFAFE;
+  }
+
+  @keyframes soft-glow {
+    0%, 100% { opacity: 0.95; }
+    50% { opacity: 1; }
+  }
+  .referral-banner { animation: soft-glow 3s ease-in-out infinite; }
+
+  @keyframes breathe-dots {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+  }
+  .breathe-dots { animation: breathe-dots 2.4s ease-in-out infinite; }
+
+  .compare-row:hover { background: #F9FAFB; }
+
+  .faq-item summary { cursor: pointer; list-style: none; }
+  .faq-item summary::-webkit-details-marker { display: none; }
+  .faq-item .chev { transition: transform 0.2s; }
+  .faq-item[open] .chev { transform: rotate(180deg); }
+
+  *::-webkit-scrollbar { width: 6px; height: 6px; }
+  *::-webkit-scrollbar-thumb { background: #C8C8D0; border-radius: 3px; }
+  *::-webkit-scrollbar-track { background: transparent; }
+</style>
+</head>
+<body class="text-ink-900">
+
+<!-- TOP REFERRAL BANNER -->
+<div class="referral-banner pro-gradient text-white py-2.5 text-center text-[12px] font-medium">
+  <span class="inline-flex items-center gap-2">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 12V22H4V12"/><path d="M22 7H2V12H22V7Z"/><path d="M12 22V7"/><path d="M12 7H7.5C6.83696 7 6.20107 6.73661 5.73223 6.26777C5.26339 5.79893 5 5.16304 5 4.5C5 3.83696 5.26339 3.20107 5.73223 2.73223C6.20107 2.26339 6.83696 2 7.5 2C11 2 12 7 12 7Z"/></svg>
+    Referred by another dojang? <span class="underline cursor-pointer">Get 2 months of Core for free →</span>
+  </span>
+</div>
+
+<!-- HEADER -->
+<header class="border-b border-ink-100 bg-white sticky top-0 z-30">
+  <div class="max-w-[1280px] mx-auto px-8 h-16 flex items-center justify-between">
+    <div class="flex items-center gap-8">
+      <div class="flex items-center gap-2">
+        <div class="w-8 h-8 rounded-lg pro-gradient flex items-center justify-center">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <span class="font-semibold text-[16px] tracking-tight">STEP <span class="pro-text-gradient">Manager</span></span>
+      </div>
+
+      <nav class="flex items-center gap-6 text-[13px] text-ink-700">
+        <a class="hover:text-ink-900 transition">Product</a>
+        <a class="hover:text-ink-900 transition font-medium text-ink-900">Pricing</a>
+        <a class="hover:text-ink-900 transition">Resources</a>
+        <a class="hover:text-ink-900 transition">Partner</a>
+      </nav>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <div class="flex items-center gap-1 text-[12px] text-ink-500 bg-ink-50 rounded-md p-0.5">
+        <button class="px-2 py-1 rounded bg-white text-ink-900 font-medium shadow-sm">EN</button>
+        <button class="px-2 py-1 rounded hover:bg-white transition kr">한국어</button>
+      </div>
+      <div class="h-5 w-px bg-ink-200"></div>
+      <button class="text-[13px] text-ink-700 hover:text-ink-900 transition">Sign in</button>
+      <a href="step_onboarding_v1.html" class="bg-ink-900 hover:bg-ink-800 text-white text-[13px] font-medium px-4 py-2 rounded-lg transition inline-block">Get started</a>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero-bg pt-20 pb-16">
+  <div class="max-w-[1024px] mx-auto px-8 text-center">
+    <div class="inline-flex items-center gap-2 bg-pro-50 border border-pro-100 rounded-full px-3.5 py-1.5 mb-6">
+      <span class="w-1.5 h-1.5 rounded-full bg-pro-500"></span>
+      <span class="text-[12px] font-medium text-pro-700">Powered by Xiro AI</span>
+    </div>
+
+    <h1 class="text-[56px] font-semibold tracking-tight leading-[1.05] mb-6" style="letter-spacing: -0.03em;">
+      Run and Manage<br>your dojang.
+    </h1>
+
+    <p class="text-[18px] text-ink-500 leading-relaxed max-w-[640px] mx-auto mb-10">
+      Whether you're getting started or running a full operation — STEP has a plan that meets you where you are. <span class="text-ink-700 font-medium">More awaits as you grow.</span>
+    </p>
+
+    <div class="inline-flex items-center gap-3 bg-ink-50 rounded-xl p-1">
+      <button class="bg-white text-ink-900 text-[13px] font-medium px-4 py-2 rounded-lg shadow-sm">Monthly</button>
+      <button class="text-ink-500 hover:text-ink-700 text-[13px] font-medium px-4 py-2 rounded-lg transition flex items-center gap-1.5">
+        Annual
+        <span class="bg-ok/10 text-ok text-[10px] font-semibold px-1.5 py-0.5 rounded">Save 20%</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- STORY: Run → Manage → ... -->
+<section class="py-16 bg-ink-50/50">
+  <div class="max-w-[1024px] mx-auto px-8">
+    <div class="text-center mb-12">
+      <span class="text-[11px] font-semibold text-pro-700 uppercase tracking-widest mb-3 block">The STEP journey</span>
+      <h2 class="text-[32px] font-semibold tracking-tight" style="letter-spacing: -0.025em;">A platform that grows with you.</h2>
+    </div>
+
+    <div class="grid grid-cols-3 gap-6 relative">
+      <div class="absolute top-7 left-[16.66%] right-[16.66%] flex items-center pointer-events-none">
+        <svg width="100%" height="2" viewBox="0 0 800 2" preserveAspectRatio="none">
+          <line x1="0" y1="1" x2="800" y2="1" stroke="#C8C8D0" stroke-width="1" stroke-dasharray="4 4"/>
+        </svg>
+      </div>
+
+      <!-- Run -->
+      <div class="text-center relative">
+        <div class="w-14 h-14 mx-auto bg-white border-2 border-ink-200 rounded-full flex items-center justify-center mb-5 relative z-10">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-ink-700"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        </div>
+        <div class="text-[12px] font-semibold text-ink-500 uppercase tracking-wider mb-1">Stage 1</div>
+        <h3 class="text-[20px] font-semibold mb-2">Run</h3>
+        <p class="text-[14px] text-ink-500 leading-relaxed">Replace spreadsheets. Get your dojang running on AI-powered digital infrastructure.</p>
+      </div>
+
+      <!-- Manage -->
+      <div class="text-center relative">
+        <div class="w-14 h-14 mx-auto pro-gradient rounded-full flex items-center justify-center mb-5 relative z-10">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+        </div>
+        <div class="text-[12px] font-semibold text-pro-700 uppercase tracking-wider mb-1">Stage 2 · Most popular</div>
+        <h3 class="text-[20px] font-semibold mb-2">Manage</h3>
+        <p class="text-[14px] text-ink-500 leading-relaxed">Connect with parents and students. Automate payments. Run your full operation in one place.</p>
+      </div>
+
+      <!-- Future hint -->
+      <div class="text-center relative">
+        <div class="w-14 h-14 mx-auto bg-white border border-pro-200 border-dashed rounded-full flex items-center justify-center mb-5 relative z-10">
+          <span class="num text-[20px] font-medium text-pro-300 breathe-dots tracking-wider">···</span>
+        </div>
+        <div class="text-[12px] font-semibold text-ink-400 uppercase tracking-wider mb-1">Beyond Stage 2</div>
+        <h3 class="text-[20px] font-semibold mb-2 text-ink-700">More awaits</h3>
+        <p class="text-[14px] text-ink-500 leading-relaxed">Once your dojang masters the operation, deeper capabilities open up. Reserved for our most experienced partners.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING CARDS — 2 cards + 1 future hint -->
+<section class="py-20">
+  <div class="max-w-[1280px] mx-auto px-8">
+    <div class="grid grid-cols-3 gap-6">
+
+      <!-- Core -->
+      <div class="tier-card bg-white border border-ink-200 rounded-3xl p-8 flex flex-col">
+        <div class="mb-6">
+          <div class="text-[11px] font-semibold text-ink-500 uppercase tracking-widest mb-2">Core</div>
+          <h3 class="text-[28px] font-semibold mb-2 tracking-tight">Run your dojang</h3>
+          <p class="text-[13px] text-ink-500 leading-relaxed">AI-powered digital infrastructure for daily dojang operations.</p>
+        </div>
+
+        <div class="mb-6">
+          <div class="flex items-baseline gap-1.5">
+            <span class="text-ink-400 text-[18px]">$</span>
+            <span class="num text-[48px] font-semibold tracking-tight leading-none">50</span>
+            <span class="text-ink-500 text-[14px] mb-1">/ month</span>
+          </div>
+          <div class="text-[11px] text-ink-400 mt-1">per dojang · billed monthly</div>
+        </div>
+
+        <a href="step_onboarding_v1.html" class="block w-full bg-white border border-ink-300 hover:border-ink-700 text-ink-900 text-[14px] font-medium py-3 rounded-xl transition mb-8 text-center">
+          Start with Core
+        </a>
+
+        <div class="space-y-3 mb-6 flex-1">
+          <div class="text-[11px] font-semibold text-ink-700 uppercase tracking-wider">What's included</div>
+
+          <div class="flex items-start gap-2.5">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-ok flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="text-[13px] text-ink-700">STEP Manager full suite<br><span class="text-ink-500 text-[11px]">Ops · Tasks · Calendar · Inbox · Notes</span></span>
+          </div>
+
+          <div class="flex items-start gap-2.5">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-ok flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="text-[13px] text-ink-700">Member management<span class="text-ink-500 text-[11px]"> (basic)</span></span>
+          </div>
+
+          <div class="flex items-start gap-2.5">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-ok flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="text-[13px] text-ink-700">Inventory tracking</span>
+          </div>
+
+          <div class="flex items-start gap-2.5">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-pro-500 flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="text-[13px] text-ink-700">Xiro AI Suggestions<span class="text-ink-500 text-[11px]"> (basic)</span></span>
+          </div>
+        </div>
+
+        <div class="pt-5 border-t border-ink-100">
+          <div class="text-[11px] text-ink-400 leading-relaxed">
+            <div class="flex items-center gap-1.5 mb-1">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              <span class="font-medium text-ink-700">30-day money-back</span>
+            </div>
+            Try Core. If it doesn't fit, we'll refund you.
+          </div>
+        </div>
+      </div>
+
+      <!-- Pro · Most Popular · Built for serious dojangs -->
+      <div class="tier-card pro-card-glow bg-white border-2 border-pro-500 rounded-3xl p-8 flex flex-col relative">
+        <div class="absolute -top-3 left-1/2 -translate-x-1/2">
+          <div class="pro-gradient text-white text-[11px] font-semibold tracking-wider uppercase px-3 py-1.5 rounded-full">
+            Most Popular
+          </div>
+        </div>
+
+        <div class="mb-6">
+          <div class="text-[11px] font-semibold text-pro-700 uppercase tracking-widest mb-2">Pro</div>
+          <h3 class="text-[28px] font-semibold mb-2 tracking-tight">Manage your dojang</h3>
+          <p class="text-[13px] text-ink-500 leading-relaxed">Built for serious dojangs. Connect with parents, automate payments, run everything in one platform.</p>
+        </div>
+
+        <div class="mb-6">
+          <div class="flex items-baseline gap-1.5">
+            <span class="text-ink-400 text-[18px]">$</span>
+            <span class="num text-[48px] font-semibold tracking-tight leading-none">249</span>
+            <span class="text-ink-500 text-[14px] mb-1">/ month</span>
+          </div>
+          <div class="text-[11px] text-ink-400 mt-1">per dojang · billed monthly</div>
+        </div>
+
+        <a href="step_onboarding_v1.html" class="block w-full pro-gradient hover:opacity-90 text-white text-[14px] font-medium py-3 rounded-xl transition mb-8 text-center">
+          Start with Pro
+        </a>
+
+        <div class="space-y-3 mb-6 flex-1">
+          <div class="text-[11px] font-semibold text-pro-700 uppercase tracking-wider">Everything in Core, plus</div>
+
+          <div class="flex items-start gap-2.5">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-pro-500 flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="text-[13px] text-ink-700"><span class="font-medium">Play STEP App connection</span><br><span class="text-ink-500 text-[11px]">Parent &amp; student mobile experience</span></span>
+          </div>
+
+          <div class="flex items-start gap-2.5">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-pro-500 flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="text-[13px] text-ink-700"><span class="font-medium">Tuition management</span><br><span class="text-ink-500 text-[11px]">Auto-billing via Stripe Connect</span></span>
+          </div>
+
+          <div class="flex items-start gap-2.5">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-pro-500 flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="text-[13px] text-ink-700">Attendance &amp; promotions</span>
+          </div>
+
+          <div class="flex items-start gap-2.5">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-pro-500 flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="text-[13px] text-ink-700"><span class="font-medium">Xiro AI Chatbot</span><br><span class="text-ink-500 text-[11px]">Active suggestions &amp; templates</span></span>
+          </div>
+
+          <div class="flex items-start gap-2.5">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-pro-500 flex-shrink-0 mt-0.5"><polyline points="20 6 9 17 4 12"/></svg>
+            <span class="text-[13px] text-ink-700">Advanced templates<span class="text-ink-500 text-[11px]"> (Tasks, Notes, Messages)</span></span>
+          </div>
+        </div>
+
+        <div class="pt-5 border-t border-pro-100 bg-pro-50/40 -mx-8 -mb-8 px-8 pb-8 pt-5 rounded-b-3xl">
+          <div class="text-[11px] text-pro-700 leading-relaxed flex items-center gap-1.5">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4-6.2-4.5-6.2 4.5 2.4-7.4L2 9.4h7.6L12 2z"/></svg>
+            <span class="font-medium">Where most dojangs thrive</span>
+          </div>
+          <div class="text-[10px] text-ink-500 mt-1">3+ staff · 50+ students · Ready to digitize parent experience</div>
+        </div>
+      </div>
+
+      <!-- Future card -->
+      <div class="future-card tier-card rounded-3xl p-8 flex flex-col items-center justify-center text-center min-h-[600px]">
+        <div class="w-16 h-16 rounded-full pro-gradient flex items-center justify-center mb-6">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2">
+            <circle cx="12" cy="12" r="3.5" fill="white"/>
+            <path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3"/>
+          </svg>
+        </div>
+
+        <div class="text-[10px] font-semibold text-pro-700 uppercase tracking-widest mb-3">Coming when you're ready</div>
+
+        <h3 class="text-[26px] font-semibold mb-3 tracking-tight" style="letter-spacing: -0.02em;">
+          The next chapter<br>of your dojang.
+        </h3>
+
+        <p class="text-[13px] text-ink-500 leading-relaxed mb-6 max-w-[260px]">
+          Once Pro becomes second nature, deeper AI capabilities and growth tools open up — built for masters who are ready to scale.
+        </p>
+
+        <div class="space-y-2.5 mb-8 text-left w-full max-w-[260px]">
+          <div class="flex items-center gap-2 text-[12px] text-ink-500">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pro-500"><circle cx="12" cy="12" r="3"/></svg>
+            <span>AI automation (semi-auto)</span>
+          </div>
+          <div class="flex items-center gap-2 text-[12px] text-ink-500">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pro-500"><circle cx="12" cy="12" r="3"/></svg>
+            <span>Marketing &amp; website tools</span>
+          </div>
+          <div class="flex items-center gap-2 text-[12px] text-ink-500">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pro-500"><circle cx="12" cy="12" r="3"/></svg>
+            <span>Lead capture &amp; conversion</span>
+          </div>
+          <div class="flex items-center gap-2 text-[12px] text-ink-500">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-pro-500"><circle cx="12" cy="12" r="3"/></svg>
+            <span>And more...</span>
+          </div>
+        </div>
+
+        <button class="text-pro-700 hover:text-pro-900 text-[12px] font-medium underline underline-offset-2 transition">
+          Start with Pro to unlock this path
+        </button>
+      </div>
+
+    </div>
+
+    <div class="mt-8 text-center">
+      <p class="text-[13px] text-ink-500">
+        Got a referral code from another dojang?
+        <a class="text-pro-700 font-medium hover:underline cursor-pointer">Get 2 months of Core free →</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARISON TABLE — Core vs Pro only -->
+<section class="py-20 bg-ink-50/50 border-y border-ink-100">
+  <div class="max-w-[960px] mx-auto px-8">
+    <div class="text-center mb-12">
+      <span class="text-[11px] font-semibold text-pro-700 uppercase tracking-widest mb-3 block">Compare Core vs Pro</span>
+      <h2 class="text-[32px] font-semibold tracking-tight" style="letter-spacing: -0.025em;">Find your fit.</h2>
+    </div>
+
+    <div class="bg-white border border-ink-200 rounded-3xl overflow-hidden">
+      <table class="w-full" style="table-layout: fixed;">
+        <thead class="bg-ink-50/80 border-b border-ink-200">
+          <tr>
+            <th class="text-left text-[12px] font-medium text-ink-500 px-6 py-4 w-[50%]">Features</th>
+            <th class="text-center text-[13px] font-semibold text-ink-900 px-4 py-4 w-[25%]">
+              <div>Core</div>
+              <div class="num text-[11px] font-normal text-ink-500 mt-0.5">$50/mo</div>
+            </th>
+            <th class="text-center text-[13px] font-semibold pro-text-gradient px-4 py-4 w-[25%] bg-pro-50/60">
+              <div>Pro</div>
+              <div class="num text-[11px] font-normal text-ink-500 mt-0.5">$249/mo</div>
+            </th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-ink-100">
+
+          <tr class="bg-ink-50/50">
+            <td colspan="3" class="px-6 py-2 text-[10px] font-semibold text-ink-500 uppercase tracking-widest">Operations OS</td>
+          </tr>
+          <tr class="compare-row">
+            <td class="px-6 py-3.5 text-[13px] text-ink-700">Dashboard (Ops)</td>
+            <td class="text-center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-ok inline"><polyline points="20 6 9 17 4 12"/></svg></td>
+            <td class="text-center bg-pro-50/40"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-pro-700 inline"><polyline points="20 6 9 17 4 12"/></svg></td>
+          </tr>
+          <tr class="compare-row">
+            <td class="px-6 py-3.5 text-[13px] text-ink-700">Tasks (Kanban + Recurring SOP)</td>
+            <td class="text-center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-ok inline"><polyline points="20 6 9 17 4 12"/></svg></td>
+            <td class="text-center bg-pro-50/40"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-pro-700 inline"><polyline points="20 6 9 17 4 12"/></svg></td>
+          </tr>
+          <tr class="compare-row">
+            <td class="px-6 py-3.5 text-[13px] text-ink-700">Calendar &amp; Schedule Builder</td>
+            <td class="text-center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-ok inline"><polyline points="20 6 9 17 4 12"/></svg></td>
+            <td class="text-center bg-pro-50/40"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-pro-700 inline"><polyline points="20 6 9 17 4 12"/></svg></td>
+          </tr>
+          <tr class="compare-row">
+            <td class="px-6 py-3.5 text-[13px] text-ink-700">Notes &amp; Templates</td>
+            <td class="text-center text-[12px] text-ink-500">Basic</td>
+            <td class="text-center bg-pro-50/40 text-[12px] font-medium text-pro-700">Advanced</td>
+          </tr>
+          <tr class="compare-row">
+            <td class="px-6 py-3.5 text-[13px] text-ink-700">Inbox &amp; Communications</td>
+            <td class="text-center text-[12px] text-ink-500">Basic</td>
+            <td class="text-center bg-pro-50/40 text-[12px] font-medium text-pro-700">Advanced</td>
+          </tr>
+
+          <tr class="bg-ink-50/50">
+            <td colspan="3" class="px-6 py-2 text-[10px] font-semibold text-ink-500 uppercase tracking-widest">Member Management</td>
+          </tr>
+          <tr class="compare-row">
+            <td class="px-6 py-3.5 text-[13px] text-ink-700">Student roster &amp; profiles</td>
+            <td class="text-center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-ok inline"><polyline points="20 6 9 17 4 12"/></svg></td>
+            <td class="text-center bg-pro-50/40"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-pro-700 inline"><polyline points="20 6 9 17 4 12"/></svg></td>
+          </tr>
+          <tr class="compare-row">
+            <td class="px-6 py-3.5 text-[13px] text-ink-700">Attendance management</td>
+            <td class="text-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-ink-300 inline"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></td>
+            <td class="text-center bg-pro-50/40"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-pro-700 inline"><polyline points="20 6 9 17 4 12"/></svg></td>
+          </tr>
+          <tr class="compare-row">
+            <td class="px-6 py-3.5 text-[13px] text-ink-700">Belt &amp; promotion management</td>
+            <td class="text-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-ink-300 inline"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></td>
+            <td class="text-center bg-pro-50/40"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-pro-700 inline"><polyline points="20 6 9 17 4 12"/></svg></td>
+          </tr>
+          <tr class="compare-row">
+            <td class="px-6 py-3.5 text-[13px] text-ink-700"><span class="font-medium">Tuition &amp; auto-billing</span></td>
+            <td class="text-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-ink-300 inline"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></td>
+            <td class="text-center bg-pro-50/40"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-pro-700 inline"><polyline points="20 6 9 17 4 12"/></svg></td>
+          </tr>
+          <tr class="compare-row">
+            <td class="px-6 py-3.5 text-[13px] text-ink-700">Pricing programs</td>
+            <td class="text-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-ink-300 inline"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></td>
+            <td class="text-center bg-pro-50/40"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-pro-700 inline"><polyline points="20 6 9 17 4 12"/></svg></td>
+          </tr>
+
+          <tr class="bg-ink-50/50">
+            <td colspan="3" class="px-6 py-2 text-[10px] font-semibold text-ink-500 uppercase tracking-widest">Parent &amp; Student Experience</td>
+          </tr>
+          <tr class="compare-row">
+            <td class="px-6 py-3.5 text-[13px] text-ink-700"><span class="font-medium">Play STEP App connection</span></td>
+            <td class="text-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-ink-300 inline"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></td>
+            <td class="text-center bg-pro-50/40"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-pro-700 inline"><polyline points="20 6 9 17 4 12"/></svg></td>
+          </tr>
+          <tr class="compare-row">
+            <td class="px-6 py-3.5 text-[13px] text-ink-700">Self check-in for students</td>
+            <td class="text-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-ink-300 inline"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></td>
+            <td class="text-center bg-pro-50/40"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-pro-700 inline"><polyline points="20 6 9 17 4 12"/></svg></td>
+          </tr>
+          <tr class="compare-row">
+            <td class="px-6 py-3.5 text-[13px] text-ink-700">Parent payment portal</td>
+            <td class="text-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-ink-300 inline"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></td>
+            <td class="text-center bg-pro-50/40"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-pro-700 inline"><polyline points="20 6 9 17 4 12"/></svg></td>
+          </tr>
+
+          <tr class="bg-ink-50/50">
+            <td colspan="3" class="px-6 py-2 text-[10px] font-semibold text-ink-500 uppercase tracking-widest">Xiro AI Capabilities</td>
+          </tr>
+          <tr class="compare-row">
+            <td class="px-6 py-3.5 text-[13px] text-ink-700">AI Suggestions</td>
+            <td class="text-center text-[12px] text-ink-500">Basic</td>
+            <td class="text-center bg-pro-50/40 text-[12px] font-medium text-pro-700">Advanced</td>
+          </tr>
+          <tr class="compare-row">
+            <td class="px-6 py-3.5 text-[13px] text-ink-700"><span class="font-medium">AI Chatbot (Xiro)</span></td>
+            <td class="text-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-ink-300 inline"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></td>
+            <td class="text-center bg-pro-50/40"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-pro-700 inline"><polyline points="20 6 9 17 4 12"/></svg></td>
+          </tr>
+
+          <tr class="bg-ink-50/50">
+            <td colspan="3" class="px-6 py-2 text-[10px] font-semibold text-ink-500 uppercase tracking-widest">Support &amp; Onboarding</td>
+          </tr>
+          <tr class="compare-row">
+            <td class="px-6 py-3.5 text-[13px] text-ink-700">AI-powered onboarding</td>
+            <td class="text-center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-ok inline"><polyline points="20 6 9 17 4 12"/></svg></td>
+            <td class="text-center bg-pro-50/40"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-pro-700 inline"><polyline points="20 6 9 17 4 12"/></svg></td>
+          </tr>
+          <tr class="compare-row">
+            <td class="px-6 py-3.5 text-[13px] text-ink-700">Email support</td>
+            <td class="text-center"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-ok inline"><polyline points="20 6 9 17 4 12"/></svg></td>
+            <td class="text-center bg-pro-50/40"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-pro-700 inline"><polyline points="20 6 9 17 4 12"/></svg></td>
+          </tr>
+          <tr class="compare-row">
+            <td class="px-6 py-3.5 text-[13px] text-ink-700">Priority support</td>
+            <td class="text-center"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-ink-300 inline"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></td>
+            <td class="text-center bg-pro-50/40"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-pro-700 inline"><polyline points="20 6 9 17 4 12"/></svg></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- WHY STEP -->
+<section class="py-20">
+  <div class="max-w-[768px] mx-auto px-8">
+    <div class="bg-ink-900 text-white rounded-3xl p-10">
+      <div class="text-[11px] font-semibold text-pro-300 uppercase tracking-widest mb-3">Why STEP</div>
+      <h3 class="text-[28px] font-semibold tracking-tight mb-8 leading-tight">Built for taekwondo,<br>powered by AI.</h3>
+
+      <div class="grid grid-cols-2 gap-x-8 gap-y-5">
+        <div class="flex items-start gap-3">
+          <div class="w-9 h-9 rounded-lg bg-pro-500/20 flex items-center justify-center flex-shrink-0">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-pro-300"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div>
+            <div class="text-[14px] font-medium text-white mb-0.5">Built for the dojang</div>
+            <div class="text-[12px] text-ink-300 leading-relaxed">Belt system, promotions, sparring teams — built into the data model.</div>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3">
+          <div class="w-9 h-9 rounded-lg bg-pro-500/20 flex items-center justify-center flex-shrink-0">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-pro-300"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div>
+            <div class="text-[14px] font-medium text-white mb-0.5">Always-on Xiro AI</div>
+            <div class="text-[12px] text-ink-300 leading-relaxed">Watching your dojang 24/7, surfacing what needs attention.</div>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3">
+          <div class="w-9 h-9 rounded-lg bg-pro-500/20 flex items-center justify-center flex-shrink-0">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-pro-300"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div>
+            <div class="text-[14px] font-medium text-white mb-0.5">5-minute setup</div>
+            <div class="text-[12px] text-ink-300 leading-relaxed">AI-powered onboarding — no consultants, no manual setup.</div>
+          </div>
+        </div>
+
+        <div class="flex items-start gap-3">
+          <div class="w-9 h-9 rounded-lg bg-pro-500/20 flex items-center justify-center flex-shrink-0">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-pro-300"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div>
+            <div class="text-[14px] font-medium text-white mb-0.5">Trusted by masters</div>
+            <div class="text-[12px] text-ink-300 leading-relaxed">Used by master instructors across the U.S. and Korea.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="py-20 bg-ink-50/50 border-y border-ink-100">
+  <div class="max-w-[768px] mx-auto px-8">
+    <div class="text-center mb-12">
+      <span class="text-[11px] font-semibold text-pro-700 uppercase tracking-widest mb-3 block">FAQ</span>
+      <h2 class="text-[32px] font-semibold tracking-tight" style="letter-spacing: -0.025em;">Common questions.</h2>
+    </div>
+
+    <div class="space-y-2">
+      <details class="faq-item bg-white border border-ink-200 rounded-2xl overflow-hidden" open>
+        <summary class="flex items-center justify-between px-6 py-5">
+          <span class="text-[15px] font-medium text-ink-900">Is there a free trial?</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-ink-400 chev"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="px-6 pb-5 pt-0 text-[13px] text-ink-500 leading-relaxed border-t border-ink-100">
+          We don't offer a traditional time-limited trial. Instead, we give you <span class="text-ink-900 font-medium">2 months of Core for free</span> when you sign up with a referral code from another dojang. Plus, every plan comes with a <span class="text-ink-900 font-medium">30-day money-back guarantee</span>.
+        </div>
+      </details>
+
+      <details class="faq-item bg-white border border-ink-200 rounded-2xl overflow-hidden">
+        <summary class="flex items-center justify-between px-6 py-5">
+          <span class="text-[15px] font-medium text-ink-900">How does the referral program work?</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-ink-400 chev"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="px-6 pb-5 pt-0 text-[13px] text-ink-500 leading-relaxed border-t border-ink-100">
+          When a STEP Partner refers your dojang, both of you get 2 months of Core for free. As you refer more dojangs, you climb the STEP Partner ranks — earning STEP Coin Credits, business trip rewards, and VIP experiences.
+        </div>
+      </details>
+
+      <details class="faq-item bg-white border border-ink-200 rounded-2xl overflow-hidden">
+        <summary class="flex items-center justify-between px-6 py-5">
+          <span class="text-[15px] font-medium text-ink-900">Should I start with Core or Pro?</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-ink-400 chev"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="px-6 pb-5 pt-0 text-[13px] text-ink-500 leading-relaxed border-t border-ink-100">
+          Most established dojangs start with <span class="text-ink-900 font-medium">Pro</span> — it includes parent-facing tools, tuition automation, and the full Xiro AI experience. <span class="text-ink-900 font-medium">Core</span> is ideal if you're just digitizing operations and don't yet need parent connection or auto-billing.
+        </div>
+      </details>
+
+      <details class="faq-item bg-white border border-ink-200 rounded-2xl overflow-hidden">
+        <summary class="flex items-center justify-between px-6 py-5">
+          <span class="text-[15px] font-medium text-ink-900">What's beyond Pro? When can I access more?</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-ink-400 chev"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="px-6 pb-5 pt-0 text-[13px] text-ink-500 leading-relaxed border-t border-ink-100">
+          Once your dojang is running smoothly on Pro, deeper capabilities unlock — including AI automation, marketing tools, and a website builder. We invite Pro masters to the next stage when their operation is ready, typically after a few months of consistent use. No need to choose now.
+        </div>
+      </details>
+
+      <details class="faq-item bg-white border border-ink-200 rounded-2xl overflow-hidden">
+        <summary class="flex items-center justify-between px-6 py-5">
+          <span class="text-[15px] font-medium text-ink-900">Can I switch plans anytime?</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-ink-400 chev"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="px-6 pb-5 pt-0 text-[13px] text-ink-500 leading-relaxed border-t border-ink-100">
+          Yes. You can upgrade, downgrade, or cancel at any time. When upgrading, the new features become available immediately and we prorate the difference. When downgrading, the change takes effect at the next billing cycle.
+        </div>
+      </details>
+
+      <details class="faq-item bg-white border border-ink-200 rounded-2xl overflow-hidden">
+        <summary class="flex items-center justify-between px-6 py-5">
+          <span class="text-[15px] font-medium text-ink-900">How do payments work for my students?</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-ink-400 chev"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="px-6 pb-5 pt-0 text-[13px] text-ink-500 leading-relaxed border-t border-ink-100">
+          The Pro plan includes <span class="text-ink-900 font-medium">Stripe Connect integration</span>. Parents pay directly through the Play STEP app — you never handle their card details. Standard Stripe processing fees apply (2.9% + 30¢) plus a small STEP platform fee.
+        </div>
+      </details>
+
+      <details class="faq-item bg-white border border-ink-200 rounded-2xl overflow-hidden">
+        <summary class="flex items-center justify-between px-6 py-5">
+          <span class="text-[15px] font-medium text-ink-900">What if I have multiple dojang locations?</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-ink-400 chev"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="px-6 pb-5 pt-0 text-[13px] text-ink-500 leading-relaxed border-t border-ink-100">
+          Each location is billed separately. You can manage multiple dojangs from a single account, switching between them in the header. Volume discounts available for 5+ locations — <a class="text-pro-700 underline">contact us</a>.
+        </div>
+      </details>
+
+      <details class="faq-item bg-white border border-ink-200 rounded-2xl overflow-hidden">
+        <summary class="flex items-center justify-between px-6 py-5">
+          <span class="text-[15px] font-medium text-ink-900">Is my data safe? Can I export it?</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-ink-400 chev"><path d="M6 9l6 6 6-6"/></svg>
+        </summary>
+        <div class="px-6 pb-5 pt-0 text-[13px] text-ink-500 leading-relaxed border-t border-ink-100">
+          Your data is yours. You can export your full member roster, attendance records, and financial data at any time. We're SOC 2 compliant and GDPR/CCPA ready. We never sell your data — ever.
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="py-24">
+  <div class="max-w-[768px] mx-auto px-8 text-center">
+    <h2 class="text-[40px] font-semibold tracking-tight mb-5 leading-tight" style="letter-spacing: -0.025em;">
+      Ready to <span class="pro-text-gradient">level up</span> your dojang?
+    </h2>
+    <p class="text-[16px] text-ink-500 leading-relaxed mb-10 max-w-[520px] mx-auto">
+      Most master instructors start with Pro. AI onboarding takes 5 minutes — see your dojang come alive.
+    </p>
+
+    <div class="flex items-center justify-center gap-3">
+      <a href="step_onboarding_v1.html" class="pro-gradient hover:opacity-90 text-white text-[14px] font-medium px-6 py-3 rounded-xl transition flex items-center gap-2 inline-flex">
+        Start with Pro
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>
+      </a>
+      <button class="bg-white border border-ink-200 hover:border-ink-300 text-ink-900 text-[14px] font-medium px-6 py-3 rounded-xl transition">
+        Talk to a Master
+      </button>
+    </div>
+
+    <p class="text-[12px] text-ink-400 mt-6">30-day money-back guarantee · Cancel anytime · No setup fees</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="border-t border-ink-100 bg-white py-12">
+  <div class="max-w-[1280px] mx-auto px-8">
+    <div class="flex items-start justify-between flex-wrap gap-8">
+      <div class="max-w-[320px]">
+        <div class="flex items-center gap-2 mb-3">
+          <div class="w-7 h-7 rounded-lg pro-gradient flex items-center justify-center">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          </div>
+          <span class="font-semibold text-[14px]">STEP Manager</span>
+        </div>
+        <p class="text-[12px] text-ink-500 leading-relaxed">The operating system for taekwondo dojangs. Built by masters, powered by AI.</p>
+      </div>
+
+      <div class="grid grid-cols-3 gap-12 text-[12px]">
+        <div>
+          <div class="font-semibold text-ink-700 mb-3">Product</div>
+          <div class="space-y-2 text-ink-500">
+            <div><a class="hover:text-ink-900 transition">Core</a></div>
+            <div><a class="hover:text-ink-900 transition">Pro</a></div>
+            <div><a class="hover:text-ink-900 transition">Play STEP</a></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="font-semibold text-ink-700 mb-3">Company</div>
+          <div class="space-y-2 text-ink-500">
+            <div><a class="hover:text-ink-900 transition">About</a></div>
+            <div><a class="hover:text-ink-900 transition">Partners</a></div>
+            <div><a class="hover:text-ink-900 transition">Contact</a></div>
+            <div><a class="hover:text-ink-900 transition">Careers</a></div>
+          </div>
+        </div>
+
+        <div>
+          <div class="font-semibold text-ink-700 mb-3">Legal</div>
+          <div class="space-y-2 text-ink-500">
+            <div><a class="hover:text-ink-900 transition">Privacy</a></div>
+            <div><a class="hover:text-ink-900 transition">Terms</a></div>
+            <div><a class="hover:text-ink-900 transition">Security</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="border-t border-ink-100 mt-10 pt-6 flex items-center justify-between text-[11px] text-ink-400">
+      <span class="num">© 2026 STEP NEXT Inc. All rights reserved.</span>
+      <div class="flex items-center gap-4">
+        <span>Made for taekwondo masters</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- Back to index (mockup demo only) -->
+<a href="step_index.html" style="position: fixed; bottom: 24px; left: 24px; background: white; border: 1px solid #E5E5EA; color: #6B6B78; padding: 10px 16px; border-radius: 9999px; font-size: 12px; font-weight: 500; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 16px -4px rgba(0,0,0,0.08); z-index: 100; text-decoration: none; font-family: 'Pretendard', sans-serif;">
+  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+  인덱스로
+</a>
+
+</body>
+</html>
