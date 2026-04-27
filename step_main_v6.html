@@ -3971,7 +3971,7 @@
           <div class="milestone-features">
             <div class="milestone-feature">
               <div class="mf-icon mf-icon-bell"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg></div>
-              <div class="mf-text">자동 출석 알림</div>
+              <div class="mf-text">출석 알림 준비</div>
             </div>
             <div class="milestone-feature">
               <div class="mf-icon mf-icon-chat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
@@ -3983,7 +3983,7 @@
             </div>
             <div class="milestone-feature">
               <div class="mf-icon mf-icon-belt"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 2H6v7a6 6 0 0012 0V2z"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/></svg></div>
-              <div class="mf-text">승급 자동 추천</div>
+              <div class="mf-text">승급 후보 추천</div>
             </div>
           </div>
 
@@ -4018,7 +4018,7 @@
             <div class="milestone-stat">
               <div class="ms-icon mf-icon-money"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
               <div class="ms-body">
-                <div class="ms-label">자동 회수 처리</div>
+                <div class="ms-label">결제 안내 준비</div>
                 <div class="ms-value">$280<span class="ms-meta">3건</span></div>
               </div>
             </div>
@@ -4032,7 +4032,7 @@
             <div class="milestone-stat">
               <div class="ms-icon mf-icon-bell"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg></div>
               <div class="ms-body">
-                <div class="ms-label">학부모 자동 응답</div>
+                <div class="ms-label">학부모 답장 도우미</div>
                 <div class="ms-value">8<span class="ms-meta">건</span></div>
               </div>
             </div>
@@ -4078,8 +4078,8 @@
             <div class="mw-title">내일부터 비활성화되는 기능</div>
             <div class="mw-list">
               <div class="mw-item"><span class="mw-dot"></span>Xiro 대화 무제한 → 잠금</div>
-              <div class="mw-item"><span class="mw-dot"></span>자동 회수 처리 → 수동 안내로 전환</div>
-              <div class="mw-item"><span class="mw-dot"></span>학부모 자동 응답 → 직접 답변 필요</div>
+              <div class="mw-item"><span class="mw-dot"></span>결제 회수 안내 자동 준비 → 직접 안내 필요</div>
+              <div class="mw-item"><span class="mw-dot"></span>학부모 답장 도우미 → 직접 답변 필요</div>
             </div>
           </div>
 
@@ -4101,7 +4101,7 @@
             <div class="milestone-celebrate">📊</div>
             <div class="milestone-title-wrap">
               <div class="milestone-title">지난 주 Pro 체험 회상</div>
-              <div class="milestone-subtitle">체험 중에 자동으로 처리되던 항목들이 이번 주는 다시 직접 처리해야 해요.</div>
+              <div class="milestone-subtitle">체험 중에 Xiro가 챙겨주던 항목들이 이번 주는 다시 직접 처리해야 해요.</div>
             </div>
           </div>
 
@@ -4110,7 +4110,7 @@
               <div class="mr-icon mr-icon-money"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
               <div class="mr-body">
                 <div class="mr-title">미납 회수</div>
-                <div class="mr-meta">체험 중 자동 처리 $580 · 이번 주 수동 안내 필요</div>
+                <div class="mr-meta">체험 중 Xiro 도움 $580 · 이번 주 수동 안내 필요</div>
               </div>
             </div>
             <div class="mr-row">
@@ -4133,7 +4133,7 @@
 
       <!-- KPI Grid -->
       <div class="kpi-grid">
-        <div class="kpi-card">
+        <div class="kpi-card kpi-card-attendance" onclick="navigateToKpiDetail('attendance', event)" role="link" tabindex="0">
           <div class="kpi-header">
             <div class="kpi-icon blue">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
@@ -4160,13 +4160,13 @@
             <span class="kpi-empty-tag">설정 필요</span>
             <div class="kpi-empty-body">
               <div class="kpi-empty-value">—%</div>
-              <p class="kpi-empty-msg">학생을 등록하면 출석률이<br>자동으로 계산돼요.</p>
+              <p class="kpi-empty-msg">학생을 등록하면 출석률이<br>한눈에 보여요.</p>
             </div>
             <a href="step_setup_step5.html" class="kpi-empty-cta">학생 등록하기 →</a>
           </div>
         </div>
 
-        <div class="kpi-card kpi-card-promotion">
+        <div class="kpi-card kpi-card-promotion" onclick="navigateToKpiDetail('promotion', event)" role="link" tabindex="0">
           <div class="kpi-header">
             <div class="kpi-icon amber">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.5 13l1.5 8-5-3-5 3 1.5-8"/></svg>
@@ -4192,7 +4192,7 @@
             <span class="kpi-empty-tag">설정 필요</span>
             <div class="kpi-empty-body">
               <div class="kpi-empty-value">— 명</div>
-              <p class="kpi-empty-msg">학생과 띠 체계가 등록되면<br>승급 대상자를 자동 추천해요.</p>
+              <p class="kpi-empty-msg">학생과 띠 체계가 등록되면<br>승급 대상자를 분석해서 추천해드려요.</p>
             </div>
             <a href="step_setup_step5.html" class="kpi-empty-cta">학생 등록하기 →</a>
           </div>
@@ -4217,7 +4217,7 @@
           </div>
         </div>
 
-        <div class="kpi-card kpi-card-revenue">
+        <div class="kpi-card kpi-card-revenue" onclick="navigateToKpiDetail('revenue', event)" role="link" tabindex="0">
           <div class="kpi-header">
             <div class="kpi-icon green">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
@@ -4244,7 +4244,7 @@
             <span class="kpi-empty-tag">설정 필요</span>
             <div class="kpi-empty-body">
               <div class="kpi-empty-value">$ —</div>
-              <p class="kpi-empty-msg">수강료 플랜이 설정되면<br>매출이 자동으로 집계돼요.</p>
+              <p class="kpi-empty-msg">수강료 플랜이 설정되면<br>매출이 자동으로 정리돼요.</p>
             </div>
             <a href="step_setup_step4.html" class="kpi-empty-cta">수강료 설정하기 →</a>
           </div>
@@ -4271,7 +4271,7 @@
         </div>
 
         <!-- Core 전용 KPI: 신규 등록 추세 -->
-        <div class="kpi-card kpi-card-core kpi-card-new-signup">
+        <div class="kpi-card kpi-card-core kpi-card-new-signup" onclick="navigateToCoreKpi('signup', event)" role="link" tabindex="0">
           <div class="kpi-header">
             <div class="kpi-icon green">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>
@@ -4297,14 +4297,14 @@
             <span class="kpi-empty-tag">설정 필요</span>
             <div class="kpi-empty-body">
               <div class="kpi-empty-value">— 명</div>
-              <p class="kpi-empty-msg">학생 등록을 시작하면<br>월별 추세가 자동으로 보여요.</p>
+              <p class="kpi-empty-msg">학생 등록을 시작하면<br>월별 추세가 한눈에 보여요.</p>
             </div>
             <a href="step_setup_step5.html" class="kpi-empty-cta">학생 등록하기 →</a>
           </div>
         </div>
 
         <!-- Core 전용 KPI: 업무 완료율 -->
-        <div class="kpi-card kpi-card-core kpi-card-task-completion">
+        <div class="kpi-card kpi-card-core kpi-card-task-completion" onclick="navigateToCoreKpi('tasks', event)" role="link" tabindex="0">
           <div class="kpi-header">
             <div class="kpi-icon purple">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
@@ -4677,7 +4677,7 @@
           <span class="quick-label">업무 생성</span>
         </button>
         <!-- 4. 학부모 메시지 -->
-        <button class="quick-btn quick-btn-pro-lock" data-needs-setup title="자동 발송은 Pro 기능입니다" onclick="if(document.body.dataset.plan==='core'){document.getElementById('plan-badge').click();return false;}">
+        <button class="quick-btn quick-btn-pro-lock" data-needs-setup title="메시지 초안 자동 준비는 Pro 기능입니다" onclick="if(document.body.dataset.plan==='core'){document.getElementById('plan-badge').click();return false;}">
           <span class="quick-icon pink"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></span>
           <span class="quick-label">학부모 메시지</span>
           <span class="quick-pro-badge">PRO</span>
@@ -4917,6 +4917,57 @@
 </a>
 
 <script>
+  // ============================================
+  // KPI 카드 → 상세 페이지 이동
+  // ============================================
+  // Pro 카드 (출석/승급/매출) → step_kpi_detail.html?tab=xxx
+  function navigateToKpiDetail(tab, event) {
+    // 자식 링크 클릭은 무시 (kpi-empty-cta, kpi-pro-lock-cta 등)
+    if (event && event.target.closest('a, button')) return;
+
+    // Empty 상태에서는 overlay의 CTA로만 이동 (카드 본체 클릭 무효)
+    if (document.body.dataset.state === 'empty') return;
+
+    // Core plan에서 promotion/revenue 클릭 시 → plan-badge 클릭 (Pro 업셀 안내)
+    const isCoreLocked = document.body.dataset.plan === 'core' && (tab === 'promotion' || tab === 'revenue');
+    if (isCoreLocked) {
+      // Upsell mode가 켜져있으면 tab 이동 + ?plan=core 전달 (락 표시 보기용)
+      if (document.body.dataset.upsell === 'on') {
+        window.location.href = `step_kpi_detail.html?tab=${tab}&plan=core`;
+        return;
+      }
+      // 그 외엔 plan 토글로 안내
+      const planBadge = document.getElementById('plan-badge');
+      if (planBadge) planBadge.click();
+      return;
+    }
+
+    // 정상 이동
+    const plan = document.body.dataset.plan || 'pro';
+    window.location.href = `step_kpi_detail.html?tab=${tab}&plan=${plan}`;
+  }
+
+  // Core 전용 카드 (신규 등록, 업무 완료율) → 다른 페이지로
+  function navigateToCoreKpi(type, event) {
+    if (event && event.target.closest('a, button')) return;
+    if (document.body.dataset.state === 'empty') return;
+
+    if (type === 'signup') {
+      window.location.href = 'step_members.html';
+    } else if (type === 'tasks') {
+      window.location.href = 'step_weekly_report.html';
+    }
+  }
+
+  // 키보드 접근성 (role="link" + tabindex 카드를 Enter/Space로 활성화)
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const target = e.target;
+    if (!target.classList || !target.classList.contains('kpi-card')) return;
+    e.preventDefault();
+    target.click();
+  });
+
   // ============================================
   // DEMO: 도장 설정 상태 토글 (정상 / 미완)
   // ============================================
@@ -5476,14 +5527,14 @@
           target: '.kpi-grid',
           placement: 'bottom',
           title: '핵심 KPI 3종',
-          desc: '<strong>출석률 · 승급 예정자 · 매출</strong> — 도장 운영의 가장 중요한 3가지 지표를 자동으로 집계해드려요. 카드를 클릭하면 상세 분석 페이지로 이동합니다.'
+          desc: '<strong>출석률 · 승급 예정자 · 매출</strong> — 도장 운영의 가장 중요한 3가지 지표를 한눈에 보여드려요. 카드를 클릭하면 상세 분석 페이지로 이동합니다.'
         },
         {
           target: '.panel-ops',
           placement: 'right',
           title: 'Ops Center — 오늘의 작업',
-          desc: '출석 위험 학생, 미납 알림, 학부모 응답 대기 등 <strong>오늘 처리해야 할 업무</strong>가 자동으로 정리돼요. 긴급/정규/제안 우선순위로 분류됩니다.',
-          tip: 'SOP 자동 실행으로 반복 업무가 자동 처리돼요'
+          desc: '출석 위험 학생, 미납 알림, 학부모 응답 대기 등 <strong>오늘 처리해야 할 업무</strong>를 우선순위별로 정리해드려요. 긴급/정규/제안 우선순위로 분류됩니다.',
+          tip: '반복 업무는 Xiro가 준비, 관장님이 한 번에 승인해요'
         },
         {
           target: '.panel-live',
@@ -5510,7 +5561,7 @@
           target: '.members-hero-empty',
           placement: 'bottom',
           title: '아직 비어있는 상태',
-          desc: '회원이 등록되지 않은 상태입니다. 회원을 등록하면 <strong>출석률, 승급, 매출</strong>이 모두 자동으로 집계돼요.'
+          desc: '회원이 등록되지 않은 상태입니다. 회원을 등록하면 <strong>출석률, 승급, 매출</strong>이 한눈에 정리돼요.'
         },
         {
           target: '.members-options-grid',
@@ -5940,7 +5991,7 @@
           </span>
           <span class="notif-time">3일 전</span>
         </div>
-        <div class="notif-item-title">자동 결제 5건 처리 완료</div>
+        <div class="notif-item-title">정기 결제 5건 처리 완료</div>
         <div class="notif-item-detail">총 $850</div>
       </div>
     </a>
@@ -6302,7 +6353,7 @@
           <span class="whatsnew-item-tag new">NEW</span>
           <div class="whatsnew-item-title">Xiro 일일 브리핑 추가</div>
         </div>
-        <div class="whatsnew-item-desc">매일 아침 9시, 오늘의 핵심 운영 포인트를 Xiro가 분석해서 알려드려요. 출석 위험 학생, 미완료 업무, 승급 예정자를 자동 정리합니다.</div>
+        <div class="whatsnew-item-desc">매일 아침 9시, 오늘의 핵심 운영 포인트를 Xiro가 분석해서 알려드려요. 출석 위험 학생, 미완료 업무, 승급 예정자를 정리해드려요.</div>
       </div>
 
       <div class="whatsnew-item">
