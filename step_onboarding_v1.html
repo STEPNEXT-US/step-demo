@@ -3,101 +3,24 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Redirecting · STEP Manager</title>
 <meta http-equiv="refresh" content="0; url=step_onboarding_step1.html">
 <link rel="canonical" href="step_onboarding_step1.html">
-<title>STEP Manager · 새 온보딩으로 이동 중...</title>
+<script>window.location.replace('step_onboarding_step1.html');</script>
 <style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    background: #F9FAFB;
-    color: #0A0A0F;
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 24px;
-    letter-spacing: -0.011em;
-  }
-  .redirect-card {
-    background: white;
-    border: 1px solid #E5E5EA;
-    border-radius: 18px;
-    padding: 40px 32px;
-    max-width: 440px;
-    width: 100%;
-    text-align: center;
-    box-shadow: 0 8px 32px -8px rgba(10, 10, 15, 0.08);
-  }
-  .logo-mark {
-    width: 44px;
-    height: 44px;
-    border-radius: 12px;
-    background: linear-gradient(135deg, #2563EB 0%, #3B82F6 100%);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px;
-    box-shadow: 0 8px 16px -4px rgba(37, 99, 235, 0.3);
-  }
-  .spinner {
-    width: 22px;
-    height: 22px;
-    border: 2px solid #E5E5EA;
-    border-top-color: #2563EB;
-    border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin: 0 auto 16px;
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-  h1 {
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: -0.022em;
-    color: #0A0A0F;
-    margin-bottom: 8px;
-  }
-  p {
-    font-size: 13px;
-    color: #6B6B78;
-    line-height: 1.6;
-    margin-bottom: 22px;
-  }
-  a {
-    color: #2563EB;
-    text-decoration: none;
-    font-size: 12.5px;
-    font-weight: 600;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-  }
-  a:hover { text-decoration: underline; }
+  body { font-family: system-ui, sans-serif; background: #FAFAFB; color: #2A2A35; padding: 80px 24px; text-align: center; }
+  .card { max-width: 480px; margin: 0 auto; background: white; padding: 40px 32px; border-radius: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); border: 1px solid #F1F1F4; }
+  h1 { font-size: 20px; font-weight: 700; margin: 0 0 12px; }
+  p { font-size: 14px; color: #6B6B78; line-height: 1.6; margin: 0 0 20px; }
+  a { display: inline-block; padding: 10px 18px; background: #2563EB; color: white; text-decoration: none; border-radius: 8px; font-size: 13px; font-weight: 600; }
+  a:hover { background: #1D4ED8; }
 </style>
 </head>
 <body>
-
-<div class="redirect-card">
-  <div class="logo-mark">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
-      <path d="M12 2L2 7l10 5 10-5-10-5z"/>
-      <path d="M2 17l10 5 10-5"/>
-      <path d="M2 12l10 5 10-5"/>
-    </svg>
-  </div>
-  <div class="spinner"></div>
-  <h1>새 온보딩 페이지로 이동 중</h1>
-  <p>온보딩 흐름이 8단계로 분리되었습니다.<br>잠시 후 첫 단계로 자동 이동합니다.</p>
+<div class="card">
+  <h1>온보딩 페이지로 이동 중…</h1>
+  <p>이 페이지는 이전 버전입니다. 새로운 8단계 온보딩으로 이동합니다.</p>
   <a href="step_onboarding_step1.html">바로 이동하기 →</a>
 </div>
-
-<script>
-  // 메타 리프레시 백업 — JS로 즉시 리다이렉트
-  setTimeout(function() {
-    window.location.replace('step_onboarding_step1.html');
-  }, 100);
-</script>
-
 </body>
 </html>

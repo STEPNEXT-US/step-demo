@@ -20,15 +20,11 @@
             900: '#0A0A0F', 800: '#1A1A22', 700: '#2A2A35', 500: '#6B6B78',
             400: '#9B9BA8', 300: '#C8C8D0', 200: '#E5E5EA', 100: '#F1F1F4', 50: '#F9FAFB',
           },
-          blue: {
-            900: '#1E3A8A', 700: '#1D4ED8', 600: '#2563EB', 500: '#3B82F6',
-            400: '#60A5FA', 300: '#93C5FD', 100: '#DBEAFE', 50: '#EFF6FF',
-          },
           pro: {
-            900: '#4C1D95', 700: '#6B21A8', 600: '#7C3AED', 500: '#8B5CF6',
-            400: '#A78BFA', 300: '#C4B5FD', 200: '#DDD6FE', 100: '#EDE9FE', 50: '#F5F3FF',
+            900: '#3D2785', 700: '#5A3FB8', 500: '#7C5CFF', 300: '#B5A0FF',
+            100: '#EDE7FF', 50: '#F7F4FF',
           },
-          ok: '#10B981', warn: '#F59E0B', danger: '#EF4444',
+          ok: '#0F9D58', warn: '#F0A800', danger: '#E5484D',
         },
       }
     }
@@ -44,21 +40,21 @@
   .num { font-family: 'JetBrains Mono', monospace; font-feature-settings: "tnum"; }
   .kr { font-family: 'Pretendard', system-ui, sans-serif; }
 
-  .pro-gradient { background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%); }
+  .pro-gradient { background: linear-gradient(135deg, #7C5CFF 0%, #5A3FB8 100%); }
   .pro-text-gradient {
-    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+    background: linear-gradient(135deg, #7C5CFF 0%, #5A3FB8 100%);
     -webkit-background-clip: text; background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
   .hero-bg {
     background:
-      radial-gradient(ellipse 1000px 400px at 50% 0%, rgba(37, 99, 235, 0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 1000px 400px at 50% 0%, rgba(124, 92, 255, 0.06) 0%, transparent 60%),
       #FFFFFF;
   }
 
   .pro-card-glow {
-    box-shadow: 0 20px 60px -20px rgba(139, 92, 246, 0.28), 0 8px 16px -8px rgba(139, 92, 246, 0.12);
+    box-shadow: 0 20px 60px -20px rgba(124, 92, 255, 0.25), 0 8px 16px -8px rgba(124, 92, 255, 0.1);
   }
 
   .tier-card {
@@ -71,15 +67,15 @@
   /* Future hint card — distinct treatment */
   .future-card {
     background:
-      radial-gradient(ellipse 400px 200px at 50% 50%, rgba(139, 92, 246, 0.08) 0%, transparent 70%),
+      radial-gradient(ellipse 400px 200px at 50% 50%, rgba(124, 92, 255, 0.08) 0%, transparent 70%),
       #FAFAFE;
-    border: 1px dashed #C4B5FD;
+    border: 1px dashed #B5A0FF;
     transition: all 0.25s ease;
   }
   .future-card:hover {
-    border-color: #8B5CF6;
+    border-color: #7C5CFF;
     background:
-      radial-gradient(ellipse 400px 200px at 50% 50%, rgba(139, 92, 246, 0.12) 0%, transparent 70%),
+      radial-gradient(ellipse 400px 200px at 50% 50%, rgba(124, 92, 255, 0.12) 0%, transparent 70%),
       #FAFAFE;
   }
 
@@ -129,11 +125,10 @@
       </div>
 
       <nav class="flex items-center gap-6 text-[13px] text-ink-700">
-        <a href="step_home.html" class="hover:text-ink-900 transition">Home</a>
-        <a href="step_product.html" class="hover:text-ink-900 transition">Product</a>
-        <a href="step_pricing_page_v2.html" class="hover:text-ink-900 transition font-medium text-ink-900">Pricing</a>
-        <a href="step_resources.html" class="hover:text-ink-900 transition">Resources</a>
-        <a href="step_contact.html" class="hover:text-ink-900 transition">Contact</a>
+        <a class="hover:text-ink-900 transition">Product</a>
+        <a class="hover:text-ink-900 transition font-medium text-ink-900">Pricing</a>
+        <a class="hover:text-ink-900 transition">Resources</a>
+        <a class="hover:text-ink-900 transition">Partner</a>
       </nav>
     </div>
 
