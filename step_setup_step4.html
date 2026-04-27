@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>STEP 4 · 학생 등록 | STEP Manager</title>
+<title>STEP 4 · 가격정책 | STEP Manager</title>
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -12,7 +12,7 @@
   .num { font-family: 'JetBrains Mono', monospace; font-feature-settings: "tnum"; }
   a { text-decoration: none; color: inherit; }
   button { font-family: inherit; cursor: pointer; border: 0; }
-  input { font-family: inherit; }
+  input, select { font-family: inherit; }
 
   .top-progress { height: 3px; background: #F1F1F4; }
   .top-progress-fill { height: 100%; background: linear-gradient(90deg, #10B981 0%, #2563EB 100%); }
@@ -44,7 +44,7 @@
 
   .belt-progress { margin-top: 32px; padding-top: 24px; border-top: 1px solid #F1F1F4; }
   .belt-progress-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-  .belt-circle { width: 24px; height: 24px; border-radius: 9999px; flex-shrink: 0; background: #FB923C; border: 2px solid #FB923C; }
+  .belt-circle { width: 24px; height: 24px; border-radius: 9999px; flex-shrink: 0; background: #4ADE80; border: 2px solid #4ADE80; }
   .belt-bar { height: 6px; background: #F1F1F4; border-radius: 9999px; overflow: hidden; margin-bottom: 8px; }
   .belt-bar-fill { height: 100%; background: #2563EB; border-radius: 9999px; }
   .belt-progress-meta { display: flex; justify-content: space-between; font-size: 10px; }
@@ -59,71 +59,294 @@
   .ai-banner-content { flex: 1; }
   .ai-banner-text { font-size: 14px; color: #2A2A35; line-height: 1.6; margin: 0; }
   .ai-banner-text .strong { font-weight: 600; color: #0A0A0F; }
-  .ai-banner-link { display: inline-block; margin-top: 8px; font-size: 12px; color: #2563EB; font-weight: 500; text-decoration: underline; }
+  .ai-banner-link { display: inline-block; margin-top: 8px; font-size: 12px; color: #2563EB; font-weight: 500; text-decoration: underline; cursor: pointer; }
   .ai-banner-close { background: none; color: #9B9BA8; padding: 0; }
 
-  .section-content { padding: 48px 64px 80px; max-width: 1080px; }
+  .section-content { padding: 48px 64px 80px; max-width: 1100px; }
   .step-indicator { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
   .step-indicator .num-current { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 600; color: #2563EB; }
   .step-indicator .num-total { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #9B9BA8; }
   .section-title { font-size: 32px; font-weight: 700; letter-spacing: -0.025em; margin: 0 0 8px; line-height: 1.2; }
   .section-subtitle { font-size: 15px; color: #6B6B78; margin: 0 0 32px; line-height: 1.6; }
 
-  /* Search bar */
-  .search-row { display: flex; gap: 12px; margin-bottom: 24px; }
-  .search-input { flex: 1; position: relative; }
-  .search-input input { width: 100%; padding: 14px 16px 14px 44px; font-size: 15px; background: #F9FAFB; border: 1px solid transparent; border-radius: 12px; }
-  .search-input input:focus { outline: none; background: white; border-color: #2563EB; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08); }
-  .search-input svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #9B9BA8; }
-  .add-btn { background: #2563EB; color: white; padding: 14px 20px; font-size: 14px; font-weight: 600; border-radius: 12px; white-space: nowrap; }
-  .add-btn:hover { background: #1D4ED8; }
+  /* Plan Table */
+  .table-header-plan {
+    display: grid;
+    grid-template-columns: 40px 1fr 140px 1.4fr 32px;
+    gap: 12px;
+    padding: 0 14px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #9B9BA8;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .table-header-plan .req { color: #DC2626; font-weight: 700; }
 
-  /* Tabs */
-  .tabs { display: flex; align-items: center; gap: 4px; border-bottom: 1px solid #F1F1F4; padding: 0 8px; margin-bottom: 16px; }
-  .tab { padding: 14px 18px; font-size: 13px; color: #6B6B78; background: none; border-bottom: 2px solid transparent; margin-bottom: -1px; }
-  .tab.active { color: #2563EB; border-bottom-color: #2563EB; font-weight: 600; }
-  .tab .count { color: #9B9BA8; font-family: 'JetBrains Mono', monospace; margin-left: 4px; }
-  .tab.active .count { color: #2563EB; }
+  .add-row {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 12px;
+    border: 2px dashed #E5E5EA;
+    background: #F9FAFB;
+    border-radius: 12px;
+    font-size: 14px;
+    color: #2A2A35;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.15s;
+  }
+  .add-row:hover { border-color: #93C5FD; background: #EFF6FF; color: #1D4ED8; }
 
-  /* Student list */
-  .student-list { background: white; border: 1px solid #F1F1F4; border-radius: 14px; overflow: hidden; margin-bottom: 32px; }
-  .student-row { display: grid; grid-template-columns: 40px 1fr auto; gap: 16px; align-items: center; padding: 14px 18px; border-bottom: 1px solid #F1F1F4; }
-  .student-row:last-child { border-bottom: 0; }
-  .avatar { width: 36px; height: 36px; background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%); color: #1D4ED8; border-radius: 9999px; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 13px; }
-  .student-info-1 { display: flex; align-items: baseline; gap: 8px; }
-  .student-name { font-size: 15px; font-weight: 600; }
-  .student-age { font-size: 12px; color: #6B6B78; }
-  .student-info-2 { font-size: 12px; color: #6B6B78; margin-top: 2px; line-height: 1.5; }
-  .edit-btn { color: #6B6B78; font-size: 13px; font-weight: 500; padding: 8px 14px; background: none; border-radius: 8px; display: inline-flex; align-items: center; gap: 4px; }
-  .edit-btn:hover { color: #2563EB; background: #F1F1F4; }
+  .plan-list {
+    background: white;
+    border: 1px solid #F1F1F4;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .plan-row {
+    display: grid;
+    grid-template-columns: 40px 1fr 140px 1.4fr 32px;
+    gap: 12px;
+    align-items: center;
+    padding: 14px;
+    border-bottom: 1px solid #F1F1F4;
+    transition: background 0.12s;
+  }
+  .plan-row:last-child { border-bottom: 0; }
+  .plan-row:hover { background: #FAFBFF; }
 
-  /* Branch cards */
-  .branch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .branch-card { background: white; border: 1px solid #E5E5EA; border-radius: 16px; padding: 24px; display: flex; flex-direction: column; }
-  .branch-card.recommended { background: #EFF6FF; border-color: #93C5FD; }
-  .branch-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .branch-icon.green { background: rgba(16,185,129,0.1); color: #10B981; }
-  .branch-icon.blue { background: linear-gradient(135deg, #2563EB 0%, #60A5FA 100%); }
-  .branch-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-  .branch-title { font-size: 16px; font-weight: 700; }
-  .branch-desc { font-size: 13px; color: #6B6B78; line-height: 1.6; flex: 1; margin-bottom: 18px; }
-  .branch-cta { padding: 14px 20px; font-size: 15px; font-weight: 600; border-radius: 12px; text-align: center; transition: all 0.15s; }
-  .branch-cta.outline { background: white; color: #10B981; border: 1px solid #10B981; }
-  .branch-cta.outline:hover { background: #ECFDF5; }
-  .branch-cta.primary { background: #2563EB; color: white; }
-  .branch-cta.primary:hover { background: #1D4ED8; }
+  .plan-num {
+    color: #C8C8D0;
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    text-align: center;
+  }
 
-  .step-footer { background: #FAFAFB; border-top: 1px solid #F1F1F4; padding: 20px 64px; display: flex; justify-content: space-between; align-items: center; position: sticky; bottom: 0; z-index: 5; }
+  .plan-input {
+    background: transparent;
+    border: 0;
+    outline: 0;
+    font-size: 14px;
+    padding: 6px 10px;
+    border-radius: 7px;
+    color: #0A0A0F;
+    transition: background 0.12s, box-shadow 0.12s;
+    width: 100%;
+    font-family: inherit;
+  }
+  .plan-input:hover { background: #F4F4F8; }
+  .plan-input:focus { background: white; box-shadow: 0 0 0 2px #2563EB inset; }
+  .plan-input::placeholder { color: #C8C8D0; }
+  .plan-input.name { font-weight: 600; }
+  .plan-input.desc { color: #6B6B78; font-size: 13px; }
+
+  .plan-price-wrap {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: transparent;
+    padding: 0 6px;
+    border-radius: 7px;
+    transition: background 0.12s, box-shadow 0.12s;
+  }
+  .plan-price-wrap:hover { background: #F4F4F8; }
+  .plan-price-wrap:focus-within { background: white; box-shadow: 0 0 0 2px #2563EB inset; }
+  .plan-price-prefix {
+    color: #6B6B78;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .plan-input.price {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    text-align: right;
+    color: #0A0A0F;
+    padding: 6px 0;
+    flex: 1;
+    min-width: 0;
+  }
+  .plan-input.price:hover, .plan-input.price:focus { background: transparent; box-shadow: none; }
+  .plan-price-suffix { color: #9B9BA8; font-size: 12px; white-space: nowrap; }
+
+  .icon-btn {
+    background: none;
+    padding: 8px;
+    color: #C8C8D0;
+    border-radius: 7px;
+    transition: all 0.12s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .icon-btn:hover { color: #DC2626; background: #FEF2F2; }
+
+  .empty-hint {
+    margin-top: 12px;
+    padding: 16px 18px;
+    background: #FFFBEB;
+    border: 1px solid #FEF3C7;
+    border-radius: 10px;
+    font-size: 13px;
+    color: #92400E;
+    line-height: 1.6;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .empty-hint-icon {
+    width: 20px; height: 20px;
+    flex-shrink: 0;
+    color: #D97706;
+    margin-top: 1px;
+  }
+  .empty-hint .strong { font-weight: 700; color: #78350F; }
+
+  /* Summary */
+  .summary-card {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    padding: 18px 24px;
+    background: linear-gradient(135deg, #FAFBFF 0%, #F0F9FF 100%);
+    border: 1px solid #DBEAFE;
+    border-radius: 14px;
+    margin-bottom: 24px;
+  }
+  .summary-stat { flex: 1; }
+  .summary-stat-label {
+    font-size: 11px;
+    color: #6B6B78;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-weight: 600;
+  }
+  .summary-stat-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: #0A0A0F;
+  }
+  .summary-divider { width: 1px; height: 36px; background: #DBEAFE; }
+
+  /* Examples Modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 24px;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: white;
+    border-radius: 18px;
+    max-width: 720px;
+    width: 100%;
+    max-height: 80vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 32px 64px -8px rgba(0,0,0,0.24);
+  }
+  .modal-header {
+    padding: 24px 28px;
+    border-bottom: 1px solid #F1F1F4;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  .modal-title { font-size: 18px; font-weight: 700; margin-bottom: 4px; }
+  .modal-subtitle { font-size: 13px; color: #6B6B78; }
+  .modal-close { background: none; padding: 4px; color: #9B9BA8; border-radius: 6px; }
+  .modal-close:hover { color: #0A0A0F; background: #F1F1F4; }
+  .modal-body { padding: 24px 28px; overflow-y: auto; flex: 1; }
+
+  .example-pattern {
+    margin-bottom: 24px;
+    padding: 16px 18px;
+    background: #FAFBFF;
+    border: 1px solid #F1F1F4;
+    border-radius: 12px;
+  }
+  .example-pattern:last-child { margin-bottom: 0; }
+  .example-pattern-title { font-size: 14px; font-weight: 700; color: #0A0A0F; margin-bottom: 4px; }
+  .example-pattern-desc { font-size: 12px; color: #6B6B78; margin-bottom: 12px; }
+  .example-pattern-list { list-style: none; padding: 0; margin: 0; font-size: 13px; }
+  .example-pattern-list li {
+    padding: 6px 0;
+    border-bottom: 1px dashed #F1F1F4;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .example-pattern-list li:last-child { border-bottom: 0; }
+  .example-pattern-list .name { color: #2A2A35; }
+  .example-pattern-list .price {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+    color: #2563EB;
+  }
+  .example-note {
+    margin-top: 16px;
+    padding: 12px 14px;
+    background: #ECFDF5;
+    border-left: 3px solid #10B981;
+    border-radius: 6px;
+    font-size: 12px;
+    color: #047857;
+    line-height: 1.6;
+  }
+
+  /* Footer */
+  .step-footer {
+    background: #FAFAFB;
+    border-top: 1px solid #F1F1F4;
+    padding: 20px 64px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    bottom: 0;
+    z-index: 5;
+  }
   .step-footer-right { display: flex; align-items: center; gap: 12px; }
   .btn-primary { background: #2563EB; color: white; padding: 14px 24px; font-size: 15px; font-weight: 600; border-radius: 12px; }
   .btn-primary:hover { background: #1D4ED8; }
   .btn-ghost { color: #6B6B78; padding: 12px 18px; font-size: 14px; font-weight: 500; border-radius: 8px; background: none; }
   .btn-ghost:hover { color: #2A2A35; background: #F1F1F4; }
 
-  .help-float { position: fixed; bottom: 84px; right: 24px; background: white; border: 1px solid #E5E5EA; border-radius: 9999px; padding: 12px 18px; box-shadow: 0 8px 24px -4px rgba(0,0,0,0.12); display: flex; align-items: center; gap: 8px; z-index: 40; }
-  .help-float-icon { width: 28px; height: 28px; border-radius: 9999px; background: #EFF6FF; display: flex; align-items: center; justify-content: center; }
-  .help-float-text-1 { font-size: 12px; font-weight: 600; }
-  .help-float-text-2 { font-size: 10px; color: #6B6B78; }
+  /* Toast */
+  .toast {
+    position: fixed;
+    bottom: 90px;
+    left: 50%;
+    transform: translateX(-50%) translateY(20px);
+    background: #0A0A0F;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+    opacity: 0;
+    pointer-events: none;
+    transition: all 0.25s;
+    z-index: 200;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 </style>
 </head>
 <body>
@@ -143,11 +366,11 @@
   <a class="sidebar-step completed" href="step_setup_step1.html"><span class="step-num"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="label">도장 정보</span></a>
   <a class="sidebar-step completed" href="step_setup_step2.html"><span class="step-num"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="label">띠 체계</span></a>
   <a class="sidebar-step completed" href="step_setup_step3.html"><span class="step-num"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="label">수업 시간표</span></a>
-  <a class="sidebar-step active" href="step_setup_step4.html"><span class="step-num">4</span><span class="label">학생 등록</span><span class="pulse-dot"></span></a>
+  <a class="sidebar-step active" href="step_setup_step4.html"><span class="step-num">4</span><span class="label">가격정책</span><span class="pulse-dot"></span></a>
+  <a class="sidebar-step muted" href="step_setup_step5.html"><span class="step-num">5</span><span class="label">학생 등록</span></a>
   <div class="sidebar-section-label extra">추가 설정 <span class="hint-text">(나중에 해도 OK)</span></div>
-  <a class="sidebar-step muted" href="step_setup_step5.html"><span class="step-num">5</span><span class="label">직원 등록</span></a>
-  <a class="sidebar-step muted" href="step_setup_step6.html"><span class="step-num">6</span><span class="label">용품 관리</span></a>
-  <a class="sidebar-step muted" href="step_setup_step7.html"><span class="step-num">7</span><span class="label">재고 관리</span></a>
+  <a class="sidebar-step muted" href="step_setup_step6.html"><span class="step-num">6</span><span class="label">직원 등록</span></a>
+  <a class="sidebar-step muted" href="step_setup_step7.html"><span class="step-num">7</span><span class="label">용품·재고 관리</span></a>
   <a class="sidebar-step muted" href="step_setup_step8.html"><span class="step-num">8</span><span class="label">행사 일정</span></a>
 
   <div class="belt-progress">
@@ -155,13 +378,13 @@
       <div class="belt-circle"></div>
       <div>
         <div style="font-size: 11px; color: #6B6B78;">지금 단계</div>
-        <div style="font-size: 13px; font-weight: 700;">주황띠</div>
+        <div style="font-size: 13px; font-weight: 700;">초록띠</div>
       </div>
     </div>
-    <div class="belt-bar"><div class="belt-bar-fill" style="width: 75%;"></div></div>
+    <div class="belt-bar"><div class="belt-bar-fill" style="width: 60%;"></div></div>
     <div class="belt-progress-meta">
-      <span class="left">3/4 완료</span>
-      <span class="right">→ 초록띠</span>
+      <span class="left">3/5 완료</span>
+      <span class="right">→ 검은띠까지 2단계</span>
     </div>
   </div>
 </aside>
@@ -173,8 +396,8 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><circle cx="12" cy="12" r="3" fill="white"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3"/></svg>
       </div>
       <div class="ai-banner-content">
-        <p class="ai-banner-text"><span class="strong">학생은 우리 도장 운영의 가장 중요한 정보예요.</span> 학생 명단 엑셀 파일이 있으시면 자동으로 등록할 수 있어요.</p>
-        <a class="ai-banner-link">파일로 학생 명단 가져오기 →</a>
+        <p class="ai-banner-text"><span class="strong">우리 도장의 가격 플랜을 자유롭게 등록해주세요.</span> 주 N회 기준, 연령대 기준, 프로그램 종류 기준 — 도장마다 가격 정책은 다양해요. 시간표(주 2-5회)와 띠 체계를 참고하시면 도움이 돼요.</p>
+        <a class="ai-banner-link" id="show-examples">다른 도장은 어떻게 정하는지 예시 보기 →</a>
       </div>
       <button class="ai-banner-close"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
@@ -185,110 +408,71 @@
       <span class="num-current">STEP 4</span>
       <span class="num-total">/ 8</span>
     </div>
-    <h1 class="section-title">학생을 한 명씩 등록해주세요.</h1>
-    <p class="section-subtitle">엑셀로 한 번에 올릴 수도 있고, 한 명씩 추가할 수도 있어요.</p>
+    <h1 class="section-title">우리 도장의 가격 플랜을 등록해주세요.</h1>
+    <p class="section-subtitle">학부모가 결제할 모든 수강료 플랜을 등록하세요. 주 N회, 연령대, 프로그램 등 어떤 기준이든 OK. 운영 중에 언제든 수정/추가할 수 있어요.</p>
 
-    <div class="search-row">
-      <div class="search-input">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-        <input type="text" placeholder="학생 이름으로 검색하기...">
+    <div class="summary-card">
+      <div class="summary-stat">
+        <div class="summary-stat-label">등록된 플랜</div>
+        <div class="summary-stat-value"><span id="stat-count">0</span> 개</div>
       </div>
-      <button class="add-btn">+ 학생 추가</button>
+      <div class="summary-divider"></div>
+      <div class="summary-stat">
+        <div class="summary-stat-label">최저가</div>
+        <div class="summary-stat-value">$<span id="stat-min">—</span></div>
+      </div>
+      <div class="summary-divider"></div>
+      <div class="summary-stat">
+        <div class="summary-stat-label">최고가</div>
+        <div class="summary-stat-value">$<span id="stat-max">—</span></div>
+      </div>
+      <div class="summary-divider"></div>
+      <div class="summary-stat">
+        <div class="summary-stat-label">평균</div>
+        <div class="summary-stat-value">$<span id="stat-avg">—</span></div>
+      </div>
     </div>
 
-    <div class="tabs">
-      <button class="tab active">전체 <span class="count">24</span></button>
-      <button class="tab">흰띠</button>
-      <button class="tab">노란띠</button>
-      <button class="tab">주황띠</button>
-      <button class="tab">초록띠</button>
-      <button class="tab">파란띠</button>
-      <button class="tab">더보기 ▾</button>
+    <button class="add-row" id="btn-add-plan">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+      플랜 추가하기
+    </button>
+
+    <div class="table-header-plan">
+      <div></div>
+      <div>플랜명 <span class="req">*</span></div>
+      <div>가격 (월) <span class="req">*</span></div>
+      <div>설명 (선택)</div>
+      <div></div>
     </div>
 
-    <div class="student-list">
-      <div class="student-row">
-        <div class="avatar">EK</div>
-        <div>
-          <div class="student-info-1">
-            <span class="student-name">Kim Ethan</span>
-            <span class="student-age">11세 · 남</span>
-          </div>
-          <div class="student-info-2">파란띠 · 5단 · Barton Creek Elementary · 보호자: Kim David (512-555-1234)</div>
+    <div class="plan-list" id="plan-list">
+      <div class="plan-row" data-plan-row>
+        <div class="plan-num">1</div>
+        <input class="plan-input name" type="text" placeholder="예: 주 3회 기본반" data-field="name">
+        <div class="plan-price-wrap">
+          <span class="plan-price-prefix">$</span>
+          <input class="plan-input price" type="number" placeholder="0" data-field="price">
+          <span class="plan-price-suffix">/ 월</span>
         </div>
-        <button class="edit-btn">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-          수정
+        <input class="plan-input desc" type="text" placeholder="예: 7-12세 표준 프로그램" data-field="desc">
+        <button class="icon-btn" data-delete title="삭제">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
         </button>
       </div>
-      <div class="student-row">
-        <div class="avatar">SK</div>
-        <div>
-          <div class="student-info-1">
-            <span class="student-name">Kim Sophie</span>
-            <span class="student-age">8세 · 여</span>
-          </div>
-          <div class="student-info-2">노란띠 · 2단 · Barton Creek Elementary · 보호자: Kim David (512-555-1234)</div>
-        </div>
-        <button class="edit-btn">수정</button>
-      </div>
-      <div class="student-row">
-        <div class="avatar">OJ</div>
-        <div>
-          <div class="student-info-1">
-            <span class="student-name">Johnson Olivia</span>
-            <span class="student-age">11세 · 여</span>
-          </div>
-          <div class="student-info-2">빨간띠 · 6단 · Eanes Elementary · 보호자: Johnson Michael (512-555-2345)</div>
-        </div>
-        <button class="edit-btn">수정</button>
-      </div>
-      <div class="student-row">
-        <div class="avatar">LM</div>
-        <div>
-          <div class="student-info-1">
-            <span class="student-name">Martinez Liam</span>
-            <span class="student-age">10세 · 남</span>
-          </div>
-          <div class="student-info-2">초록띠 · 4단 · Blazier Elementary · 보호자: Martinez Carlos (512-555-3456)</div>
-        </div>
-        <button class="edit-btn">수정</button>
-      </div>
-      <div class="student-row">
-        <div class="avatar">EC</div>
-        <div>
-          <div class="student-info-1">
-            <span class="student-name">Chen Emma</span>
-            <span class="student-age">12세 · 여</span>
-          </div>
-          <div class="student-info-2">검은띠 · 1품/1단 · O.Henry Middle School · 보호자: Chen James (512-555-4567)</div>
-        </div>
-        <button class="edit-btn">수정</button>
+    </div>
+
+    <div class="empty-hint" id="empty-hint">
+      <svg class="empty-hint-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <div>
+        <span class="strong">첫 플랜을 입력하면서 시작해보세요.</span> 캠프, 토너먼트, 도복 같은 일시 결제 항목은 운영 시작 후 <strong>수납/결제 → Pricing 프로그램</strong>에서 추가할 수 있어요. 지금은 매월 자동 결제되는 멤버십 플랜만 정해주시면 돼요.
       </div>
     </div>
 
-    <div class="branch-grid">
-      <div class="branch-card">
-        <div class="branch-header">
-          <div class="branch-icon green">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-          <div class="branch-title">기본 설정 끝!</div>
-        </div>
-        <div class="branch-desc">여기까지만 해도 도장 운영을 시작할 수 있어요. 추가 설정은 나중에 하시면 됩니다.</div>
-        <a class="branch-cta outline" href="step_setup_step9.html">지금은 여기까지 할게요 →</a>
-      </div>
-      <div class="branch-card recommended">
-        <div class="branch-header">
-          <div class="branch-icon blue">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><circle cx="12" cy="12" r="3" fill="white"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3"/></svg>
-          </div>
-          <div class="branch-title">추가 설정으로 더 많은 도움</div>
-        </div>
-        <div class="branch-desc">직원, 용품, 행사까지 등록하면 도장 운영이 더 편해져요. 5분이면 끝나요.</div>
-        <a class="branch-cta primary" href="step_setup_step5.html">추가 설정 진행 →</a>
-      </div>
-    </div>
   </div>
 
   <div class="step-footer">
@@ -302,13 +486,192 @@
 
 </div>
 
-<a class="help-float">
-  <div class="help-float-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" style="color: #2563EB;"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
-  <div>
-    <div class="help-float-text-1">막히셨나요?</div>
-    <div class="help-float-text-2">전화로 도와드릴게요</div>
+<!-- Examples Modal -->
+<div class="modal-overlay" id="examples-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">다른 도장의 가격 정책 예시</div>
+        <div class="modal-subtitle">아래는 참고용 예시예요. 우리 도장의 실제 가격을 직접 입력해주세요.</div>
+      </div>
+      <button class="modal-close" id="modal-close">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+
+      <div class="example-pattern">
+        <div class="example-pattern-title">패턴 1. 주 N회 기준</div>
+        <div class="example-pattern-desc">수업 빈도로 가격 차등. 가장 흔한 방식.</div>
+        <ul class="example-pattern-list">
+          <li><span class="name">주 1회</span><span class="price">$80 / 월</span></li>
+          <li><span class="name">주 2회</span><span class="price">$120 / 월</span></li>
+          <li><span class="name">주 3회</span><span class="price">$150 / 월</span></li>
+          <li><span class="name">주 5회 (무제한)</span><span class="price">$200 / 월</span></li>
+        </ul>
+      </div>
+
+      <div class="example-pattern">
+        <div class="example-pattern-title">패턴 2. 연령대 + 프로그램 기준</div>
+        <div class="example-pattern-desc">연령에 맞춰 프로그램 차별화. 학부모 이해도 높음.</div>
+        <ul class="example-pattern-list">
+          <li><span class="name">Tiny Tigers (3-5세)</span><span class="price">$130 / 월</span></li>
+          <li><span class="name">Kids Beginner (6-12세)</span><span class="price">$150 / 월</span></li>
+          <li><span class="name">Kids Black Belt Club</span><span class="price">$180 / 월</span></li>
+          <li><span class="name">Adult (13세+)</span><span class="price">$200 / 월</span></li>
+        </ul>
+      </div>
+
+      <div class="example-pattern">
+        <div class="example-pattern-title">패턴 3. 프로그램 + 강도 기준</div>
+        <div class="example-pattern-desc">기본/심화/특별반으로 차별. 매출 다변화.</div>
+        <ul class="example-pattern-list">
+          <li><span class="name">Basic (주 3회)</span><span class="price">$150 / 월</span></li>
+          <li><span class="name">Premium (주 5회 + 도복)</span><span class="price">$200 / 월</span></li>
+          <li><span class="name">Sparring Team</span><span class="price">$250 / 월</span></li>
+          <li><span class="name">Demo Team</span><span class="price">$220 / 월</span></li>
+        </ul>
+      </div>
+
+      <div class="example-note">
+        💡 <strong>혼합 사용도 OK</strong>예요. "주 3회 기본반 $150 + Sparring Team $250 + 가족 할인 -15%" 처럼 우리 도장 상황에 맞게 자유롭게 조합하세요.
+      </div>
+
+    </div>
   </div>
-</a>
+</div>
+
+<div class="toast" id="toast">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+  <span id="toast-msg">저장됐어요</span>
+</div>
+
+<script>
+  const planList = document.getElementById('plan-list');
+  const btnAddPlan = document.getElementById('btn-add-plan');
+  const emptyHint = document.getElementById('empty-hint');
+
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 2200);
+  }
+
+  function renumberRows() {
+    planList.querySelectorAll('.plan-row').forEach((row, idx) => {
+      row.querySelector('.plan-num').textContent = idx + 1;
+    });
+  }
+
+  function updateStats() {
+    const rows = planList.querySelectorAll('.plan-row');
+    const prices = [];
+    rows.forEach(row => {
+      const v = parseInt(row.querySelector('.plan-input.price').value);
+      if (!isNaN(v) && v > 0) prices.push(v);
+    });
+
+    document.getElementById('stat-count').textContent = rows.length;
+
+    if (prices.length === 0) {
+      document.getElementById('stat-min').textContent = '—';
+      document.getElementById('stat-max').textContent = '—';
+      document.getElementById('stat-avg').textContent = '—';
+    } else {
+      document.getElementById('stat-min').textContent = Math.min(...prices);
+      document.getElementById('stat-max').textContent = Math.max(...prices);
+      document.getElementById('stat-avg').textContent = Math.round(prices.reduce((a,b) => a+b, 0) / prices.length);
+    }
+
+    const hasAnyInput = Array.from(rows).some(row => {
+      return Array.from(row.querySelectorAll('.plan-input')).some(i => i.value.trim() !== '');
+    });
+    emptyHint.style.display = (rows.length === 1 && !hasAnyInput) ? 'flex' : 'none';
+  }
+
+  function attachRowHandlers(row) {
+    row.querySelectorAll('.plan-input').forEach(input => {
+      input.addEventListener('input', updateStats);
+    });
+
+    row.querySelector('[data-delete]').addEventListener('click', () => {
+      const rows = planList.querySelectorAll('.plan-row');
+      if (rows.length === 1) {
+        row.querySelectorAll('.plan-input').forEach(i => i.value = '');
+        updateStats();
+        showToast('마지막 행이라 비우기만 했어요');
+        return;
+      }
+      const name = row.querySelector('.plan-input.name').value.trim() || '플랜';
+      row.style.transition = 'opacity 0.2s, transform 0.2s';
+      row.style.opacity = '0';
+      row.style.transform = 'translateX(-12px)';
+      setTimeout(() => {
+        row.remove();
+        renumberRows();
+        updateStats();
+        showToast(`"${name}" 플랜이 삭제됐어요`);
+      }, 200);
+    });
+  }
+
+  document.querySelectorAll('.plan-row').forEach(attachRowHandlers);
+  updateStats();
+
+  btnAddPlan.addEventListener('click', () => {
+    const newRow = document.createElement('div');
+    newRow.className = 'plan-row';
+    newRow.dataset.planRow = '';
+    const newIdx = planList.querySelectorAll('.plan-row').length + 1;
+    newRow.innerHTML = `
+      <div class="plan-num">${newIdx}</div>
+      <input class="plan-input name" type="text" placeholder="예: 주 3회 기본반" data-field="name">
+      <div class="plan-price-wrap">
+        <span class="plan-price-prefix">$</span>
+        <input class="plan-input price" type="number" placeholder="0" data-field="price">
+        <span class="plan-price-suffix">/ 월</span>
+      </div>
+      <input class="plan-input desc" type="text" placeholder="예: 7-12세 표준 프로그램" data-field="desc">
+      <button class="icon-btn" data-delete title="삭제">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+      </button>
+    `;
+    planList.appendChild(newRow);
+    attachRowHandlers(newRow);
+    updateStats();
+    newRow.querySelector('.plan-input.name').focus();
+  });
+
+  // Examples Modal
+  const modal = document.getElementById('examples-modal');
+  document.getElementById('show-examples').addEventListener('click', e => {
+    e.preventDefault();
+    modal.classList.add('show');
+  });
+  document.getElementById('modal-close').addEventListener('click', () => modal.classList.remove('show'));
+  modal.addEventListener('click', e => {
+    if (e.target === modal) modal.classList.remove('show');
+  });
+
+  // 저장하고 다음 - 검증
+  document.querySelector('.btn-primary').addEventListener('click', e => {
+    const rows = planList.querySelectorAll('.plan-row');
+    let hasInvalidRow = false;
+
+    rows.forEach(row => {
+      const name = row.querySelector('.plan-input.name').value.trim();
+      const price = row.querySelector('.plan-input.price').value.trim();
+      if (!name && !price) return;
+      if (!name || !price) hasInvalidRow = true;
+    });
+
+    if (hasInvalidRow) {
+      e.preventDefault();
+      showToast('플랜명과 가격은 모두 입력해주세요');
+    }
+  });
+</script>
 
 </body>
 </html>

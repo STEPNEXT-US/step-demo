@@ -196,7 +196,7 @@
         <h3 class="text-sm font-bold text-ink-900">설정 진척률</h3>
       </div>
       <div class="flex items-center gap-2">
-        <span class="mono text-xs font-bold text-ink-900" id="progress-text">0/4</span>
+        <span class="mono text-xs font-bold text-ink-900" id="progress-text">0/5</span>
         <span class="text-xs text-ink-500" id="progress-label">기본 설정</span>
       </div>
     </div>
@@ -208,6 +208,7 @@
       <span class="flex items-center gap-1.5"><span class="belt-dot bg-amber-300"></span>노란띠</span>
       <span class="flex items-center gap-1.5"><span class="belt-dot bg-orange-400"></span>주황띠</span>
       <span class="flex items-center gap-1.5"><span class="belt-dot bg-emerald-500"></span>초록띠</span>
+      <span class="flex items-center gap-1.5"><span class="belt-dot bg-blue-500"></span>파란띠</span>
       <span class="flex items-center gap-1.5"><span class="belt-dot bg-ink-900"></span>검은띠</span>
     </div>
   </div>
@@ -216,7 +217,7 @@
   <div class="card mb-6 animate-fade-up stagger-3">
     <div class="flex items-center justify-between mb-5">
       <h3 class="text-sm font-bold text-ink-900">기본 설정 (필수)</h3>
-      <span class="text-[11px] text-ink-500 mono" id="basic-summary">4단계 모두 필요</span>
+      <span class="text-[11px] text-ink-500 mono" id="basic-summary">5단계 모두 필요</span>
     </div>
 
     <div class="step-list space-y-2 relative">
@@ -259,9 +260,22 @@
         </div>
       </a>
 
-      <!-- Step 4: 학생 등록 -->
+      <!-- Step 4: 가격정책 (NEW) -->
       <a href="step_setup_step4.html" class="step-row pending block relative z-10" data-step="4">
         <div class="step-icon pending mono">4</div>
+        <div class="min-w-0">
+          <div class="text-[14px] font-bold text-ink-900 mb-0.5">가격정책 <span class="text-[10px] text-emerald-600 font-bold ml-1">NEW</span></div>
+          <div class="text-[12px] text-ink-500">수강료 플랜 등록 — 학생 등록 시 선택할 가격표 정의</div>
+        </div>
+        <div class="flex items-center gap-2">
+          <span class="text-[11px] mono text-ink-400">~2 min</span>
+          <svg class="w-4 h-4 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
+        </div>
+      </a>
+
+      <!-- Step 5: 학생 등록 -->
+      <a href="step_setup_step5.html" class="step-row pending block relative z-10" data-step="5">
+        <div class="step-icon pending mono">5</div>
         <div class="min-w-0">
           <div class="text-[14px] font-bold text-ink-900 mb-0.5">학생 등록</div>
           <div class="text-[12px] text-ink-500">학생 명단 등록 — 출석/승급/결제 모든 데이터의 기준</div>
@@ -283,22 +297,18 @@
       </h3>
       <span class="text-[11px] text-ink-500">기본 끝낸 후 진행 가능</span>
     </div>
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
       <div class="px-3 py-2.5 bg-white border border-ink-200 rounded-lg">
-        <div class="text-[12px] font-semibold text-ink-700">5. 직원 등록</div>
+        <div class="text-[12px] font-semibold text-ink-700">6. 직원 등록</div>
         <div class="text-[10px] text-ink-400">사범, 매니저</div>
       </div>
       <div class="px-3 py-2.5 bg-white border border-ink-200 rounded-lg">
-        <div class="text-[12px] font-semibold text-ink-700">6. 용품 관리</div>
-        <div class="text-[10px] text-ink-400">도복, 띠, 보호구</div>
-      </div>
-      <div class="px-3 py-2.5 bg-white border border-ink-200 rounded-lg">
-        <div class="text-[12px] font-semibold text-ink-700">7. 재고 관리</div>
-        <div class="text-[10px] text-ink-400">현재 보유 수량</div>
+        <div class="text-[12px] font-semibold text-ink-700">7. 용품·재고 관리</div>
+        <div class="text-[10px] text-ink-400">도복, 띠, 보호구 + 보유 수량</div>
       </div>
       <div class="px-3 py-2.5 bg-white border border-ink-200 rounded-lg">
         <div class="text-[12px] font-semibold text-ink-700">8. 행사 일정</div>
-        <div class="text-[10px] text-ink-400">대회, 승급심사</div>
+        <div class="text-[10px] text-ink-400">대회, <span class="text-rose-500 font-bold">승급심사 필수</span></div>
       </div>
     </div>
   </div>
@@ -340,12 +350,12 @@
       label: 'Setup Incomplete',
       title: '도장 설정을 마저 끝내야 해요.',
       subtitle: '메인 화면을 정확하게 보여드리려면 기본 설정이 먼저 필요해요.<br class="hidden md:block">Xiro가 어디까지 됐는지 확인했어요. 이어서 진행하시면 됩니다.',
-      xiroMessage: '도장 설정을 아직 시작하지 않으셨어요. 기본 4단계만 마치면 메인 화면에서 도장을 운영하실 수 있어요. <strong class="text-ink-900">약 5분</strong>이면 충분합니다.',
+      xiroMessage: '도장 설정을 아직 시작하지 않으셨어요. 기본 5단계만 마치면 메인 화면에서 도장을 운영하실 수 있어요. <strong class="text-ink-900">약 7분</strong>이면 충분합니다.',
       ctaLabel: '설정 시작하기',
       ctaHref: 'step_setup_step1.html',
       doneSteps: [],
       currentStep: 1,
-      progressText: '0/4',
+      progressText: '0/5',
       progressLabel: '시작 전',
       progressPercent: 0,
       beltColor: 'bg-ink-300',
@@ -353,15 +363,15 @@
     'B': {
       label: 'Resume Setup',
       title: '여기까지 했어요! 이어서 진행할까요?',
-      subtitle: '기본 설정 4단계 중 <strong class="text-ink-900">2단계</strong>를 마쳤어요.<br class="hidden md:block">남은 단계만 끝내면 메인 화면이 활성화됩니다.',
-      xiroMessage: '도장 정보와 띠 체계는 등록 완료됐어요. 다음은 <strong class="text-ink-900">수업 시간표</strong>예요. 시간표가 있어야 라이브 도장과 출석 체크가 작동해요. 약 4분 남았어요.',
+      subtitle: '기본 설정 5단계 중 <strong class="text-ink-900">2단계</strong>를 마쳤어요.<br class="hidden md:block">남은 단계만 끝내면 메인 화면이 활성화됩니다.',
+      xiroMessage: '도장 정보와 띠 체계는 등록 완료됐어요. 다음은 <strong class="text-ink-900">수업 시간표</strong>예요. 시간표가 있어야 라이브 도장과 출석 체크가 작동해요. 약 5분 남았어요.',
       ctaLabel: 'Step 3 이어하기',
       ctaHref: 'step_setup_step3.html',
       doneSteps: [1, 2],
       currentStep: 3,
-      progressText: '2/4',
+      progressText: '2/5',
       progressLabel: '주황띠',
-      progressPercent: 50,
+      progressPercent: 40,
       beltColor: 'bg-orange-400',
     },
   };
@@ -416,7 +426,7 @@
         row.classList.add('pending');
         icon.classList.add('pending');
         icon.innerHTML = stepNum;
-        const baseTime = ['~1 min','~1 min','~2 min','~2 min'][stepNum - 1];
+        const baseTime = ['~1 min','~1 min','~2 min','~2 min','~2 min'][stepNum - 1];
         if (timeLabel) {
           timeLabel.textContent = baseTime;
           timeLabel.classList.remove('text-emerald-600','text-brand-600','font-bold');
@@ -427,9 +437,9 @@
     });
 
     // Basic summary
-    const remaining = 4 - s.doneSteps.length;
+    const remaining = 5 - s.doneSteps.length;
     document.getElementById('basic-summary').textContent =
-      remaining === 4 ? '4단계 모두 필요' : `${remaining}단계 남음`;
+      remaining === 5 ? '5단계 모두 필요' : `${remaining}단계 남음`;
   }
 
   // Demo pill switcher

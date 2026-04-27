@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>STEP 7 · 재고 관리 | STEP Manager</title>
+<title>STEP 7 · 용품·재고 관리 | STEP Manager</title>
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -12,7 +12,7 @@
   .num { font-family: 'JetBrains Mono', monospace; font-feature-settings: "tnum"; }
   a { text-decoration: none; color: inherit; }
   button { font-family: inherit; cursor: pointer; border: 0; }
-  input { font-family: inherit; }
+  input, select { font-family: inherit; }
 
   .top-progress { height: 3px; background: #F1F1F4; }
   .top-progress-fill { height: 100%; background: linear-gradient(90deg, #10B981 0%, #2563EB 100%); }
@@ -43,7 +43,7 @@
 
   .belt-progress { margin-top: 32px; padding-top: 24px; border-top: 1px solid #F1F1F4; }
   .belt-progress-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-  .belt-circle { width: 24px; height: 24px; border-radius: 9999px; flex-shrink: 0; background: #92400E; border: 2px solid #92400E; }
+  .belt-circle { width: 24px; height: 24px; border-radius: 9999px; flex-shrink: 0; background: #3B82F6; border: 2px solid #3B82F6; }
   .belt-bar { height: 6px; background: #F1F1F4; border-radius: 9999px; overflow: hidden; margin-bottom: 8px; }
   .belt-bar-fill { height: 100%; background: #2563EB; border-radius: 9999px; }
   .belt-progress-meta { display: flex; justify-content: space-between; font-size: 10px; }
@@ -77,34 +77,37 @@
   .section-title { font-size: 32px; font-weight: 700; letter-spacing: -0.025em; margin: 0 0 8px; line-height: 1.2; }
   .section-subtitle { font-size: 15px; color: #6B6B78; margin: 0 0 24px; line-height: 1.6; }
 
-  .top-row { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-  .total-stock { background: #EFF6FF; border: 1px solid #DBEAFE; border-radius: 10px; padding: 8px 14px; display: flex; align-items: center; gap: 8px; }
-  .total-stock-label { font-size: 12px; color: #1D4ED8; font-weight: 500; }
-  .total-stock-num { font-family: 'JetBrains Mono', monospace; font-size: 16px; font-weight: 700; color: #1D4ED8; }
-  .filter-pills { display: flex; align-items: center; gap: 6px; margin-left: auto; }
+  .filter-pills { display: flex; align-items: center; gap: 6px; margin-bottom: 16px; }
   .pill { padding: 8px 14px; font-size: 12px; border-radius: 9999px; background: none; transition: all 0.15s; color: #6B6B78; font-weight: 500; }
   .pill.active { background: #2563EB; color: white; }
   .pill:not(.active):hover { background: #F1F1F4; color: #2A2A35; }
 
-  .stock-header { display: grid; grid-template-columns: 40px 100px 32px 1fr 120px 80px; gap: 12px; padding: 0 14px 8px; font-size: 11px; font-weight: 600; color: #9B9BA8; }
-  .stock-list { background: white; border: 1px solid #F1F1F4; border-radius: 12px; }
-  .stock-row { display: grid; grid-template-columns: 40px 100px 32px 1fr 120px 80px; gap: 12px; align-items: center; padding: 12px 14px; border-bottom: 1px solid #F1F1F4; }
-  .stock-row:last-child { border-bottom: 0; }
-  .stock-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #9B9BA8; }
-  .stock-cat { padding: 4px 10px; font-size: 12px; background: #EFF6FF; border-radius: 6px; color: #1D4ED8; display: inline-block; }
-  .stock-cat.belt { background: rgba(245,158,11,0.1); color: #D97706; }
-  .stock-icon { width: 28px; height: 28px; border-radius: 8px; background: #EFF6FF; display: flex; align-items: center; justify-content: center; }
-  .stock-icon.bw { background: #F9FAFB; }
-  .stock-icon.by { background: rgba(252,211,77,0.2); }
-  .stock-icon.bk { background: #F1F1F4; }
+  .table-header-inv { display: grid; grid-template-columns: 40px 90px 32px 1fr 80px 90px 60px 32px; gap: 12px; padding: 0 14px 8px; font-size: 11px; font-weight: 600; color: #9B9BA8; }
+  .add-row { width: 100%; padding: 14px; margin-bottom: 12px; border: 2px dashed #E5E5EA; background: #F9FAFB; border-radius: 12px; font-size: 14px; color: #2A2A35; font-weight: 500; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.15s; }
+  .add-row:hover { border-color: #93C5FD; background: #EFF6FF; color: #1D4ED8; }
+
+  .inv-list { background: white; border: 1px solid #F1F1F4; border-radius: 12px; }
+  .inv-row { display: grid; grid-template-columns: 40px 90px 32px 1fr 80px 90px 60px 32px; gap: 12px; align-items: center; padding: 12px 14px; border-bottom: 1px solid #F1F1F4; }
+  .inv-row:last-child { border-bottom: 0; }
+  .inv-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: #9B9BA8; }
+  .inv-cat { padding: 6px 10px; font-size: 12px; background: #F9FAFB; border: 1px solid #F1F1F4; border-radius: 8px; color: #2A2A35; }
+  .inv-icon { width: 28px; height: 28px; border-radius: 8px; background: #EFF6FF; display: flex; align-items: center; justify-content: center; }
+  .inv-icon.belt-white { background: #F9FAFB; }
+  .inv-icon.belt-yellow { background: rgba(252, 211, 77, 0.2); }
   .belt-mini { width: 12px; height: 12px; border-radius: 9999px; }
   .belt-mini.white { background: #F1F1F4; border: 1px solid #E5E5EA; }
   .belt-mini.yellow { background: #FCD34D; }
-  .belt-mini.black { background: #0A0A0F; }
-  .stock-name { font-size: 14px; font-weight: 500; }
-  .stock-input { font-family: 'JetBrains Mono', monospace; font-size: 14px; font-weight: 700; padding: 8px 12px; background: #F9FAFB; border: 0; border-radius: 8px; text-align: right; color: #1D4ED8; width: 100%; }
-  .stock-input:focus { outline: none; background: white; box-shadow: 0 0 0 2px #2563EB; }
-  .stock-min { font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #9B9BA8; text-align: right; }
+  .inv-name { background: transparent; border: 0; outline: 0; font-size: 14px; padding: 0; width: 100%; }
+  .inv-stock { padding: 6px 10px; font-size: 13px; background: #F9FAFB; border: 0; border-radius: 8px; color: #2A2A35; text-align: right; font-family: 'JetBrains Mono', monospace; }
+  
+  .inv-current.low { background: #FEF2F2 !important; color: #DC2626 !important; border: 1px solid #FECACA !important; }
+  .stock-warning { font-size: 10px; color: #DC2626; font-weight: 600; margin-top: 2px; }
+  .toggle { width: 36px; height: 20px; background: #E5E5EA; border-radius: 9999px; position: relative; cursor: pointer; transition: background 0.15s; margin: 0 auto; }
+  .toggle.on { background: #2563EB; }
+  .toggle::after { content: ''; position: absolute; width: 16px; height: 16px; background: white; border-radius: 9999px; top: 2px; left: 2px; transition: left 0.15s; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  .toggle.on::after { left: 18px; }
+  .icon-btn { background: none; padding: 6px; color: #9B9BA8; border-radius: 6px; }
+  .icon-btn:hover { color: #EF4444; background: #F1F1F4; }
 
   .reassure { background: #ECFDF5; border: 1px solid #A7F3D0; color: #047857; padding: 10px 14px; border-radius: 10px; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; margin-top: 24px; }
 
@@ -138,25 +141,25 @@
   <a class="sidebar-step completed" href="step_setup_step1.html"><span class="step-num"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="label">도장 정보</span></a>
   <a class="sidebar-step completed" href="step_setup_step2.html"><span class="step-num"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="label">띠 체계</span></a>
   <a class="sidebar-step completed" href="step_setup_step3.html"><span class="step-num"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="label">수업 시간표</span></a>
-  <a class="sidebar-step completed" href="step_setup_step4.html"><span class="step-num"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="label">학생 등록</span></a>
+  <a class="sidebar-step completed" href="step_setup_step4.html"><span class="step-num"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="label">가격정책</span></a>
+  <a class="sidebar-step completed" href="step_setup_step5.html"><span class="step-num"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="label">학생 등록</span></a>
   <div class="sidebar-section-label extra">추가 설정</div>
-  <a class="sidebar-step completed" href="step_setup_step5.html"><span class="step-num"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="label">직원 등록</span></a>
-  <a class="sidebar-step completed" href="step_setup_step6.html"><span class="step-num"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="label">용품 관리</span></a>
-  <a class="sidebar-step active" href="step_setup_step7.html"><span class="step-num">7</span><span class="label">재고 관리</span><span class="pulse-dot"></span></a>
+  <a class="sidebar-step completed" href="step_setup_step6.html"><span class="step-num"><svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span><span class="label">직원 등록</span></a>
+  <a class="sidebar-step active" href="step_setup_step7.html"><span class="step-num">7</span><span class="label">용품·재고 관리</span><span class="pulse-dot"></span></a>
   <a class="sidebar-step muted" href="step_setup_step8.html"><span class="step-num">8</span><span class="label">행사 일정</span></a>
 
   <div class="belt-progress">
     <div class="belt-progress-header">
-      <div class="belt-circle"></div>
+      <div class="belt-circle" style="background: #0A0A0F; border: 2px solid #0A0A0F;"></div>
       <div>
         <div style="font-size: 11px; color: #6B6B78;">지금 단계</div>
-        <div style="font-size: 13px; font-weight: 700;">갈색띠</div>
+        <div style="font-size: 13px; font-weight: 700;">검은띠</div>
       </div>
     </div>
-    <div class="belt-bar"><div class="belt-bar-fill" style="width: 75%;"></div></div>
+    <div class="belt-bar"><div class="belt-bar-fill" style="width: 66%;"></div></div>
     <div class="belt-progress-meta">
-      <span class="left">3/4 완료</span>
-      <span class="right">→ 검은띠 ⭐</span>
+      <span class="left">2/3 완료</span>
+      <span class="right">추가 설정 진행 중</span>
     </div>
   </div>
 </aside>
@@ -167,8 +170,8 @@
       <div class="ai-banner">
         <div class="xiro-mark"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><circle cx="12" cy="12" r="3" fill="white"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3"/></svg></div>
         <div class="ai-banner-content">
-          <p class="ai-banner-text">앞에서 등록한 용품의 재고를 입력해주세요. <span class="strong">사이즈별로 정확하게 입력하시면 재고 관리가 더 편해져요.</span></p>
-          <a class="ai-banner-link">파일로 재고 가져오기 →</a>
+          <p class="ai-banner-text"><span class="strong">용품 종류와 현재 보유 수량을 한 번에 정리해두세요.</span> 학생이 도복이 필요할 때, 재고가 부족하면 Xiro가 미리 알려드릴게요.</p>
+          <a class="ai-banner-link">엑셀 파일로 한 번에 가져오기 →</a>
         </div>
         <button class="ai-banner-close"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
       </div>
@@ -177,8 +180,8 @@
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
         </div>
         <div class="delegate-content">
-          <div class="delegate-title">재고 입력은 매니저에게 부탁할 수 있어요</div>
-          <div class="delegate-desc">실제 창고 확인이 필요하면 매니저님께 부탁하세요.</div>
+          <div class="delegate-title">용품 등록은 매니저에게 부탁할 수 있어요</div>
+          <div class="delegate-desc">자세한 용품 정보는 매니저님이 더 잘 아실 수 있어요.</div>
         </div>
         <button class="delegate-btn">매니저에게 부탁하기</button>
       </div>
@@ -190,77 +193,80 @@
       <span class="num-current">STEP 7</span>
       <span class="num-total">/ 8</span>
     </div>
-    <h1 class="section-title">지금 가지고 있는 용품 수량 알려주세요.</h1>
-    <p class="section-subtitle">실제 창고 재고를 입력해주세요. 부족하면 알림으로 알려드릴게요.</p>
+    <h1 class="section-title">용품·재고를 한눈에 관리하세요.</h1>
+    <p class="section-subtitle">판매하거나 무상 제공하는 용품과 현재 보유 수량을 함께 등록해주세요. 재고가 부족하면 자동으로 알림을 보내드릴게요.</p>
 
-    <div class="top-row">
-      <div class="total-stock">
-        <span class="total-stock-label">총 재고</span>
-        <span class="total-stock-num">327</span>
-      </div>
-      <div class="filter-pills">
-        <button class="pill active">전체</button>
-        <button class="pill">Uniform</button>
-        <button class="pill">Belt</button>
-        <button class="pill">Sparring Gear</button>
-      </div>
+    <div class="filter-pills">
+      <button class="pill active">전체</button>
+      <button class="pill">Uniform</button>
+      <button class="pill">Belt</button>
+      <button class="pill">Sparring Gear</button>
+      <button class="pill">Training Equipment</button>
+      <button class="pill">Breaking Materials</button>
     </div>
 
-    <div class="stock-header">
+    <div class="table-header-inv">
       <div>No.</div>
       <div>카테고리</div>
       <div></div>
       <div>용품명</div>
-      <div style="text-align: right;">현재 재고</div>
       <div style="text-align: right;">최소 재고</div>
+      <div style="text-align: right;">현재 보유</div>
+      <div style="text-align: center;">활성</div>
+      <div></div>
     </div>
 
-    <div class="stock-list">
-      <div class="stock-row">
-        <span class="stock-num">20</span>
-        <span class="stock-cat">Uniform</span>
-        <div class="stock-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#2563EB;"><path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.47a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.47a2 2 0 00-1.34-2.23z"/></svg></div>
-        <span class="stock-name">TKD Uniform (Top)</span>
-        <input type="number" value="30" class="stock-input">
-        <span class="stock-min">10</span>
+    <button class="add-row">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
+      용품 추가하기
+    </button>
+
+    <div class="inv-list">
+      <div class="inv-row">
+        <span class="inv-num">20</span>
+        <select class="inv-cat"><option>Uniform</option></select>
+        <div class="inv-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#2563EB;"><path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.47a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.47a2 2 0 00-1.34-2.23z"/></svg></div>
+        <input class="inv-name" value="TKD Uniform (Top)">
+        <select class="inv-stock"><option>10</option></select>
+        <input class="inv-current low" type="number" value="8" placeholder="0" style="padding: 6px 10px; font-size: 13px; background: #F9FAFB; border: 0; border-radius: 8px; color: #0A0A0F; text-align: right; font-family: 'JetBrains Mono', monospace; font-weight: 600; width: 100%;">
+        <div class="toggle on"></div>
+        <button class="icon-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
       </div>
-      <div class="stock-row">
-        <span class="stock-num">19</span>
-        <span class="stock-cat">Uniform</span>
-        <div class="stock-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#2563EB;"><path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.47a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.47a2 2 0 00-1.34-2.23z"/></svg></div>
-        <span class="stock-name">TKD Uniform (Bottom)</span>
-        <input type="number" value="29" class="stock-input">
-        <span class="stock-min">10</span>
+      <div class="inv-row">
+        <span class="inv-num">19</span>
+        <select class="inv-cat"><option>Uniform</option></select>
+        <div class="inv-icon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#2563EB;"><path d="M20.38 3.46L16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.47a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.47a2 2 0 00-1.34-2.23z"/></svg></div>
+        <input class="inv-name" value="TKD Uniform (Bottom)">
+        <select class="inv-stock"><option>10</option></select>
+        <input class="inv-current low" type="number" value="8" placeholder="0" style="padding: 6px 10px; font-size: 13px; background: #F9FAFB; border: 0; border-radius: 8px; color: #0A0A0F; text-align: right; font-family: 'JetBrains Mono', monospace; font-weight: 600; width: 100%;">
+        <div class="toggle on"></div>
+        <button class="icon-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
       </div>
-      <div class="stock-row">
-        <span class="stock-num">16</span>
-        <span class="stock-cat belt">Belt</span>
-        <div class="stock-icon bw"><div class="belt-mini white"></div></div>
-        <span class="stock-name">White Belt</span>
-        <input type="number" value="30" class="stock-input">
-        <span class="stock-min">10</span>
+      <div class="inv-row">
+        <span class="inv-num">16</span>
+        <select class="inv-cat"><option>Belt</option></select>
+        <div class="inv-icon belt-white"><div class="belt-mini white"></div></div>
+        <input class="inv-name" value="White Belt (흰띠)">
+        <select class="inv-stock"><option>10</option></select>
+        <input class="inv-current" type="number" value="25" placeholder="0" style="padding: 6px 10px; font-size: 13px; background: #F9FAFB; border: 0; border-radius: 8px; color: #0A0A0F; text-align: right; font-family: 'JetBrains Mono', monospace; font-weight: 600; width: 100%;">
+        <div class="toggle on"></div>
+        <button class="icon-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
       </div>
-      <div class="stock-row">
-        <span class="stock-num">15</span>
-        <span class="stock-cat belt">Belt</span>
-        <div class="stock-icon by"><div class="belt-mini yellow"></div></div>
-        <span class="stock-name">Yellow Belt</span>
-        <input type="number" value="20" class="stock-input">
-        <span class="stock-min">5</span>
-      </div>
-      <div class="stock-row">
-        <span class="stock-num">11</span>
-        <span class="stock-cat belt">Belt</span>
-        <div class="stock-icon bk"><div class="belt-mini black"></div></div>
-        <span class="stock-name">Black Belt</span>
-        <input type="number" value="8" class="stock-input">
-        <span class="stock-min">3</span>
+      <div class="inv-row">
+        <span class="inv-num">15</span>
+        <select class="inv-cat"><option>Belt</option></select>
+        <div class="inv-icon belt-yellow"><div class="belt-mini yellow"></div></div>
+        <input class="inv-name" value="Yellow Belt (노란띠)">
+        <select class="inv-stock"><option>5</option></select>
+        <input class="inv-current" type="number" value="18" placeholder="0" style="padding: 6px 10px; font-size: 13px; background: #F9FAFB; border: 0; border-radius: 8px; color: #0A0A0F; text-align: right; font-family: 'JetBrains Mono', monospace; font-weight: 600; width: 100%;">
+        <div class="toggle on"></div>
+        <button class="icon-btn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
       </div>
     </div>
 
     <div class="reassure">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-      최소 재고 이하로 떨어지면 Xiro가 자동으로 알려드려요.
+      체크박스로 활성화한 용품만 도장에서 사용됩니다. 비활성화는 언제든 가능해요.
     </div>
   </div>
 
