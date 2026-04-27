@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STEP Manager · 알림 패널 시연</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body { font-family: 'Pretendard', -apple-system, sans-serif; background: #F9FAFB; color: #0A0A0F; min-height: 100vh; }
+
+  /* ============ 백그라운드 페이지 (시연용) ============ */
+  .demo-page {
+    min-height: 100vh;
+    padding: 60px 40px;
+    background: #F9FAFB;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+  }
+  .demo-eyebrow {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 600;
+    color: #2563EB;
+    background: #EFF6FF;
+    padding: 4px 10px;
+    border-radius: 6px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .demo-title {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    text-align: center;
+  }
+  .demo-subtitle {
+    font-size: 14px;
+    color: #6B6B78;
+    text-align: center;
+    max-width: 600px;
+  }
+  .demo-controls {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .demo-btn {
+    padding: 8px 14px;
+    background: white;
+    border: 1px solid #E5E5EA;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    color: #2A2A35;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .demo-btn:hover { border-color: #2563EB; color: #2563EB; }
+  .demo-btn.primary {
+    background: #0A0A0F;
+    color: white;
+    border-color: #0A0A0F;
+  }
+  .demo-btn.primary:hover { background: #2A2A35; border-color: #2A2A35; color: white; }
+
+  .demo-info {
+    margin-top: 32px;
+    background: white;
+    border: 1px solid #E5E5EA;
+    border-radius: 12px;
+    padding: 20px 24px;
+    max-width: 560px;
+    font-size: 13px;
+    color: #6B6B78;
+    line-height: 1.7;
+  }
+  .demo-info strong { color: #0A0A0F; font-weight: 600; }
+  .demo-info ul { margin-top: 8px; padding-left: 20px; }
+  .demo-info li { margin-bottom: 4px; }
+
+  /* ============================================
+     알림 슬라이드 패널 (시연 - 처음부터 열려있음)
+     ============================================ */
+  .notif-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 15, 0.32);
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+    z-index: 50;
+    opacity: 1;
+    visibility: visible;
+  }
+  .notif-backdrop.closed {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .notif-panel {
+    position: fixed;
+    top: 0; right: 0;
+    width: 380px;
+    height: 100vh;
+    background: white;
+    border-left: 1px solid #F1F1F4;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(0);
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 60;
+    box-shadow: -8px 0 32px -8px rgba(10, 10, 15, 0.08);
+  }
+  .notif-panel.closed {
+    transform: translateX(100%);
+  }
+
+  /* Header */
+  .notif-header {
+    padding: 20px 20px 14px;
+    border-bottom: 1px solid #F1F1F4;
+    flex-shrink: 0;
+  }
+  .notif-header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 4px;
+  }
+  .notif-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0A0A0F;
+    letter-spacing: -0.02em;
+    margin: 0;
+  }
+  .notif-close {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: #6B6B78;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .notif-close:hover { background: #F1F1F4; color: #0A0A0F; }
+  .notif-subtitle { font-size: 11px; color: #9B9BA8; }
+
+  /* Control bar */
+  .notif-controls {
+    padding: 12px 20px;
+    border-bottom: 1px solid #F1F1F4;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    background: #FAFAFB;
+  }
+  .notif-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #2A2A35;
+    cursor: pointer;
+    user-select: none;
+  }
+  .notif-toggle input { width: 14px; height: 14px; accent-color: #2563EB; cursor: pointer; }
+  .notif-unread-count {
+    background: #EFF6FF;
+    color: #1D4ED8;
+    padding: 2px 7px;
+    border-radius: 9999px;
+    font-size: 10px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .notif-mark-all {
+    background: transparent;
+    border: 0;
+    color: #2563EB;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0;
+  }
+  .notif-mark-all:hover { color: #1D4ED8; }
+
+  /* List */
+  .notif-list {
+    flex: 1;
+    overflow-y: auto;
+    padding-bottom: 8px;
+  }
+  .notif-list::-webkit-scrollbar { width: 6px; }
+  .notif-list::-webkit-scrollbar-track { background: transparent; }
+  .notif-list::-webkit-scrollbar-thumb { background: #E5E5EA; border-radius: 9999px; }
+
+  .notif-group-label {
+    padding: 14px 20px 6px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #9B9BA8;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .notif-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 12px 20px;
+    border-bottom: 1px solid #F9FAFB;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.12s;
+    cursor: pointer;
+  }
+  .notif-item:hover { background: #FAFAFB; }
+  .notif-item.unread { background: #F8FAFE; }
+  .notif-item.unread:hover { background: #EFF6FF; }
+  .notif-dot-blue {
+    width: 7px; height: 7px;
+    border-radius: 9999px;
+    background: #2563EB;
+    flex-shrink: 0;
+    margin-top: 6px;
+  }
+  .notif-item:not(.unread) .notif-item-content { margin-left: 15px; }
+  .notif-item-content { flex: 1; min-width: 0; }
+  .notif-item-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+  .notif-cat-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    font-weight: 500;
+  }
+  .notif-cat-icon[data-cat="coach"] { color: #2563EB; }
+  .notif-cat-icon[data-cat="parent"] { color: #EC4899; }
+  .notif-cat-icon[data-cat="student"] { color: #10B981; }
+  .notif-cat-icon[data-cat="system"] { color: #6B6B78; }
+  .notif-cat-icon[data-cat="schedule"] { color: #D97706; }
+  .notif-cat-icon[data-cat="account"] { color: #A855F7; }
+  .notif-time {
+    font-size: 10px;
+    color: #9B9BA8;
+    font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+  }
+  .notif-item-title {
+    font-size: 13px;
+    color: #0A0A0F;
+    line-height: 1.45;
+    margin-bottom: 2px;
+  }
+  .notif-item.unread .notif-item-title { font-weight: 600; }
+  .notif-item:not(.unread) .notif-item-title { color: #6B6B78; }
+  .notif-item-detail {
+    font-size: 11px;
+    color: #9B9BA8;
+    line-height: 1.4;
+  }
+
+  .notif-load-more {
+    width: 100%;
+    padding: 14px 20px;
+    background: transparent;
+    border: 0;
+    border-top: 1px solid #F1F1F4;
+    color: #6B6B78;
+    font-size: 12px;
+    cursor: pointer;
+  }
+  .notif-load-more:hover { background: #FAFAFB; color: #2563EB; }
+
+  .notif-footer {
+    border-top: 1px solid #F1F1F4;
+    background: #FAFAFB;
+    flex-shrink: 0;
+  }
+  .notif-settings-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 20px;
+    color: #2A2A35;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 500;
+  }
+  .notif-settings-link:hover { background: #F1F1F4; color: #1D4ED8; }
+  .notif-settings-link .arrow { margin-left: auto; color: #9B9BA8; }
+
+  @media (max-width: 768px) {
+    .notif-panel { width: 100vw; }
+    .demo-page { padding: 40px 20px; }
+    .demo-title { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ 백그라운드 페이지 (시연 컨텍스트) ============ -->
+<div class="demo-page">
+  <span class="demo-eyebrow">알림 패널 단독 시연</span>
+  <h1 class="demo-title">STEP Manager · 알림 슬라이드 패널</h1>
+  <p class="demo-subtitle">우측에 표시된 알림 패널이 실제 동작하는 화면입니다. 모든 인터랙션을 직접 테스트해보세요.</p>
+
+  <div class="demo-controls">
+    <button class="demo-btn primary" id="reset-demo">↻ 시연 데이터 초기화</button>
+    <button class="demo-btn" id="toggle-panel">패널 열기/닫기</button>
+    <a href="step_notification_panel.html" class="demo-btn" style="text-decoration:none;">📄 디자인 문서</a>
+    <a href="step_main_v6.html" class="demo-btn" style="text-decoration:none;">🏠 메인 화면</a>
+  </div>
+
+  <div class="demo-info">
+    <strong>테스트 가능한 인터랙션</strong>
+    <ul>
+      <li>알림 항목 클릭 → 자동 읽음 처리 + 페이지 이동 (시연: alert)</li>
+      <li>"읽지 않음만" 토글 → 미읽음 항목만 필터링</li>
+      <li>"모두 읽음 처리" → 모든 미읽음 일괄 read</li>
+      <li>X 버튼 / 백드롭 클릭 / ESC 키 → 패널 닫기</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ============ 알림 슬라이드 패널 ============ -->
+<div id="notif-backdrop" class="notif-backdrop"></div>
+
+<aside id="notif-panel" class="notif-panel" aria-label="알림 패널">
+  <div class="notif-header">
+    <div class="notif-header-top">
+      <h2 class="notif-title">알림</h2>
+      <button class="notif-close" id="notif-close" aria-label="닫기">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="notif-subtitle">모바일 앱에 푸시된 내역</div>
+  </div>
+
+  <div class="notif-controls">
+    <label class="notif-toggle">
+      <input type="checkbox" id="notif-unread-only">
+      <span>읽지 않음만</span>
+      <span class="notif-unread-count" id="notif-unread-count">3</span>
+    </label>
+    <button class="notif-mark-all" id="notif-mark-all">모두 읽음 처리</button>
+  </div>
+
+  <div class="notif-list">
+    <div class="notif-group-label">오늘</div>
+
+    <div class="notif-item unread" data-category="coach">
+      <span class="notif-dot-blue"></span>
+      <div class="notif-item-content">
+        <div class="notif-item-meta">
+          <span class="notif-cat-icon" data-cat="coach">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0114 0v1"/></svg>
+            Coach 활동
+          </span>
+          <span class="notif-time">5분 전</span>
+        </div>
+        <div class="notif-item-title">박사범이 꼬마호랑이반 출석을 마감했어요</div>
+        <div class="notif-item-detail">12/15명 출석 완료</div>
+      </div>
+    </div>
+
+    <div class="notif-item unread" data-category="parent">
+      <span class="notif-dot-blue"></span>
+      <div class="notif-item-content">
+        <div class="notif-item-meta">
+          <span class="notif-cat-icon" data-cat="parent">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+            학부모 활동
+          </span>
+          <span class="notif-time">10분 전</span>
+        </div>
+        <div class="notif-item-title">김민준 학부모가 답장을 보냈어요</div>
+        <div class="notif-item-detail">"네, 5월 승급 신청합니다"</div>
+      </div>
+    </div>
+
+    <div class="notif-item unread" data-category="system">
+      <span class="notif-dot-blue"></span>
+      <div class="notif-item-content">
+        <div class="notif-item-meta">
+          <span class="notif-cat-icon" data-cat="system">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>
+            시스템 처리
+          </span>
+          <span class="notif-time">15분 전</span>
+        </div>
+        <div class="notif-item-title">결제 안내 SMS 3건 발송 완료</div>
+        <div class="notif-item-detail">총 $110</div>
+      </div>
+    </div>
+
+    <div class="notif-item" data-category="student">
+      <div class="notif-item-content">
+        <div class="notif-item-meta">
+          <span class="notif-cat-icon" data-cat="student">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+            학생 활동
+          </span>
+          <span class="notif-time">1시간 전</span>
+        </div>
+        <div class="notif-item-title">박지훈 학생이 출석 체크 했어요</div>
+      </div>
+    </div>
+
+    <div class="notif-group-label">어제</div>
+
+    <div class="notif-item" data-category="schedule">
+      <div class="notif-item-content">
+        <div class="notif-item-meta">
+          <span class="notif-cat-icon" data-cat="schedule">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            임박 일정
+          </span>
+          <span class="notif-time">어제 14:30</span>
+        </div>
+        <div class="notif-item-title">4월 승급 심사 D-7 (5/20 수)</div>
+      </div>
+    </div>
+
+    <div class="notif-item" data-category="account">
+      <div class="notif-item-content">
+        <div class="notif-item-meta">
+          <span class="notif-cat-icon" data-cat="account">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="9" cy="8" r="4"/><path d="M3 20v-1a6 6 0 016-6h0a6 6 0 016 6v1"/><circle cx="17" cy="6" r="2.5"/></svg>
+            권한·계정
+          </span>
+          <span class="notif-time">어제 09:15</span>
+        </div>
+        <div class="notif-item-title">새 직원 박코치가 추가됐어요</div>
+        <div class="notif-item-detail">역할: Coach</div>
+      </div>
+    </div>
+
+    <div class="notif-group-label">이번 주</div>
+
+    <div class="notif-item" data-category="system">
+      <div class="notif-item-content">
+        <div class="notif-item-meta">
+          <span class="notif-cat-icon" data-cat="system">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>
+            시스템 처리
+          </span>
+          <span class="notif-time">3일 전</span>
+        </div>
+        <div class="notif-item-title">자동 결제 5건 처리 완료</div>
+        <div class="notif-item-detail">총 $850</div>
+      </div>
+    </div>
+
+    <button class="notif-load-more">더보기 (4건) ↓</button>
+  </div>
+
+  <div class="notif-footer">
+    <a class="notif-settings-link" href="#">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      푸시 알림 설정
+      <svg class="arrow" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+    </a>
+  </div>
+</aside>
+
+<script>
+  const notifPanel = document.getElementById('notif-panel');
+  const notifBackdrop = document.getElementById('notif-backdrop');
+  const notifClose = document.getElementById('notif-close');
+  const togglePanelBtn = document.getElementById('toggle-panel');
+  const resetBtn = document.getElementById('reset-demo');
+
+  function openPanel() {
+    notifPanel.classList.remove('closed');
+    notifBackdrop.classList.remove('closed');
+  }
+  function closePanel() {
+    notifPanel.classList.add('closed');
+    notifBackdrop.classList.add('closed');
+  }
+
+  if (notifClose) notifClose.addEventListener('click', closePanel);
+  if (notifBackdrop) notifBackdrop.addEventListener('click', closePanel);
+  if (togglePanelBtn) togglePanelBtn.addEventListener('click', () => {
+    notifPanel.classList.contains('closed') ? openPanel() : closePanel();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closePanel();
+  });
+
+  // 시연 데이터 초기화 (페이지 새로고침)
+  if (resetBtn) resetBtn.addEventListener('click', () => location.reload());
+
+  // 읽지 않음 토글
+  const notifUnreadOnly = document.getElementById('notif-unread-only');
+  if (notifUnreadOnly) {
+    notifUnreadOnly.addEventListener('change', (e) => {
+      const showUnreadOnly = e.target.checked;
+      const items = document.querySelectorAll('.notif-item');
+      const groupLabels = document.querySelectorAll('.notif-group-label');
+
+      items.forEach(item => {
+        if (showUnreadOnly) {
+          item.style.display = item.classList.contains('unread') ? 'flex' : 'none';
+        } else {
+          item.style.display = 'flex';
+        }
+      });
+
+      groupLabels.forEach(label => {
+        let next = label.nextElementSibling;
+        let hasVisible = false;
+        while (next && !next.classList.contains('notif-group-label')) {
+          if (next.classList.contains('notif-item') && next.style.display !== 'none') {
+            hasVisible = true;
+            break;
+          }
+          next = next.nextElementSibling;
+        }
+        label.style.display = hasVisible ? '' : 'none';
+      });
+    });
+  }
+
+  // 모두 읽음
+  const notifMarkAll = document.getElementById('notif-mark-all');
+  const notifUnreadCountEl = document.getElementById('notif-unread-count');
+  if (notifMarkAll) {
+    notifMarkAll.addEventListener('click', () => {
+      const unreadItems = document.querySelectorAll('.notif-item.unread');
+      unreadItems.forEach(item => {
+        item.classList.remove('unread');
+        const dot = item.querySelector('.notif-dot-blue');
+        if (dot) dot.remove();
+      });
+      if (notifUnreadCountEl) notifUnreadCountEl.textContent = '0';
+    });
+  }
+
+  // 항목 클릭
+  document.querySelectorAll('.notif-item').forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (item.classList.contains('unread')) {
+        item.classList.remove('unread');
+        const dot = item.querySelector('.notif-dot-blue');
+        if (dot) dot.remove();
+        if (notifUnreadCountEl) {
+          const cur = parseInt(notifUnreadCountEl.textContent) || 0;
+          if (cur > 0) notifUnreadCountEl.textContent = String(cur - 1);
+        }
+      }
+      const cat = item.dataset.category;
+      const title = item.querySelector('.notif-item-title')?.textContent || '';
+      alert(`[${cat}] "${title}"\n\n실제 서비스에서는 해당 페이지로 이동합니다.`);
+    });
+  });
+</script>
+
+</body>
+</html>

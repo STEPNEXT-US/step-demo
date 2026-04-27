@@ -1,0 +1,1346 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STEP Manager · Upsell Triggers v1.0</title>
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Pretendard', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    background: #F9FAFB;
+    color: #0A0A0F;
+    letter-spacing: -0.011em;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  .num { font-family: 'JetBrains Mono', monospace; font-feature-settings: "tnum"; }
+  .en { font-family: 'Inter', system-ui, sans-serif; }
+  button { font-family: inherit; cursor: pointer; border: 0; background: none; }
+
+  /* ============ 페이지 레이아웃 ============ */
+  .page {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 40px 32px 80px;
+  }
+
+  .page-header {
+    margin-bottom: 40px;
+    padding-bottom: 24px;
+    border-bottom: 1px solid #E5E5EA;
+  }
+  .page-title {
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    margin-bottom: 6px;
+  }
+  .page-subtitle {
+    font-size: 14px;
+    color: #6B6B78;
+    font-weight: 500;
+  }
+  .page-meta {
+    display: flex;
+    gap: 16px;
+    margin-top: 14px;
+    font-size: 12px;
+    color: #9B9BA8;
+  }
+  .page-meta .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: #EFF6FF;
+    color: #2563EB;
+    border-radius: 999px;
+    font-weight: 600;
+  }
+
+  /* ============ 거버넌스 박스 ============ */
+  .governance {
+    background: white;
+    border: 1px solid #E5E5EA;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 40px;
+  }
+  .governance-title {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .governance-title svg { width: 18px; height: 18px; color: #2563EB; }
+  .governance-sub {
+    font-size: 13px;
+    color: #6B6B78;
+    margin-bottom: 18px;
+  }
+  .governance-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+  }
+  .gov-item {
+    background: #F9FAFB;
+    border: 1px solid #F1F1F4;
+    border-radius: 12px;
+    padding: 14px 16px;
+  }
+  .gov-item-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #9B9BA8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+  .gov-item-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #0A0A0F;
+  }
+  .gov-item-value .num { font-size: 18px; font-weight: 700; }
+
+  /* ============ 트리거 카드 ============ */
+  .trigger-list { display: flex; flex-direction: column; gap: 32px; }
+
+  .trigger {
+    background: white;
+    border: 1px solid #E5E5EA;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .trigger-head {
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    gap: 16px;
+    align-items: center;
+    padding: 22px 28px;
+    border-bottom: 1px solid #F1F1F4;
+    background: linear-gradient(180deg, #FAFAFB 0%, white 100%);
+  }
+  .trigger-num {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: #0A0A0F;
+    color: white;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .trigger-num.t1 { background: #0A0A0F; }
+  .trigger-num.t2 { background: #2563EB; }
+  .trigger-num.t3 { background: #7C3AED; }
+  .trigger-num.t4 { background: #059669; }
+  .trigger-num.t5 { background: #D97706; }
+
+  .trigger-head-text h2 {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+  }
+  .trigger-head-text p {
+    font-size: 13px;
+    color: #6B6B78;
+  }
+
+  .trigger-form-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: #F1F1F4;
+    color: #2A2A35;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .trigger-body {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 0;
+  }
+
+  .trigger-spec {
+    padding: 24px 28px;
+    border-right: 1px solid #F1F1F4;
+    background: #FAFAFB;
+  }
+  .spec-row {
+    margin-bottom: 16px;
+  }
+  .spec-row:last-child { margin-bottom: 0; }
+  .spec-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #9B9BA8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 6px;
+  }
+  .spec-value {
+    font-size: 13px;
+    color: #2A2A35;
+    line-height: 1.5;
+  }
+  .spec-value strong { color: #0A0A0F; font-weight: 600; }
+  .spec-value .num { font-weight: 600; }
+
+  .trigger-preview {
+    padding: 28px;
+    background:
+      linear-gradient(135deg, #F9FAFB 0%, #F1F1F4 100%);
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(0,0,0,0.04) 1px, transparent 0);
+    background-size: 16px 16px;
+    background-color: #F9FAFB;
+    min-height: 320px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+  .preview-frame {
+    width: 100%;
+    max-width: 520px;
+  }
+  .preview-label {
+    position: absolute;
+    top: 12px;
+    left: 16px;
+    font-size: 10px;
+    font-weight: 600;
+    color: #9B9BA8;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  /* ============ T1: Value First (인라인 카드) ============ */
+  .t1-context {
+    background: white;
+    border: 1px solid #E5E5EA;
+    border-radius: 16px;
+    padding: 18px 20px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+  }
+  .t1-kpi-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 14px;
+  }
+  .t1-kpi-label {
+    font-size: 12px;
+    color: #6B6B78;
+    font-weight: 500;
+    margin-bottom: 4px;
+  }
+  .t1-kpi-value {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  .t1-kpi-meta {
+    font-size: 12px;
+    color: #DC2626;
+    font-weight: 500;
+    margin-top: 2px;
+  }
+  .t1-divider {
+    height: 1px;
+    background: #F1F1F4;
+    margin: 14px -20px;
+  }
+  .t1-upsell-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 4px 0;
+  }
+  .t1-upsell-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: #EFF6FF;
+    color: #2563EB;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .t1-upsell-icon svg { width: 16px; height: 16px; }
+  .t1-upsell-text {
+    flex: 1;
+    font-size: 12.5px;
+    color: #2A2A35;
+    line-height: 1.45;
+  }
+  .t1-upsell-text strong { color: #0A0A0F; font-weight: 600; }
+  .t1-pro-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 7px;
+    background: #2563EB;
+    color: white;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    margin-left: 4px;
+    vertical-align: 1px;
+  }
+  .t1-upsell-cta {
+    font-size: 12px;
+    font-weight: 600;
+    color: #2563EB;
+    padding: 6px 10px;
+    border-radius: 8px;
+    transition: background 0.15s;
+    flex-shrink: 0;
+  }
+  .t1-upsell-cta:hover { background: #EFF6FF; }
+
+  /* ============ T2: Xiro Whisper (채팅 말풍선) ============ */
+  .t2-chat {
+    background: white;
+    border: 1px solid #E5E5EA;
+    border-radius: 20px;
+    padding: 20px;
+    box-shadow: 0 8px 24px -4px rgba(37, 99, 235, 0.12);
+    position: relative;
+  }
+  .t2-chat::before {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    right: 32px;
+    width: 16px;
+    height: 16px;
+    background: white;
+    border-right: 1px solid #E5E5EA;
+    border-bottom: 1px solid #E5E5EA;
+    transform: rotate(45deg);
+  }
+  .t2-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .t2-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    font-family: 'Inter', sans-serif;
+  }
+  .t2-name {
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .t2-status {
+    font-size: 11px;
+    color: #9B9BA8;
+  }
+  .t2-message {
+    font-size: 13.5px;
+    color: #2A2A35;
+    line-height: 1.55;
+    margin-bottom: 14px;
+  }
+  .t2-message strong { color: #0A0A0F; font-weight: 600; }
+  .t2-data-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: #FEF3C7;
+    border-radius: 10px;
+    font-size: 12px;
+    color: #92400E;
+    font-weight: 500;
+    margin-bottom: 14px;
+  }
+  .t2-data-chip .num { font-weight: 700; color: #78350F; }
+  .t2-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .t2-btn {
+    padding: 8px 14px;
+    border-radius: 10px;
+    font-size: 12.5px;
+    font-weight: 600;
+    transition: all 0.15s;
+  }
+  .t2-btn-primary {
+    background: #0A0A0F;
+    color: white;
+  }
+  .t2-btn-primary:hover { background: #2A2A35; }
+  .t2-btn-secondary {
+    background: #F1F1F4;
+    color: #2A2A35;
+  }
+  .t2-btn-secondary:hover { background: #E5E5EA; }
+  .t2-btn-ghost {
+    background: transparent;
+    color: #9B9BA8;
+    font-weight: 500;
+  }
+  .t2-btn-ghost:hover { color: #2A2A35; }
+
+  /* ============ T3: Free Pro Preview (카드 + 진행바) ============ */
+  .t3-card {
+    background: linear-gradient(135deg, #1E1B4B 0%, #4C1D95 100%);
+    border-radius: 20px;
+    padding: 24px;
+    color: white;
+    position: relative;
+    overflow: hidden;
+  }
+  .t3-card::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 200px;
+    height: 200px;
+    background: radial-gradient(circle, rgba(167, 139, 250, 0.3) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .t3-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(8px);
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  .t3-title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .t3-title .pro-mark {
+    background: linear-gradient(90deg, #FCD34D 0%, #F59E0B 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .t3-desc {
+    font-size: 13px;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.55;
+    margin-bottom: 18px;
+    position: relative;
+  }
+  .t3-features {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+  .t3-feature {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12.5px;
+    color: rgba(255,255,255,0.9);
+  }
+  .t3-feature svg { width: 14px; height: 14px; color: #A78BFA; flex-shrink: 0; }
+  .t3-cta-row {
+    display: flex;
+    gap: 10px;
+    position: relative;
+  }
+  .t3-btn-primary {
+    flex: 1;
+    padding: 11px 16px;
+    background: white;
+    color: #1E1B4B;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 700;
+    transition: all 0.15s;
+  }
+  .t3-btn-primary:hover { background: #F1F1F4; }
+  .t3-btn-secondary {
+    padding: 11px 14px;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .t3-fineprint {
+    font-size: 11px;
+    color: rgba(255,255,255,0.55);
+    margin-top: 10px;
+    position: relative;
+  }
+
+  /* ============ T4: Personalized ROI (계산기) ============ */
+  .t4-card {
+    background: white;
+    border: 1px solid #E5E5EA;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .t4-head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .t4-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    background: #ECFDF5;
+    color: #059669;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .t4-icon svg { width: 18px; height: 18px; }
+  .t4-title {
+    font-size: 14px;
+    font-weight: 700;
+  }
+  .t4-sub {
+    font-size: 11px;
+    color: #9B9BA8;
+  }
+
+  .t4-formula {
+    background: #F9FAFB;
+    border: 1px solid #F1F1F4;
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 16px;
+  }
+  .t4-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 12.5px;
+  }
+  .t4-row + .t4-row { border-top: 1px dashed #E5E5EA; }
+  .t4-row-label { color: #6B6B78; }
+  .t4-row-label small { color: #9B9BA8; font-size: 11px; margin-left: 4px; }
+  .t4-row-value { font-weight: 600; color: #0A0A0F; font-family: 'JetBrains Mono', monospace; font-size: 13px; }
+  .t4-row.highlight {
+    margin-top: 6px;
+    padding: 10px 14px;
+    margin-left: -14px;
+    margin-right: -14px;
+    background: #ECFDF5;
+    border-radius: 10px;
+    border: 0;
+  }
+  .t4-row.highlight .t4-row-label { color: #047857; font-weight: 600; }
+  .t4-row.highlight .t4-row-value { color: #047857; font-size: 16px; }
+
+  .t4-result {
+    text-align: center;
+    padding: 16px 0;
+    margin-bottom: 18px;
+    border-top: 1px solid #F1F1F4;
+    border-bottom: 1px solid #F1F1F4;
+  }
+  .t4-result-label {
+    font-size: 11px;
+    color: #9B9BA8;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+  .t4-result-value {
+    font-size: 28px;
+    font-weight: 800;
+    color: #047857;
+    letter-spacing: -0.02em;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .t4-result-meta {
+    font-size: 12px;
+    color: #6B6B78;
+    margin-top: 4px;
+  }
+  .t4-result-meta strong { color: #0A0A0F; font-weight: 600; }
+
+  .t4-cta-row { display: flex; gap: 10px; }
+  .t4-btn-primary {
+    flex: 1;
+    padding: 11px 14px;
+    background: #047857;
+    color: white;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: background 0.15s;
+  }
+  .t4-btn-primary:hover { background: #065F46; }
+  .t4-btn-secondary {
+    padding: 11px 14px;
+    background: #F1F1F4;
+    color: #2A2A35;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  /* ============ T5: Soft Choice (선택 카드) ============ */
+  .t5-card {
+    background: white;
+    border: 1px solid #E5E5EA;
+    border-radius: 20px;
+    padding: 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .t5-head {
+    margin-bottom: 18px;
+  }
+  .t5-title {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    margin-bottom: 4px;
+  }
+  .t5-desc {
+    font-size: 12.5px;
+    color: #6B6B78;
+    line-height: 1.5;
+  }
+  .t5-options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .t5-opt {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1px solid #E5E5EA;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: left;
+    width: 100%;
+  }
+  .t5-opt:hover {
+    border-color: #2563EB;
+    background: #FAFBFF;
+  }
+  .t5-opt-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: #F1F1F4;
+    color: #6B6B78;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .t5-opt-icon svg { width: 16px; height: 16px; }
+  .t5-opt.primary .t5-opt-icon { background: #EFF6FF; color: #2563EB; }
+  .t5-opt-text { flex: 1; }
+  .t5-opt-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #0A0A0F;
+    margin-bottom: 2px;
+  }
+  .t5-opt-sub {
+    font-size: 11.5px;
+    color: #9B9BA8;
+  }
+  .t5-opt-arrow {
+    color: #9B9BA8;
+  }
+  .t5-opt-arrow svg { width: 16px; height: 16px; }
+  .t5-opt:hover .t5-opt-arrow { color: #2563EB; }
+
+  /* ============ 위치 매핑 도식 ============ */
+  .map-wrap {
+    background: white;
+    border: 1px solid #E5E5EA;
+    border-radius: 20px;
+    padding: 28px;
+    margin-top: 40px;
+  }
+  .map-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .map-sub {
+    font-size: 13px;
+    color: #6B6B78;
+    margin-bottom: 24px;
+  }
+  .wireframe {
+    background: #FAFAFB;
+    border: 1px solid #E5E5EA;
+    border-radius: 16px;
+    overflow: hidden;
+    position: relative;
+    aspect-ratio: 16/10;
+    max-height: 600px;
+  }
+  .wf-sidebar {
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 18%;
+    background: white;
+    border-right: 1px solid #E5E5EA;
+    padding: 14px;
+  }
+  .wf-line {
+    height: 8px;
+    background: #F1F1F4;
+    border-radius: 4px;
+    margin-bottom: 8px;
+  }
+  .wf-line.sm { width: 60%; }
+  .wf-line.md { width: 80%; }
+  .wf-header {
+    position: absolute;
+    left: 18%; right: 0; top: 0;
+    height: 52px;
+    background: white;
+    border-bottom: 1px solid #E5E5EA;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .wf-main {
+    position: absolute;
+    left: 18%; right: 0; top: 52px; bottom: 0;
+    padding: 20px;
+    overflow: hidden;
+  }
+  .wf-briefing {
+    height: 60px;
+    background: linear-gradient(90deg, #EFF6FF, #F1F1F4);
+    border-radius: 10px;
+    margin-bottom: 14px;
+  }
+  .wf-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .wf-kpi {
+    height: 90px;
+    background: white;
+    border: 1px solid #E5E5EA;
+    border-radius: 10px;
+    padding: 10px;
+  }
+  .wf-kpi.t1-target {
+    border: 2px solid #0A0A0F;
+    box-shadow: 0 0 0 4px rgba(10,10,15,0.08);
+  }
+  .wf-grid-2 {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 10px;
+  }
+  .wf-panel {
+    height: 120px;
+    background: white;
+    border: 1px solid #E5E5EA;
+    border-radius: 10px;
+  }
+  .wf-pin {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    z-index: 10;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+  .wf-pin:hover { transform: scale(1.15); }
+  .wf-pin.p1 { background: #0A0A0F; top: 26%; left: 28%; }
+  .wf-pin.p2 { background: #2563EB; bottom: 5%; right: 4%; }
+  .wf-pin.p3 { background: #7C3AED; top: 16%; right: 4%; }
+  .wf-pin.p4 { background: #059669; top: 60%; right: 8%; }
+  .wf-pin.p5 { background: #D97706; top: 50%; left: 50%; transform: translate(-50%, -50%); }
+  .wf-pin.p5:hover { transform: translate(-50%, -50%) scale(1.15); }
+
+  .map-legend {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .legend-item {
+    display: flex;
+    gap: 10px;
+    padding: 10px 12px;
+    background: #FAFAFB;
+    border: 1px solid #F1F1F4;
+    border-radius: 10px;
+  }
+  .legend-pin {
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .legend-text { font-size: 11.5px; color: #2A2A35; line-height: 1.4; }
+  .legend-text strong { display: block; font-size: 12px; font-weight: 600; color: #0A0A0F; margin-bottom: 2px; }
+
+  /* ============ 결정 노트 ============ */
+  .decisions {
+    background: #FFFBEB;
+    border: 1px solid #FCD34D;
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-top: 32px;
+  }
+  .decisions-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #92400E;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .decisions-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .decisions-list li {
+    font-size: 12.5px;
+    color: #78350F;
+    line-height: 1.5;
+    padding-left: 18px;
+    position: relative;
+  }
+  .decisions-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #059669;
+    font-weight: 700;
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <!-- ===== 페이지 헤더 ===== -->
+  <header class="page-header">
+    <h1 class="page-title">Upsell Trigger System <span class="num" style="font-size: 18px; color: #9B9BA8; font-weight: 600;">v1.0</span></h1>
+    <p class="page-subtitle">Core → Pro · Pro → Grow 5단계 업셀 트리거 명세 및 UI 목업</p>
+    <div class="page-meta">
+      <span class="badge">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+        Value First Strategy
+      </span>
+      <span>·</span>
+      <span>Owner / Manager 전용 · Coach·학부모·학생 isolate 보호</span>
+    </div>
+  </header>
+
+  <!-- ===== 거버넌스 룰 ===== -->
+  <section class="governance">
+    <h3 class="governance-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      Upsell Budget · 노출 거버넌스
+    </h3>
+    <p class="governance-sub">5종 트리거가 따로 발동되면 사용자 피로가 누적됩니다. 통합 빈도 룰로 보호합니다.</p>
+    <div class="governance-grid">
+      <div class="gov-item">
+        <div class="gov-item-label">Weekly Budget</div>
+        <div class="gov-item-value"><span class="num">2.0</span> · 합산 점수</div>
+      </div>
+      <div class="gov-item">
+        <div class="gov-item-label">Strong Trigger</div>
+        <div class="gov-item-value"><span class="num">1.0</span> 점 (Modal · Slide)</div>
+      </div>
+      <div class="gov-item">
+        <div class="gov-item-label">Soft Trigger</div>
+        <div class="gov-item-value"><span class="num">0.5</span> 점 (Toast · Inline)</div>
+      </div>
+      <div class="gov-item">
+        <div class="gov-item-label">Cool-down</div>
+        <div class="gov-item-value">거부 후 <span class="num">14~90</span> 일</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 트리거 5종 ===== -->
+  <div class="trigger-list">
+
+    <!-- ============ T1: Value First ============ -->
+    <article class="trigger" id="t1">
+      <header class="trigger-head">
+        <div class="trigger-num t1">01</div>
+        <div class="trigger-head-text">
+          <h2>Value First · 가치 먼저 보여주기</h2>
+          <p>Core 사용 중 자연스럽게 Pro의 결과물을 시각적으로 노출. 광고가 아니라 "정보의 연장선".</p>
+        </div>
+        <span class="trigger-form-tag">📍 Inline Card · 0.5pt</span>
+      </header>
+      <div class="trigger-body">
+        <aside class="trigger-spec">
+          <div class="spec-row">
+            <div class="spec-label">노출 위치</div>
+            <div class="spec-value">메인 KPI 카드 하단<br>· 매출 카드 (미납 데이터)<br>· 출석률 카드 (위험 학생)</div>
+          </div>
+          <div class="spec-row">
+            <div class="spec-label">발동 조건</div>
+            <div class="spec-value">데이터 임계값 도달 시<br>· 미납 ≥ <strong>$300</strong>/월 또는 ≥3건<br>· 위험 학생 ≥ 3명</div>
+          </div>
+          <div class="spec-row">
+            <div class="spec-label">권한</div>
+            <div class="spec-value">Owner · Manager 전용<br>(Coach 화면 비노출)</div>
+          </div>
+          <div class="spec-row">
+            <div class="spec-label">거부 시 재노출</div>
+            <div class="spec-value">X 닫기 → <strong>14일</strong><br>"관심 없음" → <strong>90일</strong></div>
+          </div>
+        </aside>
+        <div class="trigger-preview">
+          <span class="preview-label">Preview</span>
+          <div class="preview-frame">
+            <div class="t1-context">
+              <div class="t1-kpi-head">
+                <div>
+                  <div class="t1-kpi-label">이번 달 매출</div>
+                  <div class="t1-kpi-value num">$18,420</div>
+                  <div class="t1-kpi-meta">미납 <span class="num">$420</span> · 3건</div>
+                </div>
+                <div style="font-size: 11px; color: #DC2626; background: #FEE2E2; padding: 4px 8px; border-radius: 6px; font-weight: 600;">↗ 16%</div>
+              </div>
+              <div class="t1-divider"></div>
+              <div class="t1-upsell-row">
+                <div class="t1-upsell-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>
+                </div>
+                <div class="t1-upsell-text">
+                  미납 <strong>$420</strong>를 자동결제로 회수할 수 있어요<span class="t1-pro-tag en">PRO</span>
+                </div>
+                <button class="t1-upsell-cta">어떻게? →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ============ T2: Xiro Whisper ============ -->
+    <article class="trigger" id="t2">
+      <header class="trigger-head">
+        <div class="trigger-num t2">02</div>
+        <div class="trigger-head-text">
+          <h2>Xiro Whisper · AI가 부드럽게 제안</h2>
+          <p>Xiro가 일일 브리핑이나 채팅 중 자연스럽게 Pro 가치를 언급. 강요 X, 대화 톤.</p>
+        </div>
+        <span class="trigger-form-tag">📍 Floating Bubble · 0.5pt</span>
+      </header>
+      <div class="trigger-body">
+        <aside class="trigger-spec">
+          <div class="spec-row">
+            <div class="spec-label">노출 위치</div>
+            <div class="spec-value">우하단 Xiro 채팅창<br>또는 일일 브리핑 카드 끝</div>
+          </div>
+          <div class="spec-row">
+            <div class="spec-label">발동 조건</div>
+            <div class="spec-value">패턴 감지 시<br>· 미납 추세 <strong>3주 연속</strong> 증가<br>· 동일 작업 <strong>주 5회+</strong> 반복<br>· 학부모 문의 <strong>20건+</strong>/주</div>
+          </div>
+          <div class="spec-row">
+            <div class="spec-label">권한 룰</div>
+            <div class="spec-value">Owner · Manager만 발동<br>Coach 화면 절대 X<br>학부모 앱 절대 X</div>
+          </div>
+          <div class="spec-row">
+            <div class="spec-label">거부 시 재노출</div>
+            <div class="spec-value">"나중에" → <strong>7일</strong><br>"필요 없음" → <strong>30일</strong></div>
+          </div>
+        </aside>
+        <div class="trigger-preview">
+          <span class="preview-label">Preview · Xiro 채팅창 안</span>
+          <div class="preview-frame">
+            <div class="t2-chat">
+              <div class="t2-head">
+                <div class="t2-avatar en">X</div>
+                <div>
+                  <div class="t2-name">Xiro</div>
+                  <div class="t2-status">잠시만요, 패턴 하나 발견했어요</div>
+                </div>
+              </div>
+              <div class="t2-message">
+                최근 <strong>3주 동안 미납 결제가 평균 32%씩</strong> 늘고 있어요. 매번 학부모께 직접 연락하시느라 시간 많이 쓰시는 것 같은데 —
+              </div>
+              <div class="t2-data-chip">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                이번 달 누적 <span class="num">3.2시간</span> · 미납 처리 시간
+              </div>
+              <div class="t2-message" style="margin-bottom: 16px;">
+                Stripe 자동결제로 바꾸면 이 작업이 거의 사라져요. <strong>2분 정도 시간</strong> 되시면 어떻게 작동하는지 보여드릴까요?
+              </div>
+              <div class="t2-actions">
+                <button class="t2-btn t2-btn-primary">좋아요, 보여주세요</button>
+                <button class="t2-btn t2-btn-secondary">나중에</button>
+                <button class="t2-btn t2-btn-ghost">필요 없어요</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ============ T3: Free Pro Preview ============ -->
+    <article class="trigger" id="t3">
+      <header class="trigger-head">
+        <div class="trigger-num t3">03</div>
+        <div class="trigger-head-text">
+          <h2>Free Pro Preview · 7일 무료 체험</h2>
+          <p>Pro 기능을 잠깐 직접 써보게 함. 진입과 종료가 명확하고, 종료 후 데이터 정책도 투명.</p>
+        </div>
+        <span class="trigger-form-tag">📍 Slide-in Card · 1.0pt</span>
+      </header>
+      <div class="trigger-body">
+        <aside class="trigger-spec">
+          <div class="spec-row">
+            <div class="spec-label">노출 위치</div>
+            <div class="spec-value">메인 페이지 우측 패널<br>또는 결제/멤버 페이지 상단</div>
+          </div>
+          <div class="spec-row">
+            <div class="spec-label">발동 조건</div>
+            <div class="spec-value">자격 모두 충족 시<br>· Core 사용 <strong>30일+</strong><br>· 월 매출 <strong>$5,000+</strong><br>· T1·T2 거부 후 21일 경과</div>
+          </div>
+          <div class="spec-row">
+            <div class="spec-label">데이터 정책</div>
+            <div class="spec-value"><strong>종료 시:</strong> 데이터 30일 보관<br>업그레이드 시 복원<br>30일 후 자동 삭제 (GDPR)</div>
+          </div>
+          <div class="spec-row">
+            <div class="spec-label">중요 룰</div>
+            <div class="spec-value"><strong>자동 결제 전환 X</strong><br>7일 후 명시적 선택 필수<br>(Subscription trap 금지)</div>
+          </div>
+        </aside>
+        <div class="trigger-preview">
+          <span class="preview-label">Preview · 우측 슬라이드 인</span>
+          <div class="preview-frame">
+            <div class="t3-card">
+              <div class="t3-tag">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.5 7H22l-6 4.5 2.5 7L12 16l-6.5 4.5L8 13.5 2 9h7.5z"/></svg>
+                LIMITED TRIAL
+              </div>
+              <h3 class="t3-title"><span class="pro-mark">Pro</span> 기능 7일 무료 체험</h3>
+              <p class="t3-desc">신용카드 등록 없이 바로 시작. 7일 후 직접 선택해서 계속 쓰거나 Core로 돌아오세요.</p>
+              <div class="t3-features">
+                <div class="t3-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Stripe 자동결제 연동</div>
+                <div class="t3-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Play STEP 학부모 앱</div>
+                <div class="t3-feature"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12l5 5L20 7"/></svg> Xiro AI 챗봇 (24/7 응대)</div>
+              </div>
+              <div class="t3-cta-row">
+                <button class="t3-btn-primary">7일 체험 시작</button>
+                <button class="t3-btn-secondary">나중에</button>
+              </div>
+              <p class="t3-fineprint">자동 결제 전환 없음 · 종료 시 데이터 30일 보관</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ============ T4: Personalized ROI ============ -->
+    <article class="trigger" id="t4">
+      <header class="trigger-head">
+        <div class="trigger-num t4">04</div>
+        <div class="trigger-head-text">
+          <h2>Personalized ROI · 도장 실제 데이터 계산</h2>
+          <p>일반적인 마케팅 카피가 아닌 도장의 진짜 숫자로 ROI를 시각화. 가장 강력한 트리거.</p>
+        </div>
+        <span class="trigger-form-tag">📍 Modal · 1.0pt</span>
+      </header>
+      <div class="trigger-body">
+        <aside class="trigger-spec">
+          <div class="spec-row">
+            <div class="spec-label">노출 위치</div>
+            <div class="spec-value">설정 → 가격 페이지<br>또는 T2/T3 클릭 후 상세</div>
+          </div>
+          <div class="spec-row">
+            <div class="spec-label">발동 조건</div>
+            <div class="spec-value">사용자가 능동적으로 클릭<br>(자동 팝업 X)<br>· "어떻게?" 버튼<br>· "체험 시작" 전 확인</div>
+          </div>
+          <div class="spec-row">
+            <div class="spec-label">계산 근거</div>
+            <div class="spec-value"><strong>실제 데이터 기반:</strong><br>· 최근 3개월 미납 평균<br>· 업계 평균 회수율 90%<br>· 학부모 응대 시간 로그</div>
+          </div>
+          <div class="spec-row">
+            <div class="spec-label">투명성</div>
+            <div class="spec-value">"계산 근거 보기" 버튼 필수<br>(모든 가정과 출처 공개)</div>
+          </div>
+        </aside>
+        <div class="trigger-preview">
+          <span class="preview-label">Preview · Modal 본문</span>
+          <div class="preview-frame">
+            <div class="t4-card">
+              <div class="t4-head">
+                <div class="t4-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 6-6"/></svg>
+                </div>
+                <div>
+                  <div class="t4-title">우리 도장 ROI 계산</div>
+                  <div class="t4-sub">최근 3개월 데이터 기준</div>
+                </div>
+              </div>
+              <div class="t4-formula">
+                <div class="t4-row">
+                  <span class="t4-row-label">월 평균 미납<small>3개월 평균</small></span>
+                  <span class="t4-row-value">$ 110.00</span>
+                </div>
+                <div class="t4-row">
+                  <span class="t4-row-label">자동결제 회수율<small>업계 평균</small></span>
+                  <span class="t4-row-value">90 %</span>
+                </div>
+                <div class="t4-row">
+                  <span class="t4-row-label">월 회수 예상</span>
+                  <span class="t4-row-value">$ 99.00</span>
+                </div>
+                <div class="t4-row highlight">
+                  <span class="t4-row-label">연간 회수 예상</span>
+                  <span class="t4-row-value">$ 1,188</span>
+                </div>
+              </div>
+              <div class="t4-result">
+                <div class="t4-result-label">Pro 구독 후 순이익</div>
+                <div class="t4-result-value">+ $ 196 / 월</div>
+                <div class="t4-result-meta">회수액 <span class="num">$99</span> + 절감 시간 <span class="num">$346</span> − Pro <span class="num">$249</span></div>
+              </div>
+              <div class="t4-cta-row">
+                <button class="t4-btn-primary">7일 무료 체험으로 확인</button>
+                <button class="t4-btn-secondary">계산 근거</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- ============ T5: Soft Choice ============ -->
+    <article class="trigger" id="t5">
+      <header class="trigger-head">
+        <div class="trigger-num t5">05</div>
+        <div class="trigger-head-text">
+          <h2>Soft Choice · 부담 없는 선택지</h2>
+          <p>"지금 / 나중에 / 관심 없음" 3단계 선택. 거부도 명확한 길로 만든다.</p>
+        </div>
+        <span class="trigger-form-tag">📍 Modal Footer · 0.5pt</span>
+      </header>
+      <div class="trigger-body">
+        <aside class="trigger-spec">
+          <div class="spec-row">
+            <div class="spec-label">노출 위치</div>
+            <div class="spec-value">T2/T3/T4 모달의 닫기 흐름<br>(독립 트리거 X, 종결 패턴)</div>
+          </div>
+          <div class="spec-row">
+            <div class="spec-label">발동 조건</div>
+            <div class="spec-value">다른 트리거의 종결 시점<br>X 닫기 시 자동 노출</div>
+          </div>
+          <div class="spec-row">
+            <div class="spec-label">3가지 선택</div>
+            <div class="spec-value"><strong>지금 시작</strong> → 7일 체험<br><strong>7일 후 알림</strong> → 일주일 후 재노출<br><strong>관심 없음</strong> → 90일 잠금</div>
+          </div>
+          <div class="spec-row">
+            <div class="spec-label">철학</div>
+            <div class="spec-value">"닫기 = 거부"가 아니라<br>"닫기 = 다음에 결정"<br>거부도 명확한 의사표시</div>
+          </div>
+        </aside>
+        <div class="trigger-preview">
+          <span class="preview-label">Preview · 닫기 직전 노출</span>
+          <div class="preview-frame">
+            <div class="t5-card">
+              <div class="t5-head">
+                <h3 class="t5-title">결정은 천천히 하셔도 돼요</h3>
+                <p class="t5-desc">지금 결정이 어려우시면 편한 시점에 다시 알려드릴게요.</p>
+              </div>
+              <div class="t5-options">
+                <button class="t5-opt primary">
+                  <div class="t5-opt-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+                  </div>
+                  <div class="t5-opt-text">
+                    <div class="t5-opt-title">지금 7일 체험 시작</div>
+                    <div class="t5-opt-sub">바로 사용해보고 결정</div>
+                  </div>
+                  <div class="t5-opt-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
+                </button>
+                <button class="t5-opt">
+                  <div class="t5-opt-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                  </div>
+                  <div class="t5-opt-text">
+                    <div class="t5-opt-title">일주일 뒤에 다시 알려주세요</div>
+                    <div class="t5-opt-sub">5월 4일 (월) 오전 9시</div>
+                  </div>
+                  <div class="t5-opt-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
+                </button>
+                <button class="t5-opt">
+                  <div class="t5-opt-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                  </div>
+                  <div class="t5-opt-text">
+                    <div class="t5-opt-title">지금은 관심 없어요</div>
+                    <div class="t5-opt-sub">90일 동안 다시 안내하지 않음</div>
+                  </div>
+                  <div class="t5-opt-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </article>
+
+  </div>
+
+  <!-- ===== 위치 매핑 도식 ===== -->
+  <section class="map-wrap">
+    <h3 class="map-title">메인 화면 위치 매핑</h3>
+    <p class="map-sub">각 트리거가 step_main_v5.html 어디에서 발동되는지 시각화</p>
+
+    <div class="wireframe">
+      <!-- 사이드바 -->
+      <div class="wf-sidebar">
+        <div class="wf-line md"></div>
+        <div class="wf-line sm" style="margin-bottom: 18px;"></div>
+        <div class="wf-line"></div>
+        <div class="wf-line"></div>
+        <div class="wf-line"></div>
+        <div class="wf-line sm"></div>
+      </div>
+      <!-- 헤더 -->
+      <div class="wf-header">
+        <div class="wf-line md" style="width: 140px; margin: 0;"></div>
+        <div style="display: flex; gap: 8px;">
+          <div class="wf-line" style="width: 24px; height: 24px; border-radius: 50%; margin: 0;"></div>
+          <div class="wf-line" style="width: 24px; height: 24px; border-radius: 50%; margin: 0;"></div>
+        </div>
+      </div>
+      <!-- 메인 -->
+      <div class="wf-main">
+        <div class="wf-briefing"></div>
+        <div class="wf-kpi-grid">
+          <div class="wf-kpi"></div>
+          <div class="wf-kpi"></div>
+          <div class="wf-kpi t1-target"></div>
+        </div>
+        <div class="wf-grid-2">
+          <div class="wf-panel"></div>
+          <div class="wf-panel"></div>
+        </div>
+      </div>
+
+      <!-- 핀 -->
+      <div class="wf-pin p1" title="T1: 매출 KPI 카드 안">1</div>
+      <div class="wf-pin p2" title="T2: Xiro 플로팅 버튼">2</div>
+      <div class="wf-pin p3" title="T3: 우측 슬라이드 인">3</div>
+      <div class="wf-pin p4" title="T4: 메인 영역 모달">4</div>
+      <div class="wf-pin p5" title="T5: 모달 종결 시점">5</div>
+    </div>
+
+    <div class="map-legend">
+      <div class="legend-item">
+        <div class="legend-pin" style="background: #0A0A0F;">1</div>
+        <div class="legend-text"><strong>Value First</strong>매출 KPI 카드 하단 인라인</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-pin" style="background: #2563EB;">2</div>
+        <div class="legend-text"><strong>Xiro Whisper</strong>우하단 채팅창 / 브리핑</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-pin" style="background: #7C3AED;">3</div>
+        <div class="legend-text"><strong>Free Pro Preview</strong>우측 슬라이드 인 카드</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-pin" style="background: #059669;">4</div>
+        <div class="legend-text"><strong>ROI Calculator</strong>중앙 모달 (능동 클릭)</div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-pin" style="background: #D97706;">5</div>
+        <div class="legend-text"><strong>Soft Choice</strong>모달 종결 시점</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 결정 노트 ===== -->
+  <section class="decisions">
+    <div class="decisions-title">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+      이번 v1.0에서 확정된 5가지 결정사항
+    </div>
+    <ul class="decisions-list">
+      <li><strong>Upsell Budget 시스템</strong>: 주 2점 합산 예산 · 강한 트리거 1pt · 약한 트리거 0.5pt</li>
+      <li><strong>3단계 거부 처리</strong>: X 닫기 14일 · "나중에" 7일 · "관심 없음" 90일 잠금</li>
+      <li><strong>데이터 임계값</strong>: 미납 ≥ $300/월 또는 ≥3건일 때 ROI 트리거 발동</li>
+      <li><strong>Free Pro 종료 정책</strong>: 데이터 30일 보관 → 업그레이드 시 복원 → 자동 결제 전환 절대 금지</li>
+      <li><strong>Xiro 권한 분리</strong>: Owner/Manager만 업셀 발동 · Coach/학부모/학생 화면 절대 X</li>
+    </ul>
+  </section>
+
+</div>
+
+</body>
+</html>

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>STEP Manager · 메인 (v5)</title>
+<title>회원 관리 · STEP Manager</title>
 <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -2485,6 +2485,478 @@
     .help-panel { width: 100vw; }
   }
 
+  /* ==================== MEMBERS PAGE ==================== */
+
+  /* 페이지 헤더 */
+  .members-page-header {
+    margin-bottom: 28px;
+  }
+  .members-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #9B9BA8;
+    margin-bottom: 8px;
+  }
+  .members-breadcrumb a {
+    color: #6B6B78;
+    text-decoration: none;
+    transition: color 0.15s;
+  }
+  .members-breadcrumb a:hover { color: #2563EB; }
+  .members-breadcrumb svg { width: 12px; height: 12px; color: #C8C8D0; }
+
+  .members-page-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 24px;
+  }
+  .members-page-title {
+    font-size: 26px;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: #0A0A0F;
+    line-height: 1.2;
+    margin-bottom: 6px;
+  }
+  .members-page-subtitle {
+    font-size: 14px;
+    color: #6B6B78;
+  }
+  .members-page-stats {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 12px;
+    color: #6B6B78;
+  }
+  .members-stat-item .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    color: #0A0A0F;
+    font-size: 14px;
+    margin-right: 4px;
+  }
+  .members-stat-divider {
+    width: 1px;
+    height: 12px;
+    background: #E5E5EA;
+  }
+
+  /* Hero Empty State */
+  .members-hero-empty {
+    background: linear-gradient(180deg, #FAFBFF 0%, white 100%);
+    border: 1px solid #E5E5EA;
+    border-radius: 24px;
+    padding: 56px 32px;
+    text-align: center;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .members-hero-empty::before {
+    content: '';
+    position: absolute;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 400px;
+    height: 200px;
+    background: radial-gradient(ellipse, rgba(37, 99, 235, 0.06) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .members-hero-icon {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    margin: 0 auto 24px;
+    background: white;
+    border: 1.5px solid #E5E5EA;
+    border-radius: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 8px 24px -8px rgba(37, 99, 235, 0.15);
+  }
+  .members-hero-icon svg {
+    width: 38px;
+    height: 38px;
+    color: #2563EB;
+  }
+  .members-hero-icon::after {
+    content: '';
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #FEF3C7;
+    border: 2px solid white;
+    background-image: url("data:image/svg+xml,%3Csvg width='14' height='14' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 8V12L14 14' stroke='%23D97706' stroke-width='2.5' stroke-linecap='round'/%3E%3Ccircle cx='12' cy='12' r='9' stroke='%23D97706' stroke-width='2.5'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 14px 14px;
+  }
+  .members-hero-title {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.022em;
+    color: #0A0A0F;
+    margin-bottom: 8px;
+    position: relative;
+  }
+  .members-hero-desc {
+    font-size: 14px;
+    color: #6B6B78;
+    line-height: 1.6;
+    max-width: 480px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .members-hero-desc strong {
+    color: #2563EB;
+    font-weight: 600;
+  }
+
+  /* 3 Option Cards */
+  .members-options-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+  .members-option-card {
+    background: white;
+    border: 1.5px solid #E5E5EA;
+    border-radius: 18px;
+    padding: 24px;
+    cursor: pointer;
+    transition: all 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    color: inherit;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 200px;
+  }
+  .members-option-card:hover {
+    border-color: #2563EB;
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px -8px rgba(37, 99, 235, 0.15);
+  }
+  .members-option-card.recommended {
+    border-color: #2563EB;
+    background: linear-gradient(135deg, white 0%, #FAFBFF 100%);
+  }
+  .members-option-card.recommended::before {
+    content: '추천';
+    position: absolute;
+    top: -8px;
+    right: 16px;
+    background: #2563EB;
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.04em;
+  }
+
+  .members-option-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+  .members-option-icon.blue { background: #EFF6FF; color: #2563EB; }
+  .members-option-icon.purple { background: #F3E8FF; color: #7C3AED; }
+  .members-option-icon.amber { background: #FEF3C7; color: #D97706; }
+  .members-option-icon svg { width: 20px; height: 20px; }
+
+  .members-option-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #0A0A0F;
+    letter-spacing: -0.015em;
+    margin-bottom: 6px;
+  }
+  .members-option-desc {
+    font-size: 12.5px;
+    color: #6B6B78;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    flex: 1;
+  }
+  .members-option-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    color: #9B9BA8;
+    margin-bottom: 16px;
+  }
+  .members-option-meta-tag {
+    background: #F1F1F4;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+    color: #2A2A35;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+  }
+  .members-option-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #2563EB;
+    transition: gap 0.15s;
+  }
+  .members-option-card:hover .members-option-cta {
+    gap: 10px;
+  }
+  .members-option-cta svg { width: 14px; height: 14px; }
+
+  /* Future preview section */
+  .members-preview-section {
+    background: white;
+    border: 1px solid #E5E5EA;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-bottom: 24px;
+  }
+  .members-preview-head {
+    padding: 20px 24px;
+    border-bottom: 1px solid #F1F1F4;
+    background: #FAFBFF;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .members-preview-head-text {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .members-preview-head-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: #EFF6FF;
+    color: #2563EB;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .members-preview-head-icon svg { width: 14px; height: 14px; }
+  .members-preview-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #0A0A0F;
+  }
+  .members-preview-sub {
+    font-size: 11.5px;
+    color: #9B9BA8;
+    margin-top: 2px;
+  }
+  .members-preview-tag {
+    background: white;
+    border: 1px solid #DBEAFE;
+    color: #2563EB;
+    font-size: 10.5px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 999px;
+  }
+
+  /* Blurred sample table */
+  .members-preview-body {
+    position: relative;
+    padding: 0;
+  }
+  .members-preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    filter: blur(0.4px);
+  }
+  .members-preview-table thead {
+    background: #FAFAFA;
+  }
+  .members-preview-table th {
+    text-align: left;
+    padding: 14px 20px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #6B6B78;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom: 1px solid #F1F1F4;
+  }
+  .members-preview-table td {
+    padding: 14px 20px;
+    font-size: 13px;
+    border-bottom: 1px solid #F9F9FB;
+  }
+  .members-preview-table tr:last-child td {
+    border-bottom: 0;
+  }
+  .members-preview-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #DBEAFE, #C7D2FE);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: #4F46E5;
+    font-size: 12px;
+  }
+  .members-preview-cell-name {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .members-preview-cell-name .name {
+    font-weight: 600;
+    color: #0A0A0F;
+  }
+  .members-preview-belt {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+  }
+  .members-preview-belt::before {
+    content: '';
+    width: 16px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--belt-color, #FCD34D);
+  }
+  .members-preview-attendance {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .members-preview-attendance-bar {
+    width: 60px;
+    height: 4px;
+    background: #F1F1F4;
+    border-radius: 999px;
+    overflow: hidden;
+    position: relative;
+  }
+  .members-preview-attendance-fill {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, #10B981, #059669);
+    border-radius: 999px;
+  }
+  .members-preview-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 999px;
+  }
+  .members-preview-status.active { background: #ECFDF5; color: #047857; }
+  .members-preview-status.warning { background: #FEF3C7; color: #92400E; }
+
+  /* Lock overlay on preview */
+  .members-preview-lock-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.85) 60%, white 100%);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 32px 24px 24px;
+    pointer-events: none;
+  }
+  .members-preview-lock-text {
+    text-align: center;
+    pointer-events: auto;
+  }
+  .members-preview-lock-text p {
+    font-size: 12.5px;
+    color: #6B6B78;
+    line-height: 1.55;
+    margin-bottom: 10px;
+  }
+  .members-preview-lock-text strong { color: #0A0A0F; font-weight: 700; }
+  .members-preview-lock-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #2563EB;
+    text-decoration: none;
+  }
+  .members-preview-lock-cta:hover { gap: 6px; }
+
+  /* Help link footer */
+  .members-help-footer {
+    background: #F9FAFB;
+    border: 1px solid #F1F1F4;
+    border-radius: 14px;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    font-size: 13px;
+  }
+  .members-help-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: white;
+    border: 1px solid #E5E5EA;
+    color: #6B6B78;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .members-help-icon svg { width: 14px; height: 14px; }
+  .members-help-text {
+    flex: 1;
+    color: #6B6B78;
+    line-height: 1.5;
+  }
+  .members-help-text strong { color: #0A0A0F; font-weight: 600; }
+  .members-help-cta {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #2563EB;
+    text-decoration: none;
+    flex-shrink: 0;
+  }
+  .members-help-cta:hover { text-decoration: underline; }
+
+  /* 모바일 */
+  @media (max-width: 1024px) {
+    .members-options-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 768px) {
+    .members-page-title-row { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .members-hero-empty { padding: 40px 20px; }
+    .members-hero-title { font-size: 18px; }
+    .members-preview-table th:nth-child(n+4),
+    .members-preview-table td:nth-child(n+4) { display: none; }
+  }
+
+
   /* ==================== COACH MARK SYSTEM ==================== */
   /* 페이지별 화면 둘러보기 — Linear/Stripe 스타일 */
 
@@ -2732,10 +3204,9 @@
     }
   }
 
-
 </style>
 </head>
-<body data-state="ready" data-upsell="on" data-page="main">
+<body data-state="empty" data-upsell="on" data-page="members">
 
 <div class="app-shell">
 
@@ -2766,7 +3237,7 @@
       <span class="kbd-hint">⌘K</span>
     </div>
 
-    <a class="nav-item active">
+    <a class="nav-item" href="step_main_v6.html">
       <span class="icon-wrap">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       </span>
@@ -2774,7 +3245,7 @@
     </a>
 
     <div class="nav-section-label">Business</div>
-    <a class="nav-item" href="step_members.html">
+    <a class="nav-item active">
       <span class="icon-wrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0114 0v1"/></svg></span>
       회원 관리
     </a>
@@ -2859,9 +3330,10 @@
     </header>
 
     <!-- Content -->
+    <!-- Content -->
     <div class="content">
 
-      <!-- Setup-incomplete banner (empty state only) -->
+      <!-- Setup-incomplete banner (글로벌 알림 — 메인과 동일) -->
       <div class="setup-banner">
         <div class="setup-banner-orb">X</div>
         <div class="setup-banner-content">
@@ -2873,7 +3345,7 @@
             <div class="setup-banner-bar">
               <div class="setup-banner-bar-fill" style="width:80%"></div>
             </div>
-            <span class="setup-banner-meta-text">남은 단계: <strong>학생 등록</strong></span>
+            <span class="setup-banner-meta-text">남은 단계: <strong>회원 등록</strong></span>
           </div>
         </div>
         <a href="step_setup_step5.html" class="setup-banner-cta">이어하기 →</a>
@@ -2882,454 +3354,228 @@
         </button>
       </div>
 
-      <!-- Greeting -->
-      <div class="greeting">
-        <h1>좋은 아침이에요, <span class="name">Master Kim</span></h1>
-        <p class="date">2026년 4월 26일 일요일</p>
-      </div>
-
-      <div class="briefing-card">
-        <div class="briefing-content">
-          <div class="briefing-title">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3" fill="currentColor"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg>
-            Xiro의 2026년 4월 26일 일일 브리핑입니다.
-          </div>
-          <div class="briefing-desc briefing-desc-normal">오늘 7개 수업이 예정되어 있으며 예상 출석률은 <strong>85%</strong>입니다. <strong>3건</strong>의 미완료 업무가 있습니다.</div>
-          <div class="briefing-desc briefing-desc-empty"><strong>도장 설정이 75% 완료됐어요.</strong> 학생 등록만 마치면 매일의 운영 데이터를 정확하게 보여드릴 수 있어요. 남은 시간은 <strong>약 2분</strong>입니다.</div>
+      <!-- Page Header -->
+      <div class="members-page-header">
+        <div class="members-breadcrumb">
+          <a href="step_main_v6.html">STEP Manager</a>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+          <span>회원 관리</span>
         </div>
-        <button class="briefing-cta">
-          Briefing Details
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
-        </button>
-      </div>
-
-      <!-- KPI Grid -->
-      <div class="kpi-grid">
-        <div class="kpi-card">
-          <div class="kpi-header">
-            <div class="kpi-icon blue">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
-            </div>
-            <div class="kpi-label">출석률</div>
-            <div class="kpi-trend">↘ 6% (지난 7일)</div>
-            <div class="kpi-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>
+        <div class="members-page-title-row">
+          <div>
+            <h1 class="members-page-title">회원 관리</h1>
+            <p class="members-page-subtitle">도장의 모든 회원을 한눈에 관리하세요</p>
           </div>
-          <div class="kpi-body">
-            <div class="kpi-value-wrap">
-              <div class="kpi-value">84<span style="font-size: 14px; color: #6B6B78;">%</span></div>
-              <div class="kpi-meta-text">3명의 수련생이 위험해요</div>
-            </div>
-            <div class="kpi-meta-row">
-              <div class="avatar-stack" style="display:flex;">
-                <div class="mini-avatar">김</div>
-                <div class="mini-avatar amber">이</div>
-                <div class="mini-avatar blue">박</div>
-              </div>
-            </div>
-          </div>
-          <!-- Empty state overlay -->
-          <div class="kpi-empty-overlay">
-            <span class="kpi-empty-tag">설정 필요</span>
-            <div class="kpi-empty-body">
-              <div class="kpi-empty-value">—%</div>
-              <p class="kpi-empty-msg">학생을 등록하면 출석률이<br>자동으로 계산돼요.</p>
-            </div>
-            <a href="step_setup_step5.html" class="kpi-empty-cta">학생 등록하기 →</a>
-          </div>
-        </div>
-
-        <div class="kpi-card">
-          <div class="kpi-header">
-            <div class="kpi-icon amber">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.5 13l1.5 8-5-3-5 3 1.5-8"/></svg>
-            </div>
-            <div class="kpi-label">승급 예정자</div>
-            <div class="kpi-trend neutral">이번 달</div>
-            <div class="kpi-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>
-          </div>
-          <div class="kpi-body">
-            <div class="kpi-value-wrap">
-              <div class="kpi-value">9<span style="font-size: 14px; color: #6B6B78;">명</span></div>
-              <div class="kpi-meta-text">2명의 승인 대기 중</div>
-            </div>
-            <div class="kpi-meta-row">
-              <div class="avatar-stack" style="display:flex;">
-                <div class="mini-avatar purple">정</div>
-                <div class="mini-avatar red">최</div>
-              </div>
-            </div>
-          </div>
-          <!-- Empty state overlay -->
-          <div class="kpi-empty-overlay">
-            <span class="kpi-empty-tag">설정 필요</span>
-            <div class="kpi-empty-body">
-              <div class="kpi-empty-value">— 명</div>
-              <p class="kpi-empty-msg">학생과 띠 체계가 등록되면<br>승급 대상자를 자동 추천해요.</p>
-            </div>
-            <a href="step_setup_step5.html" class="kpi-empty-cta">학생 등록하기 →</a>
-          </div>
-        </div>
-
-        <div class="kpi-card kpi-card-revenue">
-          <div class="kpi-header">
-            <div class="kpi-icon green">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
-            </div>
-            <div class="kpi-label">이번 달 매출</div>
-            <div class="kpi-trend up">↗ 16% (지난 달)</div>
-            <div class="kpi-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>
-          </div>
-          <div class="kpi-body">
-            <div class="kpi-value-wrap">
-              <div class="kpi-value">$18,420</div>
-              <div class="kpi-meta-text">미납 <span class="num">$420</span> · 3건</div>
-            </div>
-            <div class="kpi-meta-row">
-              <div class="avatar-stack" style="display:flex;">
-                <div class="mini-avatar green">장</div>
-                <div class="mini-avatar amber">한</div>
-                <div class="mini-avatar purple">윤</div>
-              </div>
-            </div>
-          </div>
-          <!-- T1: Value First 인라인 카드 -->
-          <div class="t1-upsell" id="t1Upsell">
-            <div class="t1-upsell-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>
-            </div>
-            <div class="t1-upsell-text">
-              미납 <strong>$420</strong>를 자동결제로 회수<span class="t1-pro-tag en">PRO</span>
-            </div>
-            <button class="t1-upsell-cta" onclick="event.stopPropagation(); openRoiModal();">어떻게? →</button>
-            <button class="t1-upsell-close" onclick="event.stopPropagation(); dismissT1();" title="닫기">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
-          </div>
-          <!-- Empty state overlay -->
-          <div class="kpi-empty-overlay">
-            <span class="kpi-empty-tag">설정 필요</span>
-            <div class="kpi-empty-body">
-              <div class="kpi-empty-value">$ —</div>
-              <p class="kpi-empty-msg">수강료 플랜이 설정되면<br>매출이 자동으로 집계돼요.</p>
-            </div>
-            <a href="step_setup_step4.html" class="kpi-empty-cta">수강료 설정하기 →</a>
+          <div class="members-page-stats">
+            <div class="members-stat-item"><span class="num">0</span>명 등록</div>
+            <div class="members-stat-divider"></div>
+            <div class="members-stat-item"><span class="num">5</span>단계 중 <span class="num">4</span> 완료</div>
           </div>
         </div>
       </div>
 
-      <!-- Main 3-column grid -->
-      <div class="main-grid">
-
-        <!-- Ops Center -->
-        <div class="panel">
-          <div class="panel-header">
-            <div class="panel-title">
-              <span class="panel-title-icon" style="background: #DBEAFE; color: #2563EB;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 3h18v18H3z"/><path d="M3 9h18M9 21V9"/></svg>
-              </span>
-              Ops Center
-            </div>
-            <button class="panel-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
-          </div>
-          <!-- Chip filters (한 페이지 통합 + 필터) -->
-          <div class="ops-chips">
-            <button class="ops-chip active" data-filter="all">전체 <span class="count">12</span></button>
-            <button class="ops-chip" data-filter="urgent"><span class="dot urgent"></span>긴급 <span class="count">4</span></button>
-            <button class="ops-chip" data-filter="routine"><span class="dot routine"></span>정규 <span class="count">5</span></button>
-            <button class="ops-chip" data-filter="insight"><span class="dot insight"></span>제안 <span class="count">3</span></button>
-          </div>
-          <div class="ops-list">
-            <!-- Setup-required (only in empty state) -->
-            <div class="ops-item" data-depends="setup" data-type="urgent">
-              <div class="ops-icon-wrap warn">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-              </div>
-              <div class="ops-body">
-                <div class="ops-tag-row"><span class="ops-tag urgent">🔴 긴급</span></div>
-                <div class="ops-title">학생 등록이 필요해요.</div>
-                <div class="ops-meta">출석 · 승급 · 결제 모두 학생 데이터 기반</div>
-              </div>
-              <a href="step_setup_step5.html" class="ops-action" style="text-decoration:none;">학생 등록 →</a>
-            </div>
-            <div class="ops-item" data-depends="setup" data-type="routine">
-              <div class="ops-icon-wrap info">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-              </div>
-              <div class="ops-body">
-                <div class="ops-tag-row"><span class="ops-tag routine">📋 정규</span></div>
-                <div class="ops-title">남은 설정 시간 약 2분</div>
-                <div class="ops-meta">학생 등록 1단계만 마치면 모든 기능이 켜져요</div>
-              </div>
-              <a href="step_setup_required.html" class="ops-action" style="text-decoration:none;">전체 보기</a>
-            </div>
-
-            <!-- Data-dependent (only in normal state) - 5건 노출 -->
-            <!-- 1: 긴급 - 출석 위험 -->
-            <div class="ops-item" data-depends="data" data-type="urgent">
-              <div class="ops-icon-wrap warn">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-              </div>
-              <div class="ops-body">
-                <div class="ops-tag-row"><span class="ops-tag urgent">🔴 긴급</span></div>
-                <div class="ops-title">3명의 수련생이 출석 위험입니다.</div>
-                <div class="ops-meta">김민준, 이서연, 박지훈</div>
-              </div>
-              <button class="ops-action">리마인드</button>
-            </div>
-            <!-- 2: 긴급 - 미납 -->
-            <div class="ops-item" data-depends="data" data-type="urgent">
-              <div class="ops-icon-wrap danger">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-              </div>
-              <div class="ops-body">
-                <div class="ops-tag-row"><span class="ops-tag urgent">🔴 긴급</span></div>
-                <div class="ops-title">3건의 미납 결제가 있습니다.</div>
-                <div class="ops-meta">총 미납 금액 <span class="num">$110</span></div>
-              </div>
-              <button class="ops-action">결제 안내</button>
-            </div>
-            <!-- 3: 정규 - 출석 마감 -->
-            <div class="ops-item" data-depends="data" data-type="routine">
-              <div class="ops-icon-wrap routine">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="20 6 9 17 4 12"/></svg>
-              </div>
-              <div class="ops-body">
-                <div class="ops-tag-row"><span class="ops-tag routine">📋 정규 SOP</span></div>
-                <div class="ops-title">매일 09:30 오전 수업 출석 마감</div>
-                <div class="ops-meta">박사범 담당 · 미완료</div>
-              </div>
-              <button class="ops-action">처리</button>
-            </div>
-            <!-- 4: 제안 - Xiro 인사이트 -->
-            <div class="ops-item" data-depends="data" data-type="insight">
-              <div class="ops-icon-wrap insight">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="3" fill="currentColor"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3"/></svg>
-              </div>
-              <div class="ops-body">
-                <div class="ops-tag-row"><span class="ops-tag insight">💡 제안</span></div>
-                <div class="ops-title">수요일 출석률이 4주 연속 저하</div>
-                <div class="ops-meta">Xiro 분석 · 시간대 검토 권장</div>
-              </div>
-              <button class="ops-action">검토</button>
-            </div>
-          </div>
-          <a class="ops-more">더보기 (8건) ↓</a>
+      <!-- Hero Empty State -->
+      <div class="members-hero-empty">
+        <div class="members-hero-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
         </div>
+        <h2 class="members-hero-title">아직 등록된 회원이 없어요</h2>
+        <p class="members-hero-desc">회원을 등록하면 <strong>출석률 자동 집계, 승급 대상자 추천, 매출 자동 집계, Xiro 일일 브리핑</strong>이 모두 켜져요. 약 2분이면 시작할 수 있어요.</p>
+      </div>
 
-        <!-- Live Dojang -->
-        <div class="panel">
-          <div class="panel-header">
-            <div class="panel-title">
-              <span class="panel-title-icon" style="background: #ECFDF5; color: #10B981;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0M8.53 16.11a6 6 0 016.95 0M12 20h.01"/></svg>
-              </span>
-              라이브 도장
-              <span style="width: 8px; height: 8px; border-radius: 9999px; background: #10B981; box-shadow: 0 0 0 3px rgba(16,185,129,0.2); animation: pulse-live 1.5s ease-in-out infinite;"></span>
+      <!-- 3 Option Cards -->
+      <div class="members-options-grid">
+        <!-- Option 1: 개별 등록 (추천) -->
+        <a href="step_setup_step5.html" class="members-option-card recommended">
+          <div class="members-option-icon blue">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>
+          </div>
+          <div class="members-option-title">한 명씩 등록하기</div>
+          <p class="members-option-desc">회원 한 명씩 정보를 입력해서 등록해요. 신규 도장에 추천드려요.</p>
+          <div class="members-option-meta">
+            <span class="members-option-meta-tag">1~10명</span>
+            <span>· 약 1분/명</span>
+          </div>
+          <span class="members-option-cta">
+            지금 시작하기
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </span>
+        </a>
+
+        <!-- Option 2: CSV 임포트 -->
+        <a href="step_setup_step5.html?mode=csv" class="members-option-card">
+          <div class="members-option-icon purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+          </div>
+          <div class="members-option-title">엑셀·CSV 파일로 가져오기</div>
+          <p class="members-option-desc">기존 회원 명단을 한 번에 업로드해요. 다른 시스템에서 이전하시는 도장에 추천드려요.</p>
+          <div class="members-option-meta">
+            <span class="members-option-meta-tag">10~300명</span>
+            <span>· 약 5분</span>
+          </div>
+          <span class="members-option-cta">
+            파일 업로드
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </span>
+        </a>
+
+        <!-- Option 3: 샘플 데이터 -->
+        <a href="step_setup_step5.html?mode=sample" class="members-option-card">
+          <div class="members-option-icon amber">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+          </div>
+          <div class="members-option-title">샘플 데이터로 체험</div>
+          <p class="members-option-desc">샘플 회원 24명을 자동 생성해서 STEP Manager의 모든 기능을 먼저 체험해봐요.</p>
+          <div class="members-option-meta">
+            <span class="members-option-meta-tag">샘플 24명</span>
+            <span>· 즉시</span>
+          </div>
+          <span class="members-option-cta">
+            체험 시작
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </span>
+        </a>
+      </div>
+
+      <!-- Future Preview -->
+      <div class="members-preview-section">
+        <div class="members-preview-head">
+          <div class="members-preview-head-text">
+            <div class="members-preview-head-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
             </div>
-            <div class="live-toggle">
-              <button class="live-toggle-btn">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2"/></svg>
-                모닝
-              </button>
-              <button class="live-toggle-btn active">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3" fill="currentColor"/><path d="M5 12.55a11 11 0 0114.08 0M1.42 9a16 16 0 0121.16 0"/></svg>
-                수업 중
-              </button>
-              <button class="live-toggle-btn">
-                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
-                마감
-              </button>
+            <div>
+              <div class="members-preview-title">회원 등록 후 이렇게 보여요</div>
+              <div class="members-preview-sub">실제 등록된 회원의 출석·승급 정보를 한눈에 관리할 수 있어요</div>
             </div>
           </div>
-
-          <div class="live-list">
-            <div class="live-item active">
-              <div class="live-status-row">
-                <div class="live-status">
-                  <span class="dot"></span>
-                  진행 중
-                </div>
-              </div>
-              <div class="live-class-name">꼬마호랑이반 (5~7세)</div>
-              <div class="live-meta-row">
-                <div class="live-meta-item"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="num">10:00 – 10:45</span></div>
-                <div class="live-meta-item"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0114 0v1"/></svg>박사범</div>
-                <div class="live-meta-item"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Room A</div>
-              </div>
-              <div class="live-bottom">
-                <div class="live-attendance">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-                  <span class="num">12/15</span>명 출석
-                </div>
-                <a href="step_attendance.html" class="mark-attendance-btn">Mark Attendance</a>
-              </div>
-            </div>
-
-            <div class="live-item active">
-              <div class="live-status-row">
-                <div class="live-status">
-                  <span class="dot"></span>
-                  진행 중
-                </div>
-              </div>
-              <div class="live-class-name">주니어반 (8~12세)</div>
-              <div class="live-meta-row">
-                <div class="live-meta-item"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="num">10:00 – 10:50</span></div>
-                <div class="live-meta-item"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0114 0v1"/></svg>이사범</div>
-                <div class="live-meta-item"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Room B</div>
-              </div>
-              <div class="live-bottom">
-                <div class="live-attendance full">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-                  <span class="num">16/18</span>명 출석
-                </div>
-                <a href="step_attendance.html?students=0" class="mark-attendance-btn">Mark Attendance</a>
-              </div>
-            </div>
-
-            <div class="live-item next">
-              <div class="next-class-tag">NEXT CLASS</div>
-              <div class="live-class-name">중등부반 (13~15세)</div>
-              <div class="live-meta-row">
-                <div class="live-meta-item"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg><span class="num">15:00 – 15:50</span></div>
-                <div class="live-meta-item"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0114 0v1"/></svg>박사범</div>
-              </div>
-            </div>
-
-            <!-- Empty state for live classes -->
-            <div class="live-empty">
-              <div class="live-empty-icon">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-              </div>
-              <div class="live-empty-title">아직 등록된 수업이 없어요</div>
-              <p class="live-empty-desc">수업 시간표를 등록하면 매일 라이브 도장 현황이 이곳에 표시돼요.</p>
-              <a href="step_setup_step3.html" class="live-empty-cta">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
-                수업 시간표 등록
+          <span class="members-preview-tag">미리보기</span>
+        </div>
+        <div class="members-preview-body">
+          <table class="members-preview-table">
+            <thead>
+              <tr>
+                <th>회원</th>
+                <th>띠</th>
+                <th>출석률</th>
+                <th>마지막 출석</th>
+                <th>승급 진행도</th>
+                <th>상태</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="members-preview-cell-name">
+                    <span class="members-preview-avatar">민</span>
+                    <span class="name">김민준</span>
+                  </div>
+                </td>
+                <td><span class="members-preview-belt" style="--belt-color:#FCD34D;">노란띠</span></td>
+                <td>
+                  <div class="members-preview-attendance">
+                    <span class="num" style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;">92%</span>
+                    <div class="members-preview-attendance-bar"><div class="members-preview-attendance-fill" style="width:92%"></div></div>
+                  </div>
+                </td>
+                <td style="color:#6B6B78;">오늘 18:30</td>
+                <td>
+                  <div class="members-preview-attendance">
+                    <span class="num" style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;">14/16</span>
+                  </div>
+                </td>
+                <td><span class="members-preview-status active">활성</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="members-preview-cell-name">
+                    <span class="members-preview-avatar" style="background:linear-gradient(135deg,#FED7AA,#FCD34D);color:#92400E;">서</span>
+                    <span class="name">박서윤</span>
+                  </div>
+                </td>
+                <td><span class="members-preview-belt" style="--belt-color:#10B981;">초록띠</span></td>
+                <td>
+                  <div class="members-preview-attendance">
+                    <span class="num" style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;">85%</span>
+                    <div class="members-preview-attendance-bar"><div class="members-preview-attendance-fill" style="width:85%"></div></div>
+                  </div>
+                </td>
+                <td style="color:#6B6B78;">어제 17:00</td>
+                <td>
+                  <div class="members-preview-attendance">
+                    <span class="num" style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;">11/16</span>
+                  </div>
+                </td>
+                <td><span class="members-preview-status active">활성</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="members-preview-cell-name">
+                    <span class="members-preview-avatar" style="background:linear-gradient(135deg,#DDD6FE,#C7D2FE);color:#4C1D95;">하</span>
+                    <span class="name">이하준</span>
+                  </div>
+                </td>
+                <td><span class="members-preview-belt" style="--belt-color:#3B82F6;">파란띠</span></td>
+                <td>
+                  <div class="members-preview-attendance">
+                    <span class="num" style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;">68%</span>
+                    <div class="members-preview-attendance-bar"><div class="members-preview-attendance-fill" style="width:68%;background:linear-gradient(90deg,#F59E0B,#D97706);"></div></div>
+                  </div>
+                </td>
+                <td style="color:#DC2626;">5일 전</td>
+                <td>
+                  <div class="members-preview-attendance">
+                    <span class="num" style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;">8/16</span>
+                  </div>
+                </td>
+                <td><span class="members-preview-status warning">관심 필요</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="members-preview-cell-name">
+                    <span class="members-preview-avatar" style="background:linear-gradient(135deg,#FECACA,#FCA5A5);color:#991B1B;">예</span>
+                    <span class="name">최예은</span>
+                  </div>
+                </td>
+                <td><span class="members-preview-belt" style="--belt-color:#DC2626;">빨간띠</span></td>
+                <td>
+                  <div class="members-preview-attendance">
+                    <span class="num" style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;">95%</span>
+                    <div class="members-preview-attendance-bar"><div class="members-preview-attendance-fill" style="width:95%"></div></div>
+                  </div>
+                </td>
+                <td style="color:#6B6B78;">오늘 16:00</td>
+                <td>
+                  <div class="members-preview-attendance">
+                    <span class="num" style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;">15/16</span>
+                  </div>
+                </td>
+                <td><span class="members-preview-status active">활성</span></td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="members-preview-lock-overlay">
+            <div class="members-preview-lock-text">
+              <p>위 데이터는 <strong>샘플 미리보기</strong>입니다.<br>실제 회원 정보를 등록하면 정확한 데이터가 표시돼요.</p>
+              <a href="step_setup_step5.html" class="members-preview-lock-cta">
+                지금 회원 등록 시작 →
               </a>
             </div>
           </div>
         </div>
-
-        <!-- Event Hub -->
-        <div class="panel">
-          <div class="panel-header">
-            <div class="panel-title">
-              <span class="panel-title-icon" style="background: #FFFBEB; color: #D97706;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>
-              </span>
-              Event Hub
-            </div>
-            <button class="panel-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
-          </div>
-
-          <div class="event-promo">
-            <div class="event-promo-header">
-              <div class="event-promo-title">4월 승급 심사</div>
-              <span class="event-promo-status">준비 중</span>
-            </div>
-            <div class="event-promo-date">2026.05.20(수) 10:00</div>
-
-            <div class="progress-flow">
-              <div class="progress-circle">
-                <div class="circle-stat purple">11/14</div>
-                <div class="circle-label">참여 현황</div>
-              </div>
-              <svg class="progress-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              <div class="progress-circle">
-                <div class="circle-stat green">9명</div>
-                <div class="circle-label">결제 완료</div>
-              </div>
-              <svg class="progress-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-              <div class="progress-circle">
-                <div class="circle-stat red">2명</div>
-                <div class="circle-label">미결제</div>
-              </div>
-            </div>
-
-            <button class="promo-cta">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
-              미결제 알림 보내기
-            </button>
-          </div>
-
-          <!-- Empty state for Event Hub -->
-          <div class="event-empty">
-            <svg class="event-empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="14" x2="8" y2="14"/><line x1="12" y1="14" x2="12" y2="14"/><line x1="16" y1="14" x2="16" y2="14"/></svg>
-            <div class="event-empty-title">다가오는 행사가 없어요</div>
-            <p class="event-empty-desc">승급 심사, 대회, 캠프 등을 등록하면<br>이곳에서 한눈에 관리할 수 있어요.</p>
-            <a href="step_setup_step8.html" class="event-empty-cta">행사 일정 등록 →</a>
-          </div>
-
-          <div class="upcoming-section">
-            <div class="upcoming-header">
-              <div class="upcoming-title">다가오는 이벤트</div>
-              <a class="view-all">전체 보기 ›</a>
-            </div>
-            <div class="upcoming-item">
-              <div class="upcoming-icon-wrap gold">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.5 13l1.5 8-5-3-5 3 1.5-8"/></svg>
-              </div>
-              <div class="upcoming-body">
-                <span class="upcoming-tag">특강</span>
-                <div class="upcoming-name">스파링 집중 특강</div>
-                <div class="upcoming-meta">📅 2026.05.24(토) 14:00</div>
-              </div>
-              <div class="upcoming-attendees">참여 16명</div>
-            </div>
-            <div class="upcoming-item">
-              <div class="upcoming-icon-wrap silver">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.5 13l1.5 8-5-3-5 3 1.5-8"/></svg>
-              </div>
-              <div class="upcoming-body">
-                <span class="upcoming-tag">대회</span>
-                <div class="upcoming-name">서울시 협회장기 대회</div>
-                <div class="upcoming-meta">📅 2026.06.07(토)</div>
-              </div>
-              <div class="upcoming-attendees">참여 8명</div>
-            </div>
-          </div>
-        </div>
-
       </div>
 
-      <!-- Quick actions: Steve 확정 7개 -->
-      <div class="quick-actions">
-        <!-- 1. 출석 체크 (매일 4-7회 사용 - 최우선) -->
-        <a href="step_attendance.html" class="quick-btn" data-needs-setup title="수련생 등록 후 사용 가능" style="text-decoration:none;color:inherit;">
-          <span class="quick-icon green"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></span>
-          <span class="quick-label">출석 체크</span>
+      <!-- Help footer -->
+      <div class="members-help-footer">
+        <div class="members-help-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.2 9.2a3 3 0 015.6 1.3c0 1.6-2.4 2.4-2.8 3.5"/><line x1="12" y1="17.5" x2="12" y2="17.5"/></svg>
+        </div>
+        <div class="members-help-text">
+          <strong>회원 등록 전에 띠 체계와 수업 시간을 먼저 설정하셨나요?</strong> 이 정보들이 있으면 회원을 더 정확하게 관리할 수 있어요.
+        </div>
+        <a class="members-help-cta" href="step_setup_step0.html">
+          전체 설정 보기 →
         </a>
-        <!-- 2. 수련생 등록 -->
-        <a href="step_setup_step5.html" class="quick-btn" style="text-decoration:none;color:inherit;">
-          <span class="quick-icon blue"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg></span>
-          <span class="quick-label">수련생 등록</span>
-        </a>
-        <!-- 3. 업무 생성 (Tasks/SOP) -->
-        <button class="quick-btn">
-          <span class="quick-icon purple"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/><circle cx="18" cy="18" r="3"/></svg></span>
-          <span class="quick-label">업무 생성</span>
-        </button>
-        <!-- 4. 학부모 메시지 -->
-        <button class="quick-btn" data-needs-setup title="수련생 등록 후 사용 가능">
-          <span class="quick-icon pink"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></span>
-          <span class="quick-label">학부모 메시지</span>
-        </button>
-        <!-- 5. 일정 추가 -->
-        <button class="quick-btn">
-          <span class="quick-icon amber"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M12 15v4M10 17h4"/></svg></span>
-          <span class="quick-label">일정 추가</span>
-        </button>
-        <!-- 6. 노트 등록 -->
-        <button class="quick-btn" data-needs-setup title="수련생 등록 후 사용 가능">
-          <span class="quick-icon gray"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 113 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></span>
-          <span class="quick-label">노트 등록</span>
-        </button>
-        <!-- 7. 공지 등록 -->
-        <button class="quick-btn">
-          <span class="quick-icon cyan"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 11-5.8-1.6"/></svg></span>
-          <span class="quick-label">공지 등록</span>
-        </button>
       </div>
 
     </div>
@@ -4481,11 +4727,11 @@
           <div class="help-context-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
           </div>
-          <div class="help-context-page">메인 대시보드</div>
+          <div class="help-context-page">회원 관리</div>
         </div>
-        <div class="help-context-title">하루 운영의 시작점</div>
+        <div class="help-context-title">회원 등록의 시작점</div>
         <div class="help-context-desc">
-          오늘의 핵심 KPI(출석률·승급예정자·매출)를 한눈에 보고, Xiro의 일일 브리핑으로 우선순위를 잡으세요. 우측 위젯에서 라이브 출석과 미완료 업무를 확인할 수 있어요.
+          도장의 모든 회원을 한 곳에서 관리해요. 개별 등록·CSV 임포트·샘플 체험 중 도장 상황에 맞는 방법을 선택하세요.
         </div>
         <a class="help-context-cta" href="#" onclick="event.preventDefault(); closeHelpPanel(); setTimeout(startCoachMark, 280);">
           이 화면 둘러보기
@@ -4606,6 +4852,7 @@
   </div>
 </aside>
 
+<!-- ==================== SHORTCUTS MODAL ==================== -->
 <!-- ==================== COACH MARK SYSTEM ==================== -->
 <!-- 페이지별 화면 둘러보기 — 어떤 페이지에서든 재사용 가능 -->
 <div class="coach-overlay" id="coach-overlay" aria-label="화면 둘러보기">
@@ -4652,6 +4899,7 @@
     </div>
   </div>
 </div>
+
 <div class="upsell-modal-overlay" id="shortcutsModal" onclick="closeShortcutsOnOverlay(event)">
   <div class="upsell-modal" onclick="event.stopPropagation()">
     <button class="upsell-modal-close" onclick="closeShortcuts()" title="닫기">
