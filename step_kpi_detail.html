@@ -154,6 +154,29 @@
   }
   .tab-btn .tab-icon { width: 16px; height: 16px; }
 
+  /* PRO 뱃지 — Core 모드에서만 보임 (Promotion/Revenue 탭) */
+  .tab-pro-badge {
+    display: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    padding: 2px 6px;
+    border-radius: 4px;
+    background: linear-gradient(135deg, var(--pro-500) 0%, var(--pro-600) 100%);
+    color: white;
+    margin-left: 4px;
+  }
+  body[data-plan="core"] .tab-pro-badge { display: inline-block; }
+  body[data-plan="core"] .tab-btn[data-tab="promotion"],
+  body[data-plan="core"] .tab-btn[data-tab="revenue"] {
+    opacity: 0.65;
+  }
+  body[data-plan="core"] .tab-btn[data-tab="promotion"]:hover,
+  body[data-plan="core"] .tab-btn[data-tab="revenue"]:hover {
+    opacity: 0.85;
+  }
+
   /* === Period selector === */
   .period-selector {
     display: inline-flex;
@@ -1466,6 +1489,209 @@
     font-size: 10px;
   }
 
+  /* === Core 전용 Hero 카드 (신규 등록 + 업무 완료율) === */
+  /* 기본 Pro 카드는 보임 / Core용 카드는 숨김 */
+  .hero-kpi-card.core-only { display: none; }
+  /* Core 모드: Pro 보조 카드 (지각, 결석) 숨김, Core 카드 표시 */
+  body[data-plan="core"] #tab-attendance .hero-kpi-card.pro-only-secondary { display: none; }
+  body[data-plan="core"] #tab-attendance .hero-kpi-card.core-only { display: block; }
+
+  /* 업무 완료율 KPI 카드의 미니 막대차트 (Hero 카드 안) */
+  .kpi-tasks-mini-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 22px;
+    margin-top: 8px;
+  }
+  .kpi-tasks-mini-bars span {
+    flex: 1;
+    border-radius: 2px;
+    min-height: 4px;
+  }
+  .kpi-tasks-mini-bars span.done { background: var(--pro-500); }
+  .kpi-tasks-mini-bars span.partial { background: var(--warn); }
+
+  /* === Core 전용 사이드바 미니 카드 (신규 등록 + 업무 완료율) === */
+  .sidebar-mini-card { display: none; }
+  body[data-plan="core"] #tab-attendance .sidebar-mini-card { display: block; }
+  /* Core 모드에서는 Pro 자동화 + 타임라인 카드도 숨김 (Pro 업셀이 그 자리 차지) */
+  body[data-plan="core"] #tab-attendance .pro-auto-card,
+  body[data-plan="core"] #tab-attendance .timeline-card { display: none; }
+
+  .sidebar-mini-card {
+    background: white;
+    border: 1px solid var(--ink-100);
+    border-radius: 14px;
+    padding: 16px 18px;
+  }
+  .mini-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+  .mini-card-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--ink-900);
+  }
+  .mini-card-title-icon {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .mini-card-title-icon.green { background: var(--ok-light); color: var(--ok); }
+  .mini-card-title-icon.purple { background: var(--pro-100); color: var(--pro-600); }
+  .mini-card-trend {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 7px;
+    border-radius: 999px;
+  }
+  .mini-card-trend.up { color: var(--ok); background: var(--ok-light); }
+  .mini-card-trend.down { color: var(--danger); background: var(--danger-light); }
+
+  .mini-card-value-row {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+    margin-bottom: 10px;
+  }
+  .mini-card-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--ink-900);
+    line-height: 1;
+  }
+  .mini-card-suffix {
+    font-size: 14px;
+    color: var(--ink-500);
+    font-weight: 600;
+  }
+  .mini-card-context {
+    font-size: 11.5px;
+    color: var(--ink-500);
+    line-height: 1.4;
+  }
+
+  /* 신규 등록 미니 차트 (스파크라인) */
+  .mini-card-sparkline {
+    height: 36px;
+    margin: 8px 0 10px;
+  }
+  .mini-card-sparkline svg { width: 100%; height: 100%; overflow: visible; }
+  .mini-card-sparkline-area { fill: var(--ok); opacity: 0.18; }
+  .mini-card-sparkline-line {
+    fill: none;
+    stroke: var(--ok);
+    stroke-width: 2;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+  }
+  .mini-card-sparkline-dot {
+    fill: white;
+    stroke: var(--ok);
+    stroke-width: 2;
+  }
+
+  /* 신규 등록자 아바타 리스트 (mini card 안) */
+  .mini-recent-list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--ink-100);
+  }
+  .mini-recent-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11.5px;
+  }
+  .mini-recent-item .student-avatar {
+    width: 22px; height: 22px;
+    font-size: 9.5px;
+  }
+  .mini-recent-name { color: var(--ink-900); font-weight: 600; }
+  .mini-recent-meta { color: var(--ink-500); margin-left: auto; }
+
+  /* 업무 완료율 미니 카드용 일별 막대차트 */
+  .mini-tasks-bars {
+    display: flex;
+    align-items: flex-end;
+    gap: 5px;
+    height: 50px;
+    margin: 8px 0 10px;
+  }
+  .mini-tasks-bar {
+    flex: 1;
+    border-radius: 3px 3px 0 0;
+    min-height: 6px;
+    position: relative;
+    cursor: pointer;
+    transition: opacity 0.15s;
+  }
+  .mini-tasks-bar:hover { opacity: 0.8; }
+  .mini-tasks-bar.full { background: var(--pro-500); }
+  .mini-tasks-bar.partial { background: var(--warn); }
+  .mini-tasks-bar-labels {
+    display: flex;
+    gap: 5px;
+  }
+  .mini-tasks-bar-label {
+    flex: 1;
+    text-align: center;
+    font-size: 9.5px;
+    color: var(--ink-500);
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 500;
+  }
+
+  /* 업무 펜딩 리스트 */
+  .mini-pending-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--ink-100);
+  }
+  .mini-pending-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    color: var(--ink-700);
+  }
+  .mini-pending-item .pending-dot {
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--warn);
+    flex-shrink: 0;
+  }
+
+  /* mini-card link to detail */
+  .mini-card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    color: var(--blue-600);
+    font-weight: 600;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+  .mini-card-link:hover { text-decoration: underline; }
+
   /* Core용 우측 업셀 카드 */
   .core-upsell-card {
     display: none;
@@ -1640,10 +1866,12 @@
     <button class="tab-btn" data-tab="promotion" role="tab">
       <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9H4.5a2.5 2.5 0 010-5H6M18 9h1.5a2.5 2.5 0 000-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0012 0V2z"/></svg>
       승급 예정자
+      <span class="tab-pro-badge">PRO</span>
     </button>
     <button class="tab-btn" data-tab="revenue" role="tab">
       <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
       이번 달 매출
+      <span class="tab-pro-badge">PRO</span>
     </button>
   </div>
 
@@ -1702,8 +1930,8 @@
         </div>
       </div>
 
-      <!-- 보조 2: 지각 15건 -->
-      <div class="hero-kpi-card secondary" onclick="scrollToCard('.detail-card'); filterTo('late')">
+      <!-- 보조 2 (Pro 전용): 지각 15건 -->
+      <div class="hero-kpi-card secondary pro-only-secondary" onclick="scrollToCard('.detail-card'); filterTo('late')">
         <div class="kpi-label-row">
           <div class="kpi-label">
             <div class="kpi-label-icon" style="background: var(--warn-light); color: var(--warn);">
@@ -1725,8 +1953,8 @@
         </svg>
       </div>
 
-      <!-- 보조 3: 결석 2건 -->
-      <div class="hero-kpi-card secondary" onclick="scrollToCard('.detail-card'); filterTo('no-show')">
+      <!-- 보조 3 (Pro 전용): 결석 2건 -->
+      <div class="hero-kpi-card secondary pro-only-secondary" onclick="scrollToCard('.detail-card'); filterTo('no-show')">
         <div class="kpi-label-row">
           <div class="kpi-label">
             <div class="kpi-label-icon" style="background: #FEF2F2; color: #DC2626;">
@@ -1744,6 +1972,58 @@
           <div class="student-avatar red">이</div>
           <div class="student-avatar amber">정</div>
           <span class="more-count">이다니엘 · 정수민</span>
+        </div>
+      </div>
+
+      <!-- Core 전용 보조 1: 신규 등록 7명 -->
+      <div class="hero-kpi-card secondary core-only" onclick="scrollToCard('#mini-signup-card')">
+        <div class="kpi-label-row">
+          <div class="kpi-label">
+            <div class="kpi-label-icon" style="background: var(--ok-light); color: var(--ok);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>
+            </div>
+            신규 등록 (이번 달)
+          </div>
+          <span class="kpi-trend-badge up">↗ 2명</span>
+        </div>
+        <div class="kpi-value-block">
+          <span class="kpi-value-primary">7</span>
+          <span class="kpi-value-suffix">명</span>
+        </div>
+        <div class="kpi-context">평균 <strong>5명</strong> · 지난달 5명</div>
+
+        <!-- 6개월 추세 sparkline -->
+        <svg class="kpi-sparkline up" viewBox="0 0 110 36" preserveAspectRatio="none">
+          <!-- 11월 3 / 12월 4 / 1월 5 / 2월 4 / 3월 5 / 4월 7 -->
+          <path class="kpi-sparkline-area" d="M 0 27 L 22 24 L 44 21 L 66 24 L 88 21 L 110 15 L 110 36 L 0 36 Z"/>
+          <path class="kpi-sparkline-line" d="M 0 27 L 22 24 L 44 21 L 66 24 L 88 21 L 110 15"/>
+        </svg>
+      </div>
+
+      <!-- Core 전용 보조 2: 업무 완료율 76% -->
+      <div class="hero-kpi-card secondary core-only" onclick="scrollToCard('#mini-tasks-card')">
+        <div class="kpi-label-row">
+          <div class="kpi-label">
+            <div class="kpi-label-icon" style="background: var(--pro-100); color: var(--pro-600);">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+            </div>
+            업무 완료율 (이번 주)
+          </div>
+          <span class="kpi-trend-badge up">↗ 8%</span>
+        </div>
+        <div class="kpi-value-block">
+          <span class="kpi-value-primary">76</span>
+          <span class="kpi-value-suffix">%</span>
+        </div>
+        <div class="kpi-context"><strong>19/25</strong> 업무 처리 · 미완료 6건</div>
+
+        <!-- 일별 미니 막대 (월~금) -->
+        <div class="kpi-tasks-mini-bars">
+          <span class="done" style="height: 80%;" title="월: 80%"></span>
+          <span class="done" style="height: 100%;" title="화: 100%"></span>
+          <span class="partial" style="height: 60%;" title="수: 60%"></span>
+          <span class="done" style="height: 75%;" title="목: 75%"></span>
+          <span class="done" style="height: 90%;" title="금: 90%"></span>
         </div>
       </div>
     </div>
@@ -2524,6 +2804,125 @@
             </div>
             <svg class="ai-action-arrow" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
           </div>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- Core 전용: 신규 등록 미니 카드 -->
+        <!-- ============================================ -->
+        <div class="sidebar-mini-card" id="mini-signup-card">
+          <div class="mini-card-header">
+            <div class="mini-card-title">
+              <div class="mini-card-title-icon green">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>
+              </div>
+              신규 등록
+            </div>
+            <span class="mini-card-trend up">↗ 2명</span>
+          </div>
+
+          <div class="mini-card-value-row">
+            <span class="mini-card-value">7</span>
+            <span class="mini-card-suffix">명 (이번 달)</span>
+          </div>
+
+          <!-- 6개월 추세 차트 -->
+          <div class="mini-card-sparkline">
+            <svg viewBox="0 0 280 36" preserveAspectRatio="none">
+              <path class="mini-card-sparkline-area" d="M 0 24 L 56 20 L 112 16 L 168 20 L 224 16 L 280 8 L 280 36 L 0 36 Z"/>
+              <path class="mini-card-sparkline-line" d="M 0 24 L 56 20 L 112 16 L 168 20 L 224 16 L 280 8"/>
+              <circle class="mini-card-sparkline-dot" cx="0" cy="24" r="2.5"/>
+              <circle class="mini-card-sparkline-dot" cx="56" cy="20" r="2.5"/>
+              <circle class="mini-card-sparkline-dot" cx="112" cy="16" r="2.5"/>
+              <circle class="mini-card-sparkline-dot" cx="168" cy="20" r="2.5"/>
+              <circle class="mini-card-sparkline-dot" cx="224" cy="16" r="2.5"/>
+              <circle class="mini-card-sparkline-dot" cx="280" cy="8" r="3.5" style="fill: var(--ok);"/>
+            </svg>
+          </div>
+
+          <div class="mini-card-context">최근 6개월 평균 <strong>4.7명</strong> · 이번 달 +2명</div>
+
+          <!-- 최근 가입자 -->
+          <div class="mini-recent-list">
+            <div class="mini-recent-item">
+              <div class="student-avatar amber">서</div>
+              <span class="mini-recent-name">박서윤</span>
+              <span class="mini-recent-meta">3일 전</span>
+            </div>
+            <div class="mini-recent-item">
+              <div class="student-avatar blue">윤</div>
+              <span class="mini-recent-name">이채윤</span>
+              <span class="mini-recent-meta">5일 전</span>
+            </div>
+            <div class="mini-recent-item">
+              <div class="student-avatar green">하</div>
+              <span class="mini-recent-name">김하늘</span>
+              <span class="mini-recent-meta">1주 전</span>
+            </div>
+          </div>
+
+          <a class="mini-card-link" onclick="window.location.href='step_members.html'">
+            전체 회원 보기
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
+        </div>
+
+        <!-- ============================================ -->
+        <!-- Core 전용: 업무 완료율 미니 카드 -->
+        <!-- ============================================ -->
+        <div class="sidebar-mini-card" id="mini-tasks-card">
+          <div class="mini-card-header">
+            <div class="mini-card-title">
+              <div class="mini-card-title-icon purple">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+              </div>
+              업무 완료율
+            </div>
+            <span class="mini-card-trend up">↗ 8%</span>
+          </div>
+
+          <div class="mini-card-value-row">
+            <span class="mini-card-value">76</span>
+            <span class="mini-card-suffix">% (이번 주)</span>
+          </div>
+
+          <!-- 일별 막대 (월~금) -->
+          <div class="mini-tasks-bars">
+            <div class="mini-tasks-bar full" style="height: 80%;" title="월: 4/5"></div>
+            <div class="mini-tasks-bar full" style="height: 100%;" title="화: 5/5"></div>
+            <div class="mini-tasks-bar partial" style="height: 60%;" title="수: 3/5"></div>
+            <div class="mini-tasks-bar full" style="height: 75%;" title="목: 4/5"></div>
+            <div class="mini-tasks-bar full" style="height: 90%;" title="금: 3/5"></div>
+          </div>
+          <div class="mini-tasks-bar-labels">
+            <div class="mini-tasks-bar-label">월</div>
+            <div class="mini-tasks-bar-label">화</div>
+            <div class="mini-tasks-bar-label">수</div>
+            <div class="mini-tasks-bar-label">목</div>
+            <div class="mini-tasks-bar-label">금</div>
+          </div>
+
+          <div class="mini-card-context" style="margin-top: 10px;"><strong>19/25</strong> 완료 · <span style="color: var(--warn);">미완료 6건</span></div>
+
+          <!-- 미완료 업무 리스트 -->
+          <div class="mini-pending-list">
+            <div class="mini-pending-item">
+              <span class="pending-dot"></span>
+              학부모 상담 회신 (3건)
+            </div>
+            <div class="mini-pending-item">
+              <span class="pending-dot"></span>
+              수업 일지 정리 (2건)
+            </div>
+            <div class="mini-pending-item">
+              <span class="pending-dot"></span>
+              월말 리포트 작성
+            </div>
+          </div>
+
+          <a class="mini-card-link" onclick="window.location.href='step_weekly_report.html'">
+            주간 업무일지 보기
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
+          </a>
         </div>
 
         <!-- Pro Automation -->
@@ -4429,6 +4828,27 @@
     const tab = params.get('tab');
     if (tab && ['attendance','promotion','revenue'].includes(tab)) {
       setTab(tab);
+    }
+
+    // 해시 처리 — Core 미니 카드로 자동 스크롤 + 강조 효과
+    const hash = window.location.hash;
+    if (hash && (hash === '#mini-signup-card' || hash === '#mini-tasks-card')) {
+      // 약간의 지연 (탭 전환 + 렌더링 완료 대기)
+      setTimeout(() => {
+        const target = document.querySelector(hash);
+        if (target) {
+          const headerOffset = 80;
+          const top = target.getBoundingClientRect().top + window.pageYOffset - headerOffset;
+          window.scrollTo({ top, behavior: 'smooth' });
+
+          // 강조 효과 (펄스 보더)
+          target.style.transition = 'all 0.6s ease';
+          target.style.boxShadow = '0 0 0 4px rgba(37,99,235,0.3)';
+          setTimeout(() => {
+            target.style.boxShadow = '';
+          }, 1800);
+        }
+      }, 300);
     }
   })();
 

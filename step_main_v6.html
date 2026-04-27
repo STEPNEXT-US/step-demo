@@ -4952,10 +4952,13 @@
     if (event && event.target.closest('a, button')) return;
     if (document.body.dataset.state === 'empty') return;
 
+    // Core 사용자: KPI 상세 페이지 (Attendance 탭) + 해당 사이드바 카드로 자동 스크롤
+    // - 신규 등록 → #mini-signup-card
+    // - 업무 완료율 → #mini-tasks-card
     if (type === 'signup') {
-      window.location.href = 'step_members.html';
+      window.location.href = 'step_kpi_detail.html?tab=attendance&plan=core#mini-signup-card';
     } else if (type === 'tasks') {
-      window.location.href = 'step_weekly_report.html';
+      window.location.href = 'step_kpi_detail.html?tab=attendance&plan=core#mini-tasks-card';
     }
   }
 
