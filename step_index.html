@@ -572,7 +572,7 @@
       </div>
     </a>
     <div class="top-bar-meta">
-      <div class="top-bar-stat"><span class="num">17</span>개 화면</div>
+      <div class="top-bar-stat"><span class="num">19</span>개 화면</div>
       <div class="top-bar-divider"></div>
       <div class="top-bar-stat"><span class="num">3</span>개 여정</div>
       <div class="top-bar-divider"></div>
@@ -609,7 +609,7 @@
       </div>
       <h2 class="journey-title">신규 가입 → 메인 진입</h2>
       <p class="journey-desc">
-        가격 페이지에서 Pro/Core 선택 → AI 온보딩 + 결제 → 도장 초기 설정 10단계 → 검은띠 달성 → 메인 진입
+        가격 페이지 → AI 온보딩 (8단계, Plan 선택 + 결제 포함) → 도장 초기 설정 (10단계) → 메인 진입
       </p>
       <div class="journey-flow">
         <a href="step_pricing_page_v2.html" class="journey-step">
@@ -617,9 +617,9 @@
           <span class="journey-step-title">가격 페이지에서 Pro 선택</span>
           <svg class="journey-step-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
         </a>
-        <a href="step_onboarding_v1.html?plan=pro" class="journey-step">
+        <a href="step_onboarding_step1.html" class="journey-step">
           <span class="journey-step-num">2</span>
-          <span class="journey-step-title">AI 온보딩 + 결제 (7단계)</span>
+          <span class="journey-step-title">AI 온보딩 (8단계)</span>
           <svg class="journey-step-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
         </a>
         <a href="step_setup_step0.html" class="journey-step">
@@ -629,7 +629,7 @@
         </a>
         <a href="step_setup_step9.html" class="journey-step">
           <span class="journey-step-num">4</span>
-          <span class="journey-step-title">검은띠 달성 🎉</span>
+          <span class="journey-step-title">기본 설정 완료 🎉</span>
           <svg class="journey-step-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
         </a>
         <a href="step_main_v6.html" class="journey-step">
@@ -704,7 +704,7 @@
         </a>
         <a href="step_setup_step9.html" class="journey-step">
           <span class="journey-step-num">3</span>
-          <span class="journey-step-title">완료 (검은띠 → 메인)</span>
+          <span class="journey-step-title">완료 → 메인 진입</span>
           <svg class="journey-step-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M9 18l6-6-6-6"/></svg>
         </a>
       </div>
@@ -732,9 +732,9 @@
 <!-- ==================== FULL INDEX ==================== -->
 <section class="index-section">
   <div class="index-tabs">
-    <div class="index-tab active" data-tab="all">전체 <span class="index-tab-count">17</span></div>
+    <div class="index-tab active" data-tab="all">전체 <span class="index-tab-count">19</span></div>
     <div class="index-tab" data-tab="onboarding">온보딩 <span class="index-tab-count">12</span></div>
-    <div class="index-tab" data-tab="ops">운영 OS <span class="index-tab-count">2</span></div>
+    <div class="index-tab" data-tab="ops">운영 OS <span class="index-tab-count">4</span></div>
     <div class="index-tab" data-tab="docs">명세서 <span class="index-tab-count">3</span></div>
   </div>
 
@@ -751,7 +751,7 @@
           <span class="file-card-tag live">LIVE</span>
         </div>
         <div class="file-card-title">Pricing Page (v2)</div>
-        <div class="file-card-desc">Core $50 / Pro $249 / Future hint card. Pro 선택 시 ?plan=pro 전달</div>
+        <div class="file-card-desc">Core $50 / Pro $249 / Grow Coming soon. STEP 컬러 통일 (v6.2)</div>
         <div class="file-card-foot">
           <span class="file-card-path">step_pricing_page_v2</span>
           <svg class="file-card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -759,17 +759,17 @@
       </a>
 
       <!-- Onboarding v1 -->
-      <a href="step_onboarding_v1.html?plan=pro" class="file-card" data-cat="onboarding">
+      <a href="step_onboarding_step1.html" class="file-card" data-cat="onboarding">
         <div class="file-card-head">
           <div class="file-card-icon">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
           </div>
           <span class="file-card-tag new">NEW</span>
         </div>
-        <div class="file-card-title">AI 온보딩 (7단계)</div>
-        <div class="file-card-desc">홈페이지 분석 → 결제 → 시작. ?plan=pro / ?plan=core 컨텍스트 동적 처리</div>
+        <div class="file-card-title">AI 온보딩 (8단계)</div>
+        <div class="file-card-desc">홈페이지 분석 → Plan 선택 → 결제 → 도장 설정 진입. 8단계로 분리됨</div>
         <div class="file-card-foot">
-          <span class="file-card-path">step_onboarding_v1</span>
+          <span class="file-card-path">step_onboarding_step1</span>
           <svg class="file-card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </div>
       </a>
@@ -783,7 +783,7 @@
           <span class="file-card-tag">START</span>
         </div>
         <div class="file-card-title">도장 설정 시작</div>
-        <div class="file-card-desc">10단계 도장 초기 설정의 진입점. 흰띠 → 검은띠 게이미피케이션</div>
+        <div class="file-card-desc">10단계 도장 초기 설정의 진입점. 단계별 진행 게이미피케이션</div>
         <div class="file-card-foot">
           <span class="file-card-path">step_setup_step0</span>
           <svg class="file-card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
@@ -942,7 +942,7 @@
           </div>
           <span class="file-card-tag">DONE</span>
         </div>
-        <div class="file-card-title">검은띠 달성! 🎉</div>
+        <div class="file-card-title">기본 설정 완료 🎉</div>
         <div class="file-card-desc">설정 완료 축하 화면 → STEP Manager 메인으로 진입</div>
         <div class="file-card-foot">
           <span class="file-card-path">step_setup_step9</span>
@@ -978,6 +978,38 @@
         <div class="file-card-desc">회원 빈 상태 + 3가지 등록 옵션 + 미리보기 테이블 + 코치마크</div>
         <div class="file-card-foot">
           <span class="file-card-path">step_members</span>
+          <svg class="file-card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </div>
+      </a>
+
+      <!-- Attendance (Live dojang) -->
+      <a href="step_attendance.html" class="file-card" data-cat="ops">
+        <div class="file-card-head">
+          <div class="file-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+          </div>
+          <span class="file-card-tag new">LIVE</span>
+        </div>
+        <div class="file-card-title">출석 마킹</div>
+        <div class="file-card-desc">라이브 도장 클래스의 출석 체크 화면 (Kids Beginner — Yellow Belt)</div>
+        <div class="file-card-foot">
+          <span class="file-card-path">step_attendance</span>
+          <svg class="file-card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </div>
+      </a>
+
+      <!-- Setup Required (Setup gate) -->
+      <a href="step_setup_required.html" class="file-card" data-cat="ops">
+        <div class="file-card-head">
+          <div class="file-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <span class="file-card-tag">GATE</span>
+        </div>
+        <div class="file-card-title">설정 미완 안내</div>
+        <div class="file-card-desc">메인 "이어하기" → 통합 안내 → 미완 단계로 이동. Case A/B 토글 데모</div>
+        <div class="file-card-foot">
+          <span class="file-card-path">step_setup_required</span>
           <svg class="file-card-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
         </div>
       </a>
