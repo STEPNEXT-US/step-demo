@@ -257,9 +257,14 @@
   /* ============ CONTENT ============ */
   .content {
     padding: 32px 40px 80px;
-    max-width: 1600px;
+    max-width: 1800px;
     margin: 0 auto;
     width: 100%;
+    transition: max-width 0.3s ease;
+  }
+  /* Core 모드: 콘텐츠 폭 축소 → "단독 제품" 느낌 */
+  body[data-plan="core"] .content {
+    max-width: 1280px;
   }
 
   /* Greeting */
@@ -312,6 +317,7 @@
     transition: all 0.15s;
     cursor: pointer;
     position: relative;
+    overflow: hidden;
   }
   .kpi-card:hover { border-color: #DBEAFE; box-shadow: 0 4px 16px -4px rgba(0,0,0,0.06); transform: translateY(-1px); }
 
@@ -322,7 +328,14 @@
   .kpi-icon.blue { background: #EFF6FF; color: #2563EB; }
   .kpi-icon.amber { background: #FFFBEB; color: #D97706; }
   .kpi-icon.green { background: #ECFDF5; color: #10B981; }
-  .kpi-label { font-size: 12px; font-weight: 600; color: #2A2A35; }
+  .kpi-icon.purple { background: #F5F3FF; color: #7C3AED; }
+  .kpi-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #2A2A35;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
   .kpi-trend {
     display: inline-flex; align-items: center; gap: 2px;
     padding: 2px 7px;
@@ -332,10 +345,12 @@
     font-weight: 600;
     border-radius: 5px;
     font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+    flex-shrink: 0;
   }
   .kpi-trend.up { background: #ECFDF5; color: #10B981; }
   .kpi-trend.neutral { background: #F1F1F4; color: #6B6B78; }
-  .kpi-arrow { margin-left: auto; }
+  .kpi-arrow { margin-left: auto; flex-shrink: 0; }
   .kpi-arrow svg { width: 14px; height: 14px; color: #C8C8D0; }
 
   /* Body: 큰 숫자 + 메타 텍스트 + 아바타 한 줄 배치 */
@@ -443,24 +458,23 @@
      ============================================ */
   .ops-chips {
     display: flex; align-items: center; gap: 6px;
-    padding: 12px 16px;
-    background: #F9FAFB;
-    border-bottom: 1px solid #F1F1F4;
+    padding: 8px 16px 12px;
+    background: white;
     flex-wrap: wrap;
   }
   .ops-chip {
     display: inline-flex; align-items: center; gap: 5px;
-    padding: 5px 10px;
+    padding: 4px 10px;
     border-radius: 9999px;
     font-size: 11px;
     font-weight: 500;
     color: #6B6B78;
-    background: white;
+    background: transparent;
     border: 1px solid #E5E5EA;
     transition: all 0.15s;
     cursor: pointer;
   }
-  .ops-chip:hover { background: #F1F1F4; color: #0A0A0F; }
+  .ops-chip:hover { background: #F9FAFB; color: #2A2A35; border-color: #D4D4D8; }
   .ops-chip.active { background: #0A0A0F; color: white; border-color: #0A0A0F; }
   .ops-chip.active .count { color: #FCD34D; }
   .ops-chip .count { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: #9B9BA8; font-size: 10px; }
@@ -684,6 +698,59 @@
   .quick-icon.cyan { background: #ECFEFF; color: #0891B2; }
   .quick-icon.gray { background: #F1F1F4; color: #6B6B78; }
   .quick-label { font-size: 12px; font-weight: 600; color: #2A2A35; }
+
+  /* Quick Action — Pro 잠금 (Core × ON에서만 흐림 + 뱃지, Core × OFF에서는 항목 자체 숨김) */
+  .quick-btn-pro-lock {
+    position: relative;
+  }
+  .quick-pro-badge {
+    display: none;
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+    color: white;
+    font-size: 8.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    font-family: 'Inter', system-ui, sans-serif;
+    padding: 2px 5px;
+    border-radius: 4px;
+    line-height: 1.2;
+    box-shadow: 0 1px 3px -1px rgba(139, 92, 246, 0.5);
+  }
+  /* Core × OFF: 버튼 자체 DOM에서 숨김 (정식 제품 모습 — 자물쇠 0개) */
+  body[data-plan="core"][data-upsell="off"] .quick-btn-pro-lock { display: none !important; }
+  /* Core × OFF: 활성 버튼 5개에 맞춰 그리드 5컬럼으로 자연스럽게 */
+  body[data-plan="core"][data-upsell="off"] .quick-actions {
+    grid-template-columns: repeat(5, 1fr);
+  }
+
+  /* Core × ON: 흐림 + 보라 PRO 뱃지 (Pro 안내 트리거) */
+  body[data-plan="core"][data-upsell="on"] .quick-btn-pro-lock .quick-pro-badge {
+    display: inline-flex;
+    align-items: center;
+  }
+  body[data-plan="core"][data-upsell="on"] .quick-btn-pro-lock .quick-icon {
+    opacity: 0.45;
+    filter: grayscale(0.5);
+  }
+  body[data-plan="core"][data-upsell="on"] .quick-btn-pro-lock .quick-label {
+    color: #9B9BA8;
+  }
+  body[data-plan="core"][data-upsell="on"] .quick-btn-pro-lock {
+    cursor: pointer;
+  }
+  body[data-plan="core"][data-upsell="on"] .quick-btn-pro-lock:hover {
+    background: linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%);
+    transform: translateY(-1px);
+  }
+  body[data-plan="core"][data-upsell="on"] .quick-btn-pro-lock:hover .quick-icon {
+    opacity: 0.7;
+  }
+  body[data-plan="core"][data-upsell="on"] .quick-btn-pro-lock:hover .quick-pro-badge {
+    box-shadow: 0 4px 12px -2px rgba(139, 92, 246, 0.6);
+  }
 
   /* Ask Xiro floating */
   .ask-xiro {
@@ -948,6 +1015,651 @@
     transition: gap 0.15s;
   }
   .kpi-empty-cta:hover { color: #1D4ED8; gap: 6px; }
+
+  /* === Core × ON 업셀 카드 (Loss Aversion + Earned Moments) === */
+  /* 미니멀 잠금 → 가치 시각화 카드로 진화 */
+  .kpi-pro-lock {
+    display: none;
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, #FAFAFE 0%, #F5F3FF 100%);
+    flex-direction: column;
+    justify-content: center;
+    z-index: 3;
+    gap: 8px;
+    overflow: hidden;
+  }
+  /* 우상단 보라 글로우 효과 */
+  .kpi-pro-lock::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    right: -40px;
+    width: 120px;
+    height: 120px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* === KPI 카드 분기 === */
+  /* 1) Core 전용 카드는 기본 숨김, Core 모드일 때만 표시 */
+  .kpi-card-core { display: none; }
+  body[data-plan="core"] .kpi-card-core { display: flex; }
+
+  /* 2) Pro 전용 카드(승급, 매출)는 Core 모드일 때 숨김 */
+  body[data-plan="core"] .kpi-card-promotion,
+  body[data-plan="core"] .kpi-card-revenue { display: none; }
+
+  /* 3) Core × UPSELL ON일 때만 — 승급/매출 카드를 업셀 트리거로 보여주기 */
+  body[data-plan="core"][data-upsell="on"][data-state="ready"] .kpi-card-promotion,
+  body[data-plan="core"][data-upsell="on"][data-state="ready"] .kpi-card-revenue {
+    display: flex;
+  }
+  body[data-plan="core"][data-upsell="on"][data-state="ready"] .kpi-pro-lock {
+    display: flex;
+  }
+  /* 그리고 Core × ON에서 트리거가 보일 때, Core 전용 카드는 그리드에서 빠짐 (3개만 보이게) */
+  body[data-plan="core"][data-upsell="on"][data-state="ready"] .kpi-card-new-signup,
+  body[data-plan="core"][data-upsell="on"][data-state="ready"] .kpi-card-task-completion {
+    display: none;
+  }
+
+  /* 업셀 카드 hover — 살짝 들리는 느낌 */
+  body[data-plan="core"][data-upsell="on"][data-state="ready"] .kpi-card-promotion,
+  body[data-plan="core"][data-upsell="on"][data-state="ready"] .kpi-card-revenue {
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  body[data-plan="core"][data-upsell="on"][data-state="ready"] .kpi-card-promotion:hover,
+  body[data-plan="core"][data-upsell="on"][data-state="ready"] .kpi-card-revenue:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 32px -8px rgba(139, 92, 246, 0.25);
+    border-color: #DDD6FE;
+  }
+
+  /* 업셀 헤더: 아이콘 + 라벨 + 트렌드 (일반 KPI 헤더와 일관성) */
+  .kpi-pro-lock-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    z-index: 1;
+  }
+  .kpi-pro-lock-icon {
+    width: 26px;
+    height: 26px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 8px -2px rgba(139, 92, 246, 0.4);
+  }
+  .kpi-pro-lock-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #2A2A35;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  /* Pro 뱃지 (트렌드 자리에 위치) */
+  .kpi-pro-lock-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 8px;
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+    color: white;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 5px;
+    font-family: 'Inter', system-ui, sans-serif;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    flex-shrink: 0;
+    box-shadow: 0 1px 3px -1px rgba(139, 92, 246, 0.4);
+  }
+  .kpi-pro-lock-arrow {
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+  .kpi-pro-lock-arrow svg {
+    width: 14px;
+    height: 14px;
+    color: #8B5CF6;
+  }
+
+  /* 업셀 바디: 큰 숫자 + 메타 (일반 KPI 바디와 일관성) */
+  .kpi-pro-lock-body {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    position: relative;
+    z-index: 1;
+  }
+  .kpi-pro-lock-value-wrap {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-shrink: 0;
+    min-width: 0;
+  }
+  .kpi-pro-lock-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    background: linear-gradient(135deg, #2A2A35 0%, #7C3AED 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .kpi-pro-lock-value-suffix {
+    font-size: 12px;
+    color: #6B6B78;
+    font-weight: 600;
+    font-family: -apple-system, system-ui, sans-serif;
+  }
+  .kpi-pro-lock-meta {
+    font-size: 11px;
+    color: #6B6B78;
+    line-height: 1.3;
+    flex: 1;
+    min-width: 0;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+  }
+
+  /* 업셀 CTA 링크 — 가로 라인 끝 */
+  .kpi-pro-lock-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #7C3AED;
+    text-decoration: none;
+    cursor: pointer;
+    transition: gap 0.15s ease, color 0.15s ease;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .kpi-pro-lock-cta:hover {
+    color: #6B21A8;
+    gap: 6px;
+  }
+
+  /* 미니 아바타 스택 (승급 후보) — 같은 .mini-avatar 활용 */
+  .kpi-pro-lock-avatars {
+    display: flex;
+    flex-shrink: 0;
+  }
+
+  /* ============================================================ */
+  /*    Pro Mode Preview (Day 30/33/37/38) — 5가지 상태 카드      */
+  /* ============================================================ */
+
+  /* 모든 마일스톤 카드 기본 숨김 — data-day 속성 기반 분기 */
+  .milestone-card { display: none; }
+
+  /* 일반 (data-day=0): 모든 마일스톤 카드 숨김 + briefing 표시 */
+  /* DAY 30: 마일스톤 카드만 표시, briefing은 숨김 (마일스톤이 메인) */
+  body[data-day="30"] .briefing-card { display: none; }
+  body[data-day="30"] .milestone-day-30 { display: block; }
+
+  /* DAY 33: 체험 중 카드 + briefing 모두 표시 (체험 중 일상) */
+  body[data-day="33"] .milestone-day-33 { display: block; }
+
+  /* DAY 37: 종료 임박 카드 + briefing 모두 표시 */
+  body[data-day="37"] .milestone-day-37 { display: block; }
+
+  /* DAY 38: 회상 카드 + briefing 모두 표시 */
+  body[data-day="38"] .milestone-day-38 { display: block; }
+
+  /* === 공통 마일스톤 카드 디자인 === */
+  .milestone-card {
+    position: relative;
+    background: linear-gradient(135deg, #FAFAFE 0%, #F5F3FF 50%, #EDE9FE 100%);
+    border: 1px solid #DDD6FE;
+    border-radius: 20px;
+    margin-bottom: 24px;
+    overflow: hidden;
+    box-shadow: 0 4px 20px -6px rgba(139, 92, 246, 0.15), 0 1px 3px -1px rgba(139, 92, 246, 0.1);
+    animation: milestoneIn 0.4s ease-out;
+  }
+  @keyframes milestoneIn {
+    from { opacity: 0; transform: translateY(-8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  /* 우상단 보라 글로우 효과 */
+  .milestone-glow {
+    position: absolute;
+    top: -100px;
+    right: -100px;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.25) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  .milestone-glow-warn {
+    background: radial-gradient(circle, rgba(245, 158, 11, 0.2) 0%, transparent 70%);
+  }
+  .milestone-glow-soft {
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+  }
+  .milestone-content {
+    position: relative;
+    z-index: 1;
+    padding: 28px 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  /* 헤더 (이모지 + 타이틀 + 서브타이틀) */
+  .milestone-header {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .milestone-celebrate {
+    font-size: 32px;
+    flex-shrink: 0;
+    line-height: 1;
+    filter: drop-shadow(0 2px 8px rgba(139, 92, 246, 0.3));
+  }
+  .milestone-title-wrap {
+    flex: 1;
+    min-width: 0;
+  }
+  .milestone-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: #1A1A24;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+    margin-bottom: 6px;
+  }
+  .milestone-subtitle {
+    font-size: 13px;
+    color: #4B4B58;
+    line-height: 1.5;
+    word-break: keep-all;
+  }
+  .milestone-countdown {
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+  }
+  .milestone-countdown-warn {
+    background: linear-gradient(135deg, #F59E0B 0%, #DC2626 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* DAY 30: 4개 기능 미리보기 그리드 */
+  .milestone-features {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  .milestone-feature {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(221, 214, 254, 0.6);
+    border-radius: 10px;
+    backdrop-filter: blur(8px);
+    transition: all 0.2s ease;
+  }
+  .milestone-feature:hover {
+    background: rgba(255, 255, 255, 0.95);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px -4px rgba(139, 92, 246, 0.2);
+  }
+  .mf-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px -2px rgba(139, 92, 246, 0.4);
+  }
+  .mf-text {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #2A2A35;
+    letter-spacing: -0.01em;
+  }
+
+  /* DAY 33: 체험 통계 그리드 */
+  .milestone-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+  .milestone-stat {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(221, 214, 254, 0.6);
+    border-radius: 12px;
+    backdrop-filter: blur(8px);
+  }
+  .ms-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .ms-body {
+    flex: 1;
+    min-width: 0;
+  }
+  .ms-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #6B6B78;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .ms-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 20px;
+    font-weight: 700;
+    color: #1A1A24;
+    letter-spacing: -0.02em;
+    line-height: 1;
+    background: linear-gradient(135deg, #2A2A35 0%, #7C3AED 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .ms-meta {
+    font-family: -apple-system, system-ui, sans-serif;
+    font-size: 11px;
+    color: #6B6B78;
+    margin-left: 4px;
+    -webkit-text-fill-color: #6B6B78;
+    font-weight: 600;
+  }
+
+  /* DAY 37: 종료 임박 — 요약 + 경고 */
+  .milestone-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 14px 18px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(221, 214, 254, 0.6);
+    border-radius: 12px;
+    backdrop-filter: blur(8px);
+  }
+  .milestone-summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+  }
+  .msr-label {
+    color: #4B4B58;
+    font-weight: 500;
+  }
+  .msr-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 700;
+    color: #1A1A24;
+    letter-spacing: -0.01em;
+  }
+
+  .milestone-warning {
+    padding: 14px 18px;
+    background: linear-gradient(135deg, #FEF3C7 0%, #FED7AA 100%);
+    border: 1px solid #FCD34D;
+    border-radius: 12px;
+  }
+  .mw-title {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: #78350F;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+  }
+  .mw-list {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  .mw-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #92400E;
+  }
+  .mw-dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #DC2626;
+    flex-shrink: 0;
+  }
+
+  /* DAY 38: 회상 카드 */
+  .milestone-recall {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .mr-row {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid rgba(221, 214, 254, 0.5);
+    border-radius: 12px;
+  }
+  .mr-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .mr-body {
+    flex: 1;
+    min-width: 0;
+  }
+  .mr-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: #2A2A35;
+    margin-bottom: 2px;
+  }
+  .mr-meta {
+    font-size: 11.5px;
+    color: #6B6B78;
+    line-height: 1.4;
+  }
+
+  /* 공통 액션 버튼 */
+  .milestone-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  .milestone-cta-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+    color: white;
+    border: 0;
+    border-radius: 12px;
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 6px 16px -4px rgba(139, 92, 246, 0.5);
+    font-family: inherit;
+    letter-spacing: -0.01em;
+  }
+  .milestone-cta-primary:hover {
+    background: linear-gradient(135deg, #7C3AED 0%, #6B21A8 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 10px 24px -4px rgba(139, 92, 246, 0.6);
+  }
+  .milestone-cta-secondary {
+    display: inline-flex;
+    align-items: center;
+    padding: 12px 18px;
+    background: transparent;
+    color: #6B6B78;
+    border: 0;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    font-family: inherit;
+  }
+  .milestone-cta-secondary:hover {
+    background: rgba(0, 0, 0, 0.04);
+    color: #2A2A35;
+  }
+
+  /* DAY 30 fineprint */
+  .milestone-fineprint {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    color: #6B6B78;
+    margin-top: -4px;
+  }
+  .milestone-fineprint svg {
+    color: #10B981;
+    flex-shrink: 0;
+  }
+
+  /* === DAY 토글 핀 디자인 (active 시 보라 그라디언트) === */
+  .day-pill.active {
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+    color: white;
+    border-color: transparent;
+    box-shadow: 0 2px 6px -2px rgba(139, 92, 246, 0.5);
+  }
+
+  /* Core 모드일 때 매출 카드의 t1-upsell(미납 회수 트리거)는 숨김 (이미 잠금) */
+  body[data-plan="core"] .kpi-card-revenue .t1-upsell { display: none !important; }
+
+  /* Core 모드: Event Hub 패널 완전 숨김 (Core에는 행사 관리 없음) */
+  body[data-plan="core"] .panel-event-hub {
+    display: none !important;
+  }
+  /* Core 모드: main-grid 2컬럼 — Ops Center + Live Dojang */
+  body[data-plan="core"] .main-grid {
+    grid-template-columns: 1fr 1.1fr;
+  }
+
+  /* === Ops Center — Core 모드 항목 잠금 === */
+  /* Pro 모드: 일반 ops-action 표시, ops-action-pro 숨김 */
+  /* Core × ON: 일반 ops-action 흐릿하게 + 비활성, ops-action-pro 표시 (Pro 안내 트리거) */
+  /* Core × OFF: ops-item-pro-lock 항목 자체 숨김 (정식 제품 모습) */
+  .ops-action-pro { display: none; }
+
+  /* Core × OFF — Pro 항목 자체 DOM 숨김 */
+  body[data-plan="core"][data-upsell="off"] .ops-item-pro-lock { display: none !important; }
+
+  /* ops-item-core-only: Core × OFF에서만 표시 (잠금 항목 자리 보충용) */
+  /* Pro/Core × ON에서는 잠금 2개가 있어서 5개 한도 초과 → 숨김 */
+  body[data-plan="pro"] .ops-item-core-only,
+  body[data-plan="core"][data-upsell="on"] .ops-item-core-only {
+    display: none !important;
+  }
+
+  /* Core × ON — 일반 액션 흐림 + Pro 버튼 표시 (현재 동작) */
+  body[data-plan="core"][data-upsell="on"] .ops-item-pro-lock .ops-action:not(.ops-action-pro) {
+    opacity: 0.35;
+    pointer-events: none;
+    filter: grayscale(0.6);
+  }
+  body[data-plan="core"][data-upsell="on"] .ops-item-pro-lock .ops-action-pro {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+    color: white;
+    border: 0;
+    box-shadow: 0 1px 3px -1px rgba(139, 92, 246, 0.4);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  body[data-plan="core"][data-upsell="on"] .ops-item-pro-lock .ops-action-pro:hover {
+    background: linear-gradient(135deg, #7C3AED 0%, #6B21A8 100%);
+    transform: translateY(-0.5px);
+    box-shadow: 0 4px 12px -2px rgba(139, 92, 246, 0.5);
+  }
+  body[data-plan="core"][data-upsell="on"] .ops-item-pro-lock .ops-action-pro svg {
+    color: white;
+  }
+  body[data-plan="core"][data-upsell="on"] .ops-item-pro-lock {
+    position: relative;
+    background: linear-gradient(90deg, rgba(245, 243, 255, 0.5) 0%, transparent 50%);
+  }
+  body[data-plan="core"][data-upsell="on"] .ops-item-pro-lock::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 8px;
+    bottom: 8px;
+    width: 2px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, #8B5CF6 0%, #7C3AED 100%);
+  }
+  body[data-plan="core"][data-upsell="on"] .ops-item-pro-lock .ops-title {
+    color: #6B6B78;
+  }
+
+  /* Pro 모드 + 두번째 ops-action(Pro 버튼) 자체를 dom에서 보존하되 숨김 */
+  body[data-plan="pro"] .ops-action-pro { display: none !important; }
+
+  /* 칩 카운트도 정정 — Core/Pro 모두 같은 카운트 (4 → 5건으로 +1, 학부모 메시지 추가) */
 
   .kpi-card { position: relative; }
 
@@ -1384,6 +2096,317 @@
   .upsell-pill.active {
     background: #2563EB;
   }
+
+  /* PLAN 토글 — Core/Pro */
+  .plan-pill[data-plan="core"].active {
+    background: #6B6B78;
+    color: white;
+  }
+  .plan-pill[data-plan="pro"].active {
+    background: #8B5CF6;
+    color: white;
+  }
+
+  /* Plan 뱃지 버튼 (헤더, 알림 앞) */
+  .plan-badge-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px 9px;
+    border-radius: 6px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    font-family: 'Inter', system-ui, sans-serif;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    line-height: 1;
+    position: relative;
+  }
+  .plan-badge-btn:hover {
+    transform: translateY(-0.5px);
+  }
+  .plan-badge-btn.plan-badge-core {
+    background: #F1F1F4;
+    color: #6B6B78;
+    border-color: #E5E5EA;
+  }
+  .plan-badge-btn.plan-badge-core:hover {
+    background: #E5E5EA;
+    color: #2A2A35;
+  }
+  .plan-badge-btn.plan-badge-pro {
+    background: #8B5CF6;
+    color: white;
+    box-shadow: 0 1px 3px -1px rgba(139, 92, 246, 0.4);
+  }
+  .plan-badge-btn.plan-badge-pro:hover {
+    background: #7C3AED;
+    box-shadow: 0 4px 12px -2px rgba(139, 92, 246, 0.5);
+  }
+
+  /* 코치마크 버튼 (시연용 강조) */
+  .header-coach-btn {
+    color: #2563EB !important;
+    background: #EFF6FF !important;
+    border: 1px solid #DBEAFE !important;
+    position: relative;
+  }
+  .header-coach-btn:hover {
+    background: #DBEAFE !important;
+    color: #1D4ED8 !important;
+    transform: translateY(-0.5px);
+  }
+  .header-coach-btn::after {
+    content: '';
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: #10B981;
+    box-shadow: 0 0 0 2px white, 0 0 0 3px rgba(16, 185, 129, 0.2);
+    animation: pulse-coach 2s ease-in-out infinite;
+  }
+  @keyframes pulse-coach {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.85); }
+  }
+
+  /* === Briefing 분기 (본문 동일, CTA만 모드별) === */
+  /* CTA 변형들 기본 숨김 — !important로 우선순위 보장 */
+  .briefing-cta-pro,
+  .briefing-cta-core-on { display: none !important; }
+
+  /* Pro × ON / Pro × OFF: 파랑 Briefing Details 버튼 */
+  body[data-plan="pro"] .briefing-cta.briefing-cta-pro { display: flex !important; }
+
+  /* Core × ON / Core × OFF: 보라 "Briefing Details" 버튼 (Pro 안내 진입점, 둘 다 표시) */
+  body[data-plan="core"] .briefing-cta.briefing-cta-core-on { display: flex !important; }
+
+  /* Core × ON 보라 CTA 스타일 (briefing-cta 기본 위에 색상만 오버라이드) */
+  .briefing-cta.briefing-cta-core-on {
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+    box-shadow: 0 4px 12px -2px rgba(139, 92, 246, 0.3);
+  }
+  .briefing-cta.briefing-cta-core-on:hover {
+    background: linear-gradient(135deg, #7C3AED 0%, #6B21A8 100%);
+    box-shadow: 0 6px 16px -2px rgba(139, 92, 246, 0.4);
+  }
+
+  /* === Core 모드 — Xiro 챗/Whisper 처리 === */
+  /* Core × OFF: Ask Xiro 버튼과 챗 패널 모두 숨김 (정식 제품 모습) */
+  body[data-plan="core"][data-upsell="off"] .ask-xiro { display: none !important; }
+  body[data-plan="core"] .xiro-chat { display: none !important; }
+  /* Core × ON: Ask Xiro 버튼은 표시하되 보라 톤으로 변경 (Pro 안내 진입점) */
+  body[data-plan="core"][data-upsell="on"] .ask-xiro {
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+    box-shadow: 0 12px 32px -6px rgba(139, 92, 246, 0.4);
+  }
+  body[data-plan="core"][data-upsell="on"] .ask-xiro:hover {
+    box-shadow: 0 16px 40px -6px rgba(139, 92, 246, 0.5);
+  }
+
+  /* Plan 팝오버 */
+  .plan-popover {
+    position: fixed;
+    top: 56px;
+    right: 200px;
+    width: 320px;
+    background: white;
+    border: 1px solid #E5E5EA;
+    border-radius: 14px;
+    box-shadow: 0 20px 48px -12px rgba(10, 10, 15, 0.15), 0 4px 12px -4px rgba(10, 10, 15, 0.08);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: opacity 0.18s ease, visibility 0.18s ease, transform 0.18s ease;
+    overflow: hidden;
+  }
+  .plan-popover.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .plan-popover-content {
+    display: none;
+    padding: 16px;
+  }
+  body[data-plan="pro"] .plan-content-pro { display: block; }
+  body[data-plan="core"] .plan-content-core { display: block; }
+
+  .plan-popover-header {
+    margin-bottom: 12px;
+  }
+  .plan-popover-tier {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 4px;
+  }
+  .plan-tier-badge {
+    display: inline-flex;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    font-family: 'Inter', system-ui, sans-serif;
+    line-height: 1.2;
+  }
+  .plan-tier-pro {
+    background: #8B5CF6;
+    color: white;
+  }
+  .plan-tier-core {
+    background: #F1F1F4;
+    color: #6B6B78;
+    border: 1px solid #E5E5EA;
+  }
+  .plan-tier-price {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0A0A0F;
+    letter-spacing: -0.02em;
+  }
+  .plan-tier-period {
+    font-size: 12px;
+    font-weight: 500;
+    color: #6B6B78;
+    margin-left: 1px;
+  }
+  .plan-popover-meta {
+    font-size: 12px;
+    color: #6B6B78;
+  }
+
+  /* Pro 모드 — 60일 무료 사용 중 */
+  .plan-popover-trial {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: #F0FDF4;
+    border: 1px solid #BBF7D0;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+  }
+  .plan-trial-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: #10B981;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .plan-trial-text {
+    flex: 1;
+  }
+  .plan-trial-title {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #047857;
+    line-height: 1.3;
+  }
+  .plan-trial-meta {
+    font-size: 11px;
+    color: #059669;
+    margin-top: 1px;
+  }
+
+  /* Core 모드 — Pro 업그레이드 추천 */
+  .plan-popover-upgrade {
+    background: linear-gradient(135deg, #F5F3FF 0%, #EDE9FE 100%);
+    border: 1px solid #DDD6FE;
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+  .plan-upgrade-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #6B21A8;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .plan-upgrade-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .plan-upgrade-list li {
+    font-size: 12.5px;
+    color: #2A2A35;
+    padding: 3px 0 3px 14px;
+    position: relative;
+    line-height: 1.4;
+  }
+  .plan-upgrade-list li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: #8B5CF6;
+    font-weight: 700;
+  }
+
+  /* Plan 팝오버 액션 */
+  .plan-popover-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .plan-pop-btn {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-size: 12.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    text-align: center;
+    font-family: inherit;
+  }
+  .plan-pop-btn-primary {
+    background: #8B5CF6;
+    color: white;
+    box-shadow: 0 1px 3px -1px rgba(139, 92, 246, 0.4);
+  }
+  .plan-pop-btn-primary:hover {
+    background: #7C3AED;
+    transform: translateY(-0.5px);
+    box-shadow: 0 4px 12px -2px rgba(139, 92, 246, 0.5);
+  }
+  .plan-pop-btn-secondary {
+    background: white;
+    color: #2A2A35;
+    border-color: #E5E5EA;
+  }
+  .plan-pop-btn-secondary:hover {
+    background: #F9FAFB;
+    border-color: #C8C8D0;
+  }
+  .plan-pop-btn-link {
+    background: transparent;
+    color: #6B6B78;
+  }
+  .plan-pop-btn-link:hover {
+    color: #2A2A35;
+  }
+
+  /* Plan 모드 분기 — 기본 Pro, body[data-plan="core"]일 때만 Core 동작 */
+  /* 이후 Phase에서 각 영역별 분기 추가 */
 
   /* 업셀 OFF 상태 — 모든 트리거 숨김 */
   body[data-upsell="off"] .t1-upsell { display: none !important; }
@@ -2821,15 +3844,26 @@
 
     <!-- Global header -->
     <header class="global-header">
-      <!-- 좌측: DEMO 토글 (시연 컨텍스트) -->
+      <!-- 좌측: 시연 토글 (Plan / 설정 / Upsell / Day) -->
       <div class="demo-toggle">
-        <span class="demo-label">DEMO</span>
+        <span class="demo-label">PLAN</span>
+        <button class="demo-pill plan-pill" data-plan="core">Core</button>
+        <button class="demo-pill plan-pill active" data-plan="pro">Pro</button>
+        <span class="demo-divider"></span>
+        <span class="demo-label">설정</span>
         <button class="demo-pill active" data-state="ready">정상</button>
         <button class="demo-pill" data-state="empty">설정 미완</button>
         <span class="demo-divider"></span>
         <span class="demo-label">UPSELL</span>
         <button class="demo-pill upsell-pill active" data-upsell="on">ON</button>
         <button class="demo-pill upsell-pill" data-upsell="off">OFF</button>
+        <span class="demo-divider"></span>
+        <span class="demo-label">DAY</span>
+        <button class="demo-pill day-pill active" data-day="0">일반</button>
+        <button class="demo-pill day-pill" data-day="30" title="30일 마일스톤 — 7일 무료 체험 제안">30</button>
+        <button class="demo-pill day-pill" data-day="33" title="체험 4일째 — Pro 활용 중">33</button>
+        <button class="demo-pill day-pill" data-day="37" title="체험 종료 24시간 전">37</button>
+        <button class="demo-pill day-pill" data-day="38" title="체험 종료 후 — 회상">38</button>
       </div>
 
       <!-- 우측: 메뉴 5 + 사용자 도구 -->
@@ -2846,6 +3880,11 @@
         <!-- 시각 그룹 분리 -->
         <span class="header-divider"></span>
 
+        <!-- Plan 뱃지 (클릭 시 Plan 정보 팝오버) -->
+        <button class="plan-badge-btn plan-badge-pro" id="plan-badge" onclick="togglePlanPopover()" title="구독 정보">
+          <span class="plan-badge-text">PRO</span>
+        </button>
+
         <!-- 알림 (모바일 푸시 히스토리) -->
         <button class="header-icon-btn" id="btn-notif" title="알림 (모바일 푸시 히스토리)">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
@@ -2854,6 +3893,10 @@
         <!-- 도움말 (가이드/단축키/지원) -->
         <button class="header-icon-btn" id="btn-help" title="도움말 · 가이드 · 단축키 (Cmd+/)">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9.5"/><path d="M9.2 9.2a3 3 0 015.6 1.3c0 1.6-2.4 2.4-2.8 3.5"/><line x1="12" y1="17.5" x2="12" y2="17.5"/></svg>
+        </button>
+        <!-- 코치마크 (시연용 화면 둘러보기) -->
+        <button class="header-icon-btn header-coach-btn" id="btn-coach" title="이 화면 둘러보기 (시연용)" onclick="startCoachMark()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>
         </button>
       </div>
     </header>
@@ -2888,7 +3931,8 @@
         <p class="date">2026년 4월 26일 일요일</p>
       </div>
 
-      <div class="briefing-card">
+      <!-- Briefing — 모든 모드 공통 (본문 동일, CTA만 모드별 분기) -->
+      <div class="briefing-card briefing-card-pro">
         <div class="briefing-content">
           <div class="briefing-title">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="3" fill="currentColor"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg>
@@ -2897,10 +3941,194 @@
           <div class="briefing-desc briefing-desc-normal">오늘 7개 수업이 예정되어 있으며 예상 출석률은 <strong>85%</strong>입니다. <strong>3건</strong>의 미완료 업무가 있습니다.</div>
           <div class="briefing-desc briefing-desc-empty"><strong>도장 설정이 75% 완료됐어요.</strong> 학생 등록만 마치면 매일의 운영 데이터를 정확하게 보여드릴 수 있어요. 남은 시간은 <strong>약 2분</strong>입니다.</div>
         </div>
-        <button class="briefing-cta">
+        <!-- CTA: Pro 모드 (파랑, Briefing Details 클릭 가능) -->
+        <button class="briefing-cta briefing-cta-pro">
           Briefing Details
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
         </button>
+        <!-- CTA: Core × ON/OFF 모드 (보라, Pro 안내 진입점) -->
+        <button class="briefing-cta briefing-cta-core-on" onclick="document.getElementById('plan-badge').click()">
+          Briefing Details
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
+        <!-- CTA: Core × OFF 모드 (CTA 없음 → Core x ON/OFF 둘 다 보라 CTA로 통합) -->
+      </div>
+
+      <!-- ============ Pro Mode Preview — 5가지 상태 카드 ============ -->
+
+      <!-- DAY 30: 마일스톤 카드 (7일 체험 제안) -->
+      <div class="milestone-card milestone-day-30">
+        <div class="milestone-glow"></div>
+        <div class="milestone-content">
+          <div class="milestone-header">
+            <div class="milestone-celebrate">🎉</div>
+            <div class="milestone-title-wrap">
+              <div class="milestone-title">Master Kim님, 30일 동안 STEP을 잘 사용하셨네요!</div>
+              <div class="milestone-subtitle">다음 7일 동안 Pro 기능을 무료로 켜드릴게요. 한 번 써보시고 마음에 들면 그대로 유지하세요.</div>
+            </div>
+          </div>
+
+          <div class="milestone-features">
+            <div class="milestone-feature">
+              <div class="mf-icon mf-icon-bell"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg></div>
+              <div class="mf-text">자동 출석 알림</div>
+            </div>
+            <div class="milestone-feature">
+              <div class="mf-icon mf-icon-chat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+              <div class="mf-text">Xiro 대화 무제한</div>
+            </div>
+            <div class="milestone-feature">
+              <div class="mf-icon mf-icon-money"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+              <div class="mf-text">미납 자동 회수</div>
+            </div>
+            <div class="milestone-feature">
+              <div class="mf-icon mf-icon-belt"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 2H6v7a6 6 0 0012 0V2z"/><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/></svg></div>
+              <div class="mf-text">승급 자동 추천</div>
+            </div>
+          </div>
+
+          <div class="milestone-actions">
+            <button class="milestone-cta-primary" onclick="document.getElementById('plan-badge').click()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+              7일 무료 체험 시작
+            </button>
+            <button class="milestone-cta-secondary" onclick="setDemoDay(0)">지금은 괜찮아요</button>
+          </div>
+
+          <div class="milestone-fineprint">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
+            결제 정보 입력 없음 · 7일 후 자동으로 Core로 돌아가요
+          </div>
+        </div>
+      </div>
+
+      <!-- DAY 33: Pro 체험 중 (남은 일수 카운트다운) -->
+      <div class="milestone-card milestone-day-33">
+        <div class="milestone-glow"></div>
+        <div class="milestone-content">
+          <div class="milestone-header">
+            <div class="milestone-celebrate">✨</div>
+            <div class="milestone-title-wrap">
+              <div class="milestone-title">Pro 체험 4일째 — 남은 시간 <span class="milestone-countdown">3일 12시간</span></div>
+              <div class="milestone-subtitle">이번 주 Xiro가 도와드린 것을 살펴보세요. 체험 종료 전에 결정하실 수 있어요.</div>
+            </div>
+          </div>
+
+          <div class="milestone-stats">
+            <div class="milestone-stat">
+              <div class="ms-icon mf-icon-money"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+              <div class="ms-body">
+                <div class="ms-label">자동 회수 처리</div>
+                <div class="ms-value">$280<span class="ms-meta">3건</span></div>
+              </div>
+            </div>
+            <div class="milestone-stat">
+              <div class="ms-icon mf-icon-chat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+              <div class="ms-body">
+                <div class="ms-label">Xiro 대화</div>
+                <div class="ms-value">12<span class="ms-meta">회</span></div>
+              </div>
+            </div>
+            <div class="milestone-stat">
+              <div class="ms-icon mf-icon-bell"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg></div>
+              <div class="ms-body">
+                <div class="ms-label">학부모 자동 응답</div>
+                <div class="ms-value">8<span class="ms-meta">건</span></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="milestone-actions">
+            <button class="milestone-cta-primary" onclick="document.getElementById('plan-badge').click()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              마음에 들어요, 유지할게요
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- DAY 37: 체험 종료 24시간 전 (Loss Aversion 발동) -->
+      <div class="milestone-card milestone-day-37">
+        <div class="milestone-glow milestone-glow-warn"></div>
+        <div class="milestone-content">
+          <div class="milestone-header">
+            <div class="milestone-celebrate">⏰</div>
+            <div class="milestone-title-wrap">
+              <div class="milestone-title">Pro 체험이 <span class="milestone-countdown milestone-countdown-warn">24시간</span> 후 종료됩니다</div>
+              <div class="milestone-subtitle">7일 동안 Xiro가 절약한 시간을 확인하시고, 계속 사용할지 결정해주세요.</div>
+            </div>
+          </div>
+
+          <div class="milestone-summary">
+            <div class="milestone-summary-row">
+              <span class="msr-label">⏱️ Xiro가 절약한 시간</span>
+              <span class="msr-value">약 8시간</span>
+            </div>
+            <div class="milestone-summary-row">
+              <span class="msr-label">💰 회수한 매출</span>
+              <span class="msr-value">$580</span>
+            </div>
+            <div class="milestone-summary-row">
+              <span class="msr-label">💬 Xiro와 대화</span>
+              <span class="msr-value">23회</span>
+            </div>
+          </div>
+
+          <div class="milestone-warning">
+            <div class="mw-title">내일부터 비활성화되는 기능</div>
+            <div class="mw-list">
+              <div class="mw-item"><span class="mw-dot"></span>Xiro 대화 무제한 → 잠금</div>
+              <div class="mw-item"><span class="mw-dot"></span>자동 회수 처리 → 수동 안내로 전환</div>
+              <div class="mw-item"><span class="mw-dot"></span>학부모 자동 응답 → 직접 답변 필요</div>
+            </div>
+          </div>
+
+          <div class="milestone-actions">
+            <button class="milestone-cta-primary" onclick="document.getElementById('plan-badge').click()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              Pro 유지하기 — $249/월
+            </button>
+            <button class="milestone-cta-secondary" onclick="setDemoDay(38)">Core로 돌아가기</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- DAY 38+: Core 복귀 후 회상 카드 (Briefing 위에 추가 표시) -->
+      <div class="milestone-card milestone-day-38">
+        <div class="milestone-glow milestone-glow-soft"></div>
+        <div class="milestone-content">
+          <div class="milestone-header">
+            <div class="milestone-celebrate">📊</div>
+            <div class="milestone-title-wrap">
+              <div class="milestone-title">지난 주 Pro 체험 회상</div>
+              <div class="milestone-subtitle">체험 중에 자동으로 처리되던 항목들이 이번 주는 다시 직접 처리해야 해요.</div>
+            </div>
+          </div>
+
+          <div class="milestone-recall">
+            <div class="mr-row">
+              <div class="mr-icon mr-icon-money"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
+              <div class="mr-body">
+                <div class="mr-title">미납 회수</div>
+                <div class="mr-meta">체험 중 자동 처리 $580 · 이번 주 수동 안내 필요</div>
+              </div>
+            </div>
+            <div class="mr-row">
+              <div class="mr-icon mr-icon-chat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+              <div class="mr-body">
+                <div class="mr-title">Xiro 대화 무제한</div>
+                <div class="mr-meta">체험 중 23회 활용 · 다시 잠금 상태로 전환됨</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="milestone-actions">
+            <button class="milestone-cta-primary" onclick="document.getElementById('plan-badge').click()">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              Pro로 다시 시작하기
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- KPI Grid -->
@@ -2911,7 +4139,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
             </div>
             <div class="kpi-label">출석률</div>
-            <div class="kpi-trend">↘ 6% (지난 7일)</div>
+            <div class="kpi-trend">↘ 6%</div>
             <div class="kpi-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>
           </div>
           <div class="kpi-body">
@@ -2938,7 +4166,7 @@
           </div>
         </div>
 
-        <div class="kpi-card">
+        <div class="kpi-card kpi-card-promotion">
           <div class="kpi-header">
             <div class="kpi-icon amber">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.5 13l1.5 8-5-3-5 3 1.5-8"/></svg>
@@ -2968,6 +4196,25 @@
             </div>
             <a href="step_setup_step5.html" class="kpi-empty-cta">학생 등록하기 →</a>
           </div>
+          <!-- Core Plan 업셀: Earned Moments (승급 후보) -->
+          <div class="kpi-pro-lock" onclick="document.getElementById('plan-badge').click()">
+            <div class="kpi-pro-lock-header">
+              <div class="kpi-pro-lock-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M6 9H4.5a2.5 2.5 0 010-5H6M18 9h1.5a2.5 2.5 0 000-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22M18 2H6v7a6 6 0 0012 0V2z"/></svg>
+              </div>
+              <div class="kpi-pro-lock-title">이번 주 승급 후보</div>
+              <span class="kpi-pro-lock-badge">PRO</span>
+              <div class="kpi-pro-lock-arrow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+              </div>
+            </div>
+            <div class="kpi-pro-lock-body">
+              <div class="kpi-pro-lock-value-wrap">
+                <div class="kpi-pro-lock-value">2<span class="kpi-pro-lock-value-suffix">명</span></div>
+                <div class="kpi-pro-lock-meta">박서윤 · 이도현 — 기준 충족</div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <div class="kpi-card kpi-card-revenue">
@@ -2976,7 +4223,7 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
             </div>
             <div class="kpi-label">이번 달 매출</div>
-            <div class="kpi-trend up">↗ 16% (지난 달)</div>
+            <div class="kpi-trend up">↗ 16%</div>
             <div class="kpi-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>
           </div>
           <div class="kpi-body">
@@ -2992,19 +4239,6 @@
               </div>
             </div>
           </div>
-          <!-- T1: Value First 인라인 카드 -->
-          <div class="t1-upsell" id="t1Upsell">
-            <div class="t1-upsell-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/></svg>
-            </div>
-            <div class="t1-upsell-text">
-              미납 <strong>$420</strong>를 자동결제로 회수<span class="t1-pro-tag en">PRO</span>
-            </div>
-            <button class="t1-upsell-cta" onclick="event.stopPropagation(); openRoiModal();">어떻게? →</button>
-            <button class="t1-upsell-close" onclick="event.stopPropagation(); dismissT1();" title="닫기">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 18L18 6M6 6l12 12"/></svg>
-            </button>
-          </div>
           <!-- Empty state overlay -->
           <div class="kpi-empty-overlay">
             <span class="kpi-empty-tag">설정 필요</span>
@@ -3013,6 +4247,94 @@
               <p class="kpi-empty-msg">수강료 플랜이 설정되면<br>매출이 자동으로 집계돼요.</p>
             </div>
             <a href="step_setup_step4.html" class="kpi-empty-cta">수강료 설정하기 →</a>
+          </div>
+          <!-- Core Plan 업셀: Loss Aversion (회수 가능 매출) -->
+          <div class="kpi-pro-lock" onclick="document.getElementById('plan-badge').click()">
+            <div class="kpi-pro-lock-header">
+              <div class="kpi-pro-lock-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+              </div>
+              <div class="kpi-pro-lock-title">회수 가능 매출</div>
+              <span class="kpi-pro-lock-badge">PRO</span>
+              <div class="kpi-pro-lock-arrow">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+              </div>
+            </div>
+            <div class="kpi-pro-lock-body">
+              <div class="kpi-pro-lock-value-wrap">
+                <div class="kpi-pro-lock-value">$420</div>
+                <div class="kpi-pro-lock-meta">미납 3건 · 자동결제로 즉시 회수</div>
+              </div>
+              <a class="kpi-pro-lock-cta">자동 회수 보기 →</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Core 전용 KPI: 신규 등록 추세 -->
+        <div class="kpi-card kpi-card-core kpi-card-new-signup">
+          <div class="kpi-header">
+            <div class="kpi-icon green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>
+            </div>
+            <div class="kpi-label">신규 등록</div>
+            <div class="kpi-trend up">↗ 2명</div>
+            <div class="kpi-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>
+          </div>
+          <div class="kpi-body">
+            <div class="kpi-value-wrap">
+              <div class="kpi-value">7<span style="font-size: 14px; color: #6B6B78;">명</span></div>
+              <div class="kpi-meta-text">이번 달 가입 · 평균 5명</div>
+            </div>
+            <div class="kpi-meta-row">
+              <div class="avatar-stack" style="display:flex;">
+                <div class="mini-avatar blue">서</div>
+                <div class="mini-avatar amber">윤</div>
+                <div class="mini-avatar green">하</div>
+              </div>
+            </div>
+          </div>
+          <div class="kpi-empty-overlay">
+            <span class="kpi-empty-tag">설정 필요</span>
+            <div class="kpi-empty-body">
+              <div class="kpi-empty-value">— 명</div>
+              <p class="kpi-empty-msg">학생 등록을 시작하면<br>월별 추세가 자동으로 보여요.</p>
+            </div>
+            <a href="step_setup_step5.html" class="kpi-empty-cta">학생 등록하기 →</a>
+          </div>
+        </div>
+
+        <!-- Core 전용 KPI: 업무 완료율 -->
+        <div class="kpi-card kpi-card-core kpi-card-task-completion">
+          <div class="kpi-header">
+            <div class="kpi-icon purple">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+            </div>
+            <div class="kpi-label">업무 완료율</div>
+            <div class="kpi-trend up">↗ 8%</div>
+            <div class="kpi-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>
+          </div>
+          <div class="kpi-body">
+            <div class="kpi-value-wrap">
+              <div class="kpi-value">76<span style="font-size: 14px; color: #6B6B78;">%</span></div>
+              <div class="kpi-meta-text">19/25 업무 처리 · 이번 주</div>
+            </div>
+            <div class="kpi-meta-row">
+              <div class="kpi-mini-bars" style="display:flex; gap:3px; align-items:flex-end; height:28px;">
+                <span style="width:6px; background:#7C3AED; height:80%; border-radius:2px;" title="월: 80%"></span>
+                <span style="width:6px; background:#7C3AED; height:100%; border-radius:2px;" title="화: 100%"></span>
+                <span style="width:6px; background:#F59E0B; height:60%; border-radius:2px;" title="수: 60%"></span>
+                <span style="width:6px; background:#7C3AED; height:75%; border-radius:2px;" title="목: 75%"></span>
+                <span style="width:6px; background:#7C3AED; height:90%; border-radius:2px;" title="금: 90%"></span>
+              </div>
+            </div>
+          </div>
+          <div class="kpi-empty-overlay">
+            <span class="kpi-empty-tag">설정 필요</span>
+            <div class="kpi-empty-body">
+              <div class="kpi-empty-value">—%</div>
+              <p class="kpi-empty-msg">업무를 등록하면<br>주간 처리 흐름이 보여요.</p>
+            </div>
+            <a href="step_setup_step5.html" class="kpi-empty-cta">학생 등록하기 →</a>
           </div>
         </div>
       </div>
@@ -3033,10 +4355,10 @@
           </div>
           <!-- Chip filters (한 페이지 통합 + 필터) -->
           <div class="ops-chips">
-            <button class="ops-chip active" data-filter="all">전체 <span class="count">12</span></button>
-            <button class="ops-chip" data-filter="urgent"><span class="dot urgent"></span>긴급 <span class="count">4</span></button>
-            <button class="ops-chip" data-filter="routine"><span class="dot routine"></span>정규 <span class="count">5</span></button>
-            <button class="ops-chip" data-filter="insight"><span class="dot insight"></span>제안 <span class="count">3</span></button>
+            <button class="ops-chip active" data-filter="all">전체 <span class="count">17</span></button>
+            <button class="ops-chip" data-filter="urgent"><span class="dot urgent"></span>긴급 <span class="count">5</span></button>
+            <button class="ops-chip" data-filter="routine"><span class="dot routine"></span>정규 <span class="count">7</span></button>
+            <button class="ops-chip" data-filter="insight"><span class="dot insight"></span>제안 <span class="count">5</span></button>
           </div>
           <div class="ops-list">
             <!-- Setup-required (only in empty state) -->
@@ -3076,8 +4398,8 @@
               </div>
               <button class="ops-action">리마인드</button>
             </div>
-            <!-- 2: 긴급 - 미납 -->
-            <div class="ops-item" data-depends="data" data-type="urgent">
+            <!-- 2: 긴급 - 미납 (Core에서 잠금) -->
+            <div class="ops-item ops-item-pro-lock" data-depends="data" data-type="urgent">
               <div class="ops-icon-wrap danger">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
               </div>
@@ -3087,6 +4409,26 @@
                 <div class="ops-meta">총 미납 금액 <span class="num">$110</span></div>
               </div>
               <button class="ops-action">결제 안내</button>
+              <button class="ops-action ops-action-pro" onclick="document.getElementById('plan-badge').click()">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                Pro
+              </button>
+            </div>
+            <!-- 2.5: 학부모 메시지 (Core에서 잠금) -->
+            <div class="ops-item ops-item-pro-lock" data-depends="data" data-type="urgent">
+              <div class="ops-icon-wrap" style="background: #DBEAFE; color: #2563EB;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+              </div>
+              <div class="ops-body">
+                <div class="ops-tag-row"><span class="ops-tag urgent">🔴 긴급</span></div>
+                <div class="ops-title">학부모 메시지 5건이 미응답이에요.</div>
+                <div class="ops-meta">평균 응답 시간 <span class="num">2.3시간</span> · 빠른 응답 권장</div>
+              </div>
+              <button class="ops-action">응답하기</button>
+              <button class="ops-action ops-action-pro" onclick="document.getElementById('plan-badge').click()">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                Pro
+              </button>
             </div>
             <!-- 3: 정규 - 출석 마감 -->
             <div class="ops-item" data-depends="data" data-type="routine">
@@ -3112,8 +4454,32 @@
               </div>
               <button class="ops-action">검토</button>
             </div>
+            <!-- 5: 정규 - 신규 등록 환영 (Core × OFF에서만 노출, Pro/Core × ON은 더보기로) -->
+            <div class="ops-item ops-item-core-only" data-depends="data" data-type="routine">
+              <div class="ops-icon-wrap" style="background: #ECFDF5; color: #10B981;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>
+              </div>
+              <div class="ops-body">
+                <div class="ops-tag-row"><span class="ops-tag routine">📋 정규</span></div>
+                <div class="ops-title">신규 등록 학생 2명 환영 안내 필요</div>
+                <div class="ops-meta">서윤·하준 · 첫 수업 안내</div>
+              </div>
+              <button class="ops-action">처리</button>
+            </div>
+            <!-- 6: 제안 - 띠 갱신 추천 (Core × OFF에서만 노출, Pro/Core × ON은 더보기로) -->
+            <div class="ops-item ops-item-core-only" data-depends="data" data-type="insight">
+              <div class="ops-icon-wrap insight">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="8" r="6"/><path d="M15.5 13l1.5 8-5-3-5 3 1.5-8"/></svg>
+              </div>
+              <div class="ops-body">
+                <div class="ops-tag-row"><span class="ops-tag insight">💡 제안</span></div>
+                <div class="ops-title">박서윤 학생, 노란띠 진급 기준 도달</div>
+                <div class="ops-meta">출석 24/26 · 수련 기간 조건 충족</div>
+              </div>
+              <button class="ops-action">검토</button>
+            </div>
           </div>
-          <a class="ops-more">더보기 (8건) ↓</a>
+          <a class="ops-more">더보기 (10건) ↓</a>
         </div>
 
         <!-- Live Dojang -->
@@ -3212,7 +4578,7 @@
         </div>
 
         <!-- Event Hub -->
-        <div class="panel">
+        <div class="panel panel-event-hub">
           <div class="panel-header">
             <div class="panel-title">
               <span class="panel-title-icon" style="background: #FFFBEB; color: #D97706;">
@@ -3311,9 +4677,10 @@
           <span class="quick-label">업무 생성</span>
         </button>
         <!-- 4. 학부모 메시지 -->
-        <button class="quick-btn" data-needs-setup title="수련생 등록 후 사용 가능">
+        <button class="quick-btn quick-btn-pro-lock" data-needs-setup title="자동 발송은 Pro 기능입니다" onclick="if(document.body.dataset.plan==='core'){document.getElementById('plan-badge').click();return false;}">
           <span class="quick-icon pink"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></span>
           <span class="quick-label">학부모 메시지</span>
+          <span class="quick-pro-badge">PRO</span>
         </button>
         <!-- 5. 일정 추가 -->
         <button class="quick-btn">
@@ -3326,9 +4693,10 @@
           <span class="quick-label">노트 등록</span>
         </button>
         <!-- 7. 공지 등록 -->
-        <button class="quick-btn">
+        <button class="quick-btn quick-btn-pro-lock" title="대량 공지 발송은 Pro 기능입니다" onclick="if(document.body.dataset.plan==='core'){document.getElementById('plan-badge').click();return false;}">
           <span class="quick-icon cyan"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 11-5.8-1.6"/></svg></span>
           <span class="quick-label">공지 등록</span>
+          <span class="quick-pro-badge">PRO</span>
         </button>
       </div>
 
@@ -3476,6 +4844,66 @@
   </div>
 </div>
 
+<!-- Plan Popover (헤더 Plan 뱃지 클릭 시) -->
+<div class="plan-popover" id="plan-popover">
+  <!-- Pro 모드 콘텐츠 -->
+  <div class="plan-popover-content plan-content-pro">
+    <div class="plan-popover-header">
+      <div class="plan-popover-tier">
+        <span class="plan-tier-badge plan-tier-pro">PRO</span>
+        <span class="plan-tier-price"><span class="num">$249</span><span class="plan-tier-period">/mo</span></span>
+      </div>
+      <div class="plan-popover-meta">Manage your dojang</div>
+    </div>
+    <div class="plan-popover-trial">
+      <div class="plan-trial-icon">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <div class="plan-trial-text">
+        <div class="plan-trial-title">60일 무료 사용 중</div>
+        <div class="plan-trial-meta">42일 남음 · 6월 8일부터 자동 결제</div>
+      </div>
+    </div>
+    <div class="plan-popover-actions">
+      <button class="plan-pop-btn plan-pop-btn-secondary">결제 정보 변경</button>
+      <button class="plan-pop-btn plan-pop-btn-secondary">구독 관리</button>
+    </div>
+  </div>
+
+  <!-- Core 모드 콘텐츠 -->
+  <div class="plan-popover-content plan-content-core">
+    <div class="plan-popover-header">
+      <div class="plan-popover-tier">
+        <span class="plan-tier-badge plan-tier-core">CORE</span>
+        <span class="plan-tier-price"><span class="num">$50</span><span class="plan-tier-period">/mo</span></span>
+      </div>
+      <div class="plan-popover-meta">Run your dojang</div>
+    </div>
+
+    <!-- Pro 업그레이드 추천 -->
+    <div class="plan-popover-upgrade">
+      <div class="plan-upgrade-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+        Pro로 업그레이드하면
+      </div>
+      <ul class="plan-upgrade-list">
+        <li>Xiro AI 챗봇과 직접 대화</li>
+        <li>학부모 자동 결제 (Stripe)</li>
+        <li>매출 트렌드 + 출석 분석</li>
+        <li>Play STEP 앱 연결</li>
+      </ul>
+    </div>
+    <div class="plan-popover-actions">
+      <button class="plan-pop-btn plan-pop-btn-primary">
+        Pro로 업그레이드 →
+      </button>
+      <button class="plan-pop-btn plan-pop-btn-link" onclick="togglePlanPopover()">
+        나중에
+      </button>
+    </div>
+  </div>
+</div>
+
 <!-- Toast -->
 <div class="upsell-toast" id="upsellToast">
   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
@@ -3528,6 +4956,93 @@
   });
 
   // ============================================
+  // PLAN: Core / Pro 토글 (시연용 — 새로고침 시 Pro 기본)
+  // ============================================
+  const planPills = document.querySelectorAll('.demo-pill[data-plan]');
+  const planBadge = document.getElementById('plan-badge');
+
+  function setPlan(plan) {
+    body.setAttribute('data-plan', plan);
+    planPills.forEach(p => {
+      p.classList.toggle('active', p.dataset.plan === plan);
+    });
+    // 헤더 Plan 뱃지 버튼 업데이트
+    if (planBadge) {
+      const badgeText = planBadge.querySelector('.plan-badge-text');
+      if (plan === 'core') {
+        if (badgeText) badgeText.textContent = 'CORE';
+        planBadge.classList.remove('plan-badge-pro');
+        planBadge.classList.add('plan-badge-core');
+        planBadge.title = 'Core Plan · Pro로 업그레이드';
+      } else {
+        if (badgeText) badgeText.textContent = 'PRO';
+        planBadge.classList.remove('plan-badge-core');
+        planBadge.classList.add('plan-badge-pro');
+        planBadge.title = 'Pro Plan · 구독 정보';
+      }
+    }
+  }
+  planPills.forEach(pill => {
+    pill.addEventListener('click', () => setPlan(pill.dataset.plan));
+  });
+
+  // 페이지 진입 시 기본 = Pro (B 옵션 선택 — 저장 안 함)
+  setPlan('pro');
+
+  // ============================================
+  // DAY: 마일스톤 시연 토글 (Pro Mode Preview 5가지 상태)
+  // ============================================
+  const dayPills = document.querySelectorAll('.demo-pill[data-day]');
+
+  function setDemoDay(day) {
+    const dayStr = String(day);
+    body.setAttribute('data-day', dayStr);
+    dayPills.forEach(p => {
+      p.classList.toggle('active', p.dataset.day === dayStr);
+    });
+    // 마일스톤 시연 시 Plan을 Core로 자동 전환 (체험 제안은 Core 사용자에게만 의미)
+    if (day !== 0 && day !== '0') {
+      setPlan('core');
+    }
+  }
+  dayPills.forEach(pill => {
+    pill.addEventListener('click', () => setDemoDay(pill.dataset.day));
+  });
+
+  // 페이지 진입 시 기본 = Day 0 (일반)
+  setDemoDay(0);
+
+  // ============================================
+  // PLAN POPOVER: 헤더 Plan 뱃지 클릭 시 팝오버
+  // ============================================
+  function togglePlanPopover() {
+    const popover = document.getElementById('plan-popover');
+    if (!popover) return;
+    const isOpen = popover.classList.contains('open');
+    if (isOpen) {
+      popover.classList.remove('open');
+    } else {
+      popover.classList.add('open');
+      // 외부 클릭 시 닫기
+      setTimeout(() => {
+        document.addEventListener('click', closePlanPopoverOnOutside, { once: true });
+      }, 0);
+    }
+  }
+  function closePlanPopoverOnOutside(e) {
+    const popover = document.getElementById('plan-popover');
+    const badge = document.getElementById('plan-badge');
+    if (popover && !popover.contains(e.target) && e.target !== badge && !badge?.contains(e.target)) {
+      popover.classList.remove('open');
+    } else {
+      // 다시 외부 클릭 리스너 등록
+      setTimeout(() => {
+        document.addEventListener('click', closePlanPopoverOnOutside, { once: true });
+      }, 0);
+    }
+  }
+
+  // ============================================
   // T1: Value First — 인라인 카드 닫기
   // ============================================
   function dismissT1() {
@@ -3539,6 +5054,11 @@
   // T2: Xiro Whisper — 채팅창 + 거부 처리
   // ============================================
   function toggleXiroChat() {
+    // Core 모드: Xiro 대화는 Pro 기능이므로 Plan 팝오버로 안내
+    if (body.dataset.plan === 'core') {
+      document.getElementById('plan-badge').click();
+      return;
+    }
     const isOpen = body.getAttribute('data-xiro-chat-open') === 'true';
     if (isOpen) {
       closeXiroChat();
