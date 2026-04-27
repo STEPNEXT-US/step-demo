@@ -207,6 +207,140 @@
   }
   .empty-hint .strong { font-weight: 700; color: #78350F; }
 
+  /* === Pro Plan: Stripe Connect 자동결제 안내 (Pro 사용자만 표시) === */
+  .pro-stripe-card {
+    display: none;
+    margin-top: 24px;
+    padding: 24px;
+    background: linear-gradient(135deg, #FAFAFE 0%, #F5F3FF 60%, #EDE9FE 100%);
+    border: 1px solid #DDD6FE;
+    border-radius: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  body[data-plan="pro"] .pro-stripe-card { display: block; }
+  .pro-stripe-card::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 180px; height: 180px;
+    background: radial-gradient(circle, rgba(139,92,246,0.12), transparent 70%);
+    pointer-events: none;
+  }
+  .pro-stripe-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 14px;
+    position: relative;
+  }
+  .pro-stripe-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    box-shadow: 0 4px 10px -2px rgba(139,92,246,0.4);
+    flex-shrink: 0;
+  }
+  .pro-stripe-title-wrap {
+    flex: 1;
+    min-width: 0;
+  }
+  .pro-stripe-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0A0A0F;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .pro-stripe-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 3px 7px;
+    border-radius: 5px;
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+    color: white;
+  }
+  .pro-stripe-desc {
+    font-size: 13px;
+    color: #52525B;
+    line-height: 1.55;
+    margin-top: 2px;
+  }
+  .pro-stripe-features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+    position: relative;
+  }
+  .pro-stripe-feature {
+    background: white;
+    border: 1px solid #E4E4E7;
+    border-radius: 10px;
+    padding: 12px;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .pro-stripe-feature-icon {
+    width: 18px; height: 18px;
+    flex-shrink: 0;
+    color: #7C3AED;
+    margin-top: 1px;
+  }
+  .pro-stripe-feature-text {
+    font-size: 12px;
+    color: #2A2A35;
+    line-height: 1.45;
+  }
+  .pro-stripe-feature-text .strong {
+    display: block;
+    font-weight: 700;
+    color: #0A0A0F;
+    margin-bottom: 2px;
+    font-size: 12.5px;
+  }
+  .pro-stripe-cta-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+  }
+  .btn-stripe-connect {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 18px;
+    background: #635BFF;
+    color: white;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 9px;
+    transition: all 0.15s;
+    text-decoration: none;
+    box-shadow: 0 2px 6px -1px rgba(99,91,255,0.4);
+  }
+  .btn-stripe-connect:hover { background: #5851DB; transform: translateY(-1px); box-shadow: 0 4px 10px -2px rgba(99,91,255,0.5); }
+  .pro-stripe-skip {
+    font-size: 12px;
+    color: #6B6B78;
+    background: none;
+    padding: 8px 12px;
+    border-radius: 7px;
+  }
+  .pro-stripe-skip:hover { color: #2A2A35; background: rgba(255,255,255,0.6); }
+
+  @media (max-width: 768px) {
+    .pro-stripe-features { grid-template-columns: 1fr; }
+    .pro-stripe-cta-row { flex-direction: column; align-items: stretch; }
+  }
   /* Summary */
   .summary-card {
     display: flex;
@@ -396,8 +530,8 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><circle cx="12" cy="12" r="3" fill="white"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3"/></svg>
       </div>
       <div class="ai-banner-content">
-        <p class="ai-banner-text"><span class="strong">우리 도장의 가격 플랜을 자유롭게 등록해주세요.</span> 주 N회 기준, 연령대 기준, 프로그램 종류 기준 — 도장마다 가격 정책은 다양해요. 시간표(주 2-5회)와 띠 체계를 참고하시면 도움이 돼요.</p>
-        <a class="ai-banner-link" id="show-examples">다른 도장은 어떻게 정하는지 예시 보기 →</a>
+        <p class="ai-banner-text"><span class="strong">미국 도장에서 가장 흔한 가격 정책 5개를 미리 등록해뒀어요.</span> 우리 도장에 맞게 가격, 이름, 설명을 수정하시거나 불필요한 항목은 삭제하시면 됩니다.</p>
+        <a class="ai-banner-link" id="show-examples">다른 도장의 가격 패턴 더 보기 →</a>
       </div>
       <button class="ai-banner-close"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
@@ -408,8 +542,8 @@
       <span class="num-current">STEP 4</span>
       <span class="num-total">/ 8</span>
     </div>
-    <h1 class="section-title">우리 도장의 가격 플랜을 등록해주세요.</h1>
-    <p class="section-subtitle">학부모가 결제할 모든 수강료 플랜을 등록하세요. 주 N회, 연령대, 프로그램 등 어떤 기준이든 OK. 운영 중에 언제든 수정/추가할 수 있어요.</p>
+    <h1 class="section-title">우리 도장의 가격 플랜을 확인해주세요.</h1>
+    <p class="section-subtitle">미국 태권도 도장에서 가장 흔한 가격 정책을 미리 등록해뒀어요. 우리 도장에 맞게 수정하거나 추가/삭제하시면 됩니다. 운영 중에 언제든 변경 가능해요.</p>
 
     <div class="summary-card">
       <div class="summary-stat">
@@ -449,13 +583,65 @@
     <div class="plan-list" id="plan-list">
       <div class="plan-row" data-plan-row>
         <div class="plan-num">1</div>
-        <input class="plan-input name" type="text" placeholder="예: 주 3회 기본반" data-field="name">
+        <input class="plan-input name" type="text" value="Tiny Tigers (3-5세)" data-field="name">
         <div class="plan-price-wrap">
           <span class="plan-price-prefix">$</span>
-          <input class="plan-input price" type="number" placeholder="0" data-field="price">
+          <input class="plan-input price" type="number" value="130" data-field="price">
           <span class="plan-price-suffix">/ 월</span>
         </div>
-        <input class="plan-input desc" type="text" placeholder="예: 7-12세 표준 프로그램" data-field="desc">
+        <input class="plan-input desc" type="text" value="유아 입문반 · 주 2회 30분" data-field="desc">
+        <button class="icon-btn" data-delete title="삭제">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+        </button>
+      </div>
+      <div class="plan-row" data-plan-row>
+        <div class="plan-num">2</div>
+        <input class="plan-input name" type="text" value="Kids Beginner (6-12세)" data-field="name">
+        <div class="plan-price-wrap">
+          <span class="plan-price-prefix">$</span>
+          <input class="plan-input price" type="number" value="150" data-field="price">
+          <span class="plan-price-suffix">/ 월</span>
+        </div>
+        <input class="plan-input desc" type="text" value="기본반 · 주 3회 (흰띠~파란띠)" data-field="desc">
+        <button class="icon-btn" data-delete title="삭제">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+        </button>
+      </div>
+      <div class="plan-row" data-plan-row>
+        <div class="plan-num">3</div>
+        <input class="plan-input name" type="text" value="Kids Black Belt Club" data-field="name">
+        <div class="plan-price-wrap">
+          <span class="plan-price-prefix">$</span>
+          <input class="plan-input price" type="number" value="180" data-field="price">
+          <span class="plan-price-suffix">/ 월</span>
+        </div>
+        <input class="plan-input desc" type="text" value="검은띠 후보 · 주 5회 + 리더십 트레이닝" data-field="desc">
+        <button class="icon-btn" data-delete title="삭제">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+        </button>
+      </div>
+      <div class="plan-row" data-plan-row>
+        <div class="plan-num">4</div>
+        <input class="plan-input name" type="text" value="Adult Class (13세+)" data-field="name">
+        <div class="plan-price-wrap">
+          <span class="plan-price-prefix">$</span>
+          <input class="plan-input price" type="number" value="160" data-field="price">
+          <span class="plan-price-suffix">/ 월</span>
+        </div>
+        <input class="plan-input desc" type="text" value="성인반 · 주 3회 (저녁/주말 클래스)" data-field="desc">
+        <button class="icon-btn" data-delete title="삭제">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+        </button>
+      </div>
+      <div class="plan-row" data-plan-row>
+        <div class="plan-num">5</div>
+        <input class="plan-input name" type="text" value="Family Plan (2nd member)" data-field="name">
+        <div class="plan-price-wrap">
+          <span class="plan-price-prefix">$</span>
+          <input class="plan-input price" type="number" value="120" data-field="price">
+          <span class="plan-price-suffix">/ 월</span>
+        </div>
+        <input class="plan-input desc" type="text" value="가족 할인 · 두 번째 가족 구성원부터 적용" data-field="desc">
         <button class="icon-btn" data-delete title="삭제">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
         </button>
@@ -469,7 +655,72 @@
         <line x1="12" y1="16" x2="12.01" y2="16"/>
       </svg>
       <div>
-        <span class="strong">첫 플랜을 입력하면서 시작해보세요.</span> 캠프, 토너먼트, 도복 같은 일시 결제 항목은 운영 시작 후 <strong>수납/결제 → Pricing 프로그램</strong>에서 추가할 수 있어요. 지금은 매월 자동 결제되는 멤버십 플랜만 정해주시면 돼요.
+        <span class="strong">샘플 5개가 미리 등록돼있어요.</span> 캠프, 토너먼트, 도복 같은 일시 결제 항목은 운영 시작 후 <strong>수납/결제 → Pricing 프로그램</strong>에서 추가할 수 있어요. 지금은 매월 자동 결제되는 멤버십 플랜만 정해주시면 돼요.
+      </div>
+    </div>
+
+    <!-- ============================================ -->
+    <!-- Pro Plan 전용: Stripe Connect 자동결제 (Pro 사용자만 표시) -->
+    <!-- ============================================ -->
+    <div class="pro-stripe-card">
+      <div class="pro-stripe-header">
+        <div class="pro-stripe-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <rect x="2" y="5" width="20" height="14" rx="3"/>
+            <path d="M2 10h20"/>
+            <path d="M6 15h4"/>
+          </svg>
+        </div>
+        <div class="pro-stripe-title-wrap">
+          <div class="pro-stripe-title">
+            Stripe Connect로 자동결제 활성화
+            <span class="pro-stripe-badge">PRO</span>
+          </div>
+          <div class="pro-stripe-desc">위에 등록한 가격 플랜이 매월 자동으로 결제돼요. 학부모는 Play STEP 앱에서 카드 등록만 하면 끝.</div>
+        </div>
+      </div>
+
+      <div class="pro-stripe-features">
+        <div class="pro-stripe-feature">
+          <svg class="pro-stripe-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+            <path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            <polyline points="9 12 11 14 15 10"/>
+          </svg>
+          <div class="pro-stripe-feature-text">
+            <span class="strong">매월 자동 결제</span>
+            도장에서 카드 받지 않아도 자동으로 청구
+          </div>
+        </div>
+        <div class="pro-stripe-feature">
+          <svg class="pro-stripe-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+          </svg>
+          <div class="pro-stripe-feature-text">
+            <span class="strong">미납 자동 회수</span>
+            결제 실패 시 3회까지 자동 재시도
+          </div>
+        </div>
+        <div class="pro-stripe-feature">
+          <svg class="pro-stripe-feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+            <rect x="2" y="4" width="20" height="16" rx="2"/>
+            <path d="M2 10h20"/>
+            <path d="M8 14h8"/>
+          </svg>
+          <div class="pro-stripe-feature-text">
+            <span class="strong">Play STEP 학부모 결제</span>
+            학부모가 앱에서 카드 등록 → 자동 연동
+          </div>
+        </div>
+      </div>
+
+      <div class="pro-stripe-cta-row">
+        <a href="#" class="btn-stripe-connect" id="btn-stripe-connect">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+          Stripe Connect 연결하기
+        </a>
+        <button class="pro-stripe-skip" id="btn-stripe-skip">나중에 설정할게요</button>
       </div>
     </div>
 
@@ -671,6 +922,30 @@
       showToast('플랜명과 가격은 모두 입력해주세요');
     }
   });
+
+  // ============================================
+  // Plan 분기 — URL ?plan=pro 시 Stripe 카드 표시
+  // ============================================
+  (function applyPlan() {
+    const urlPlan = new URLSearchParams(window.location.search).get('plan');
+    const plan = (urlPlan === 'core' || urlPlan === 'pro') ? urlPlan : 'pro';
+    document.body.setAttribute('data-plan', plan);
+  })();
+
+  // Stripe Connect 버튼 — 시연용 (실제 OAuth는 추후)
+  const btnStripe = document.getElementById('btn-stripe-connect');
+  if (btnStripe) {
+    btnStripe.addEventListener('click', e => {
+      e.preventDefault();
+      showToast('Stripe Connect 인증 준비 중 — 다음 단계로 진행하면서 백그라운드 처리됩니다');
+    });
+  }
+  const btnStripeSkip = document.getElementById('btn-stripe-skip');
+  if (btnStripeSkip) {
+    btnStripeSkip.addEventListener('click', () => {
+      showToast('나중에 수납/결제 → Stripe 연결에서 설정 가능해요');
+    });
+  }
 </script>
 
 </body>

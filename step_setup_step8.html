@@ -160,6 +160,92 @@
     gap: 8px;
     margin-top: 16px;
   }
+
+  /* === Plan 분기 === */
+  /* Pro 전용 요소 — 기본 숨김, Pro 사용자만 표시 */
+  .pro-only { display: none; }
+  body[data-plan="pro"] .pro-only { display: block; }
+  body[data-plan="pro"] .pro-only.flex { display: flex; }
+
+  /* Pro 자동화 안내 카드 */
+  .pro-automation-card {
+    margin-top: 24px;
+    padding: 18px 20px;
+    background: linear-gradient(135deg, #FAFAFE 0%, #F5F3FF 60%, #EDE9FE 100%);
+    border: 1px solid #DDD6FE;
+    border-radius: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  .pro-automation-card::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 140px; height: 140px;
+    background: radial-gradient(circle, rgba(139,92,246,0.10), transparent 70%);
+    pointer-events: none;
+  }
+  .pro-automation-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    position: relative;
+  }
+  .pro-automation-icon {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    box-shadow: 0 2px 6px -1px rgba(139,92,246,0.4);
+  }
+  .pro-automation-title {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #0A0A0F;
+    letter-spacing: -0.01em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .pro-automation-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    padding: 2px 6px;
+    border-radius: 5px;
+    background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
+    color: white;
+  }
+  .pro-automation-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 6px;
+    position: relative;
+  }
+  .pro-automation-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    font-size: 12.5px;
+    color: #2A2A35;
+    line-height: 1.5;
+  }
+  .pro-automation-list li svg {
+    flex-shrink: 0;
+    color: #7C3AED;
+    margin-top: 2px;
+  }
+  .pro-automation-list li strong {
+    color: #0A0A0F;
+    font-weight: 700;
+  }
 </style>
 </head>
 <body>
@@ -210,7 +296,7 @@
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2"><circle cx="12" cy="12" r="3" fill="white"/><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3"/></svg>
       </div>
       <div class="ai-banner-content">
-        <p class="ai-banner-text"><span class="strong" style="color: #B91C1C;">승급심사 일정은 반드시 등록해주세요.</span> Xiro는 이 일정을 기준으로 승급 대상 자동 관리, 학부모 사전 안내, 심사 준비 알림 등 모든 자동화를 작동시켜요.</p>
+        <p class="ai-banner-text"><span class="strong">올해 도장 일정을 캘린더에 등록해주세요.</span> 대회, 캠프, 승급심사, 시범 등 도장 일정을 미리 등록하면 학부모와 학생이 캘린더에서 확인할 수 있어요.</p>
         <a class="ai-banner-link">파일로 행사 일정 가져오기 →</a>
       </div>
       <button class="ai-banner-close"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
@@ -233,8 +319,8 @@
       <span class="num-current">STEP 8</span>
       <span class="num-total">/ 8</span>
     </div>
-    <h1 class="section-title">올해 행사 일정을 등록해주세요.</h1>
-    <p class="section-subtitle">승급심사는 <span style="color: #B91C1C; font-weight: 600;">필수</span>로 등록해야 해요. 다른 행사(대회, 캠프, 시범)는 선택이에요. 미리 등록해두면 학부모에게 자동 안내가 발송돼요.</p>
+    <h1 class="section-title">올해 행사 일정을 캘린더에 등록해주세요.</h1>
+    <p class="section-subtitle">대회, 캠프, 승급심사, 시범 등 도장 일정을 미리 등록하면 학부모와 학생이 캘린더에서 확인할 수 있어요. 운영 중에 언제든 추가/수정 가능합니다.</p>
 
     <button class="add-row">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 5v14M5 12h14"/></svg>
@@ -249,16 +335,12 @@
       <div></div>
     </div>
 
-    <div class="event-row required">
-      <input class="event-input" value="1차 승급심사" data-required="true">
+    <div class="event-row">
+      <input class="event-input" value="1차 승급심사">
       <select class="event-input"><option>승급심사</option></select>
       <input type="date" class="event-input num" value="2026-03-15">
       <input class="event-input" value="도장 내">
-      <button class="icon-btn" disabled title="필수 항목은 삭제할 수 없어요"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
-    </div>
-    <div class="required-helper">
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-      이 일정을 기준으로 Xiro가 승급 대상 자동 관리, 학부모 사전 안내 등을 작동시켜요. 정확한 날짜로 수정해주세요.
+      <button class="icon-btn" title="삭제"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg></button>
     </div>
     <div class="event-row">
       <input class="event-input" value="봄 태권도 대회">
@@ -284,14 +366,46 @@
 
     <div class="reassure">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-      행사 시작 2주 전, 1주 전, 1일 전에 자동으로 알림이 발송돼요. 승급심사는 추가로 30일 전부터 대상 학생 자동 관리가 시작돼요.
+      등록한 일정은 메인 캘린더에 자동으로 표시되고, 학부모/학생도 Play STEP 앱에서 확인할 수 있어요.
+    </div>
+
+    <!-- ============================================ -->
+    <!-- Pro Plan 전용: 자동화 안내 (Pro 사용자만 표시) -->
+    <!-- ============================================ -->
+    <div class="pro-only pro-automation-card">
+      <div class="pro-automation-header">
+        <div class="pro-automation-icon">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+            <path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3M5.64 18.36l2.12-2.12M16.95 7.05l2.12-2.12"/>
+            <circle cx="12" cy="12" r="4"/>
+          </svg>
+        </div>
+        <div class="pro-automation-title">
+          행사 자동화로 시간을 절약하세요
+          <span class="pro-automation-badge">PRO</span>
+        </div>
+      </div>
+      <ul class="pro-automation-list">
+        <li>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>
+          <div><strong>학부모 자동 안내</strong> — 행사 시작 2주 전, 1주 전, 1일 전에 자동 발송</div>
+        </li>
+        <li>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>
+          <div><strong>승급심사 대상 자동 추천</strong> — 30일 전부터 띠/출석 기준으로 후보 학생 자동 선별</div>
+        </li>
+        <li>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>
+          <div><strong>대회 등록 추적</strong> — 학부모 신청서 자동 수합 + 결제 연동</div>
+        </li>
+      </ul>
     </div>
   </div>
 
   <div class="step-footer">
     <a class="btn-ghost" href="step_setup_step7.html">← 이전</a>
     <div class="step-footer-right">
-      <button class="btn-ghost nav-skip-disabled" onclick="event.preventDefault(); alert('승급심사는 필수 항목이라 건너뛸 수 없어요. Xiro의 모든 자동화가 이 일정을 기준으로 작동하기 때문이에요.');" title="승급심사 필수">건너뛰기</button>
+      <a class="btn-ghost" href="step_setup_step9.html">건너뛰기</a>
       <a class="btn-primary" href="step_setup_step9.html">설정 끝내기 ✓</a>
     </div>
   </div>
@@ -306,6 +420,15 @@
     <div class="help-float-text-2">전화로 도와드릴게요</div>
   </div>
 </a>
+
+<script>
+  // Plan 분기 — URL ?plan=pro면 Pro 자동화 카드 표시
+  (function applyPlan() {
+    const urlPlan = new URLSearchParams(window.location.search).get('plan');
+    const plan = (urlPlan === 'core' || urlPlan === 'pro') ? urlPlan : 'pro';
+    document.body.setAttribute('data-plan', plan);
+  })();
+</script>
 
 </body>
 </html>
