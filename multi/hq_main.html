@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HQ Main · STEP Manager</title>
+<link rel="stylesheet" href="shared/multi_styles.css">
+<link rel="stylesheet" href="shared/app_shell.css">
+<link rel="stylesheet" href="shared/hq_main.css">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="hq-mode" data-plan="pro" data-upsell="off">
+
+<div class="app-shell">
+
+  <!-- ============================================================
+       SIDEBAR (v6.6 구조 + HQ 메뉴)
+       ============================================================ -->
+  <aside class="sidebar">
+
+    <div class="sidebar-top">
+      <button class="sidebar-collapse" aria-label="사이드바 접기">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="3" y1="12" x2="15" y2="12"/>
+          <line x1="3" y1="18" x2="21" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="sidebar-logo">
+      <span class="logo-text">
+        <span class="logo-step">ST<span class="logo-e">E</span>P</span>
+        <span class="logo-manager">Manager</span>
+        <span class="logo-hq-tag">HQ</span>
+      </span>
+    </div>
+
+    <!-- Studio Switcher (사이드바 모드 = v6.6의 dojang-selector 자리) -->
+    <div id="studio-switcher-sidebar" class="studio-switcher" style="margin-bottom: 10px;"></div>
+
+    <!-- 사이드바 검색 -->
+    <div class="sidebar-search">
+      <svg class="s-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+      </svg>
+      <input id="sidebar-search-input" placeholder="지점, 사범 검색...">
+      <span class="kbd-hint">⌘K</span>
+    </div>
+
+    <!-- HQ 메인 (현재 위치) -->
+    <a class="nav-item active" href="hq_main.html">
+      <span class="icon-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/>
+          <polyline points="9 22 9 12 15 12 15 22"/>
+        </svg>
+      </span>
+      HQ Overview
+    </a>
+
+    <!-- HQ 컨텍스트 전용 메뉴 그룹 1: Network -->
+    <div class="nav-section-label">Network</div>
+
+    <a class="nav-item" href="hq_studios.html">
+      <span class="icon-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 21V8l9-5 9 5v13"/>
+          <path d="M9 21v-9h6v9"/>
+        </svg>
+      </span>
+      지점 목록
+    </a>
+
+    <a class="nav-item" href="hq_studios.html#staff">
+      <span class="icon-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="9" cy="8" r="4"/>
+          <path d="M3 20v-1a6 6 0 016-6h0a6 6 0 016 6v1"/>
+          <circle cx="17" cy="6" r="2.5"/>
+          <path d="M21 14v-1a4 4 0 00-4-4"/>
+        </svg>
+      </span>
+      사범 배치
+    </a>
+
+    <a class="nav-item disabled">
+      <span class="icon-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="20" x2="18" y2="10"/>
+          <line x1="12" y1="20" x2="12" y2="4"/>
+          <line x1="6" y1="20" x2="6" y2="14"/>
+        </svg>
+      </span>
+      통합 리포트
+      <span class="nav-item-tag p1b">P1B</span>
+    </a>
+
+    <a class="nav-item disabled">
+      <span class="icon-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="1" x2="12" y2="23"/>
+          <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+        </svg>
+      </span>
+      매출 통합
+      <span class="nav-item-tag p1b">P1B</span>
+    </a>
+
+    <!-- HQ 컨텍스트 전용 메뉴 그룹 2: Management -->
+    <div class="nav-section-label">Management</div>
+
+    <a class="nav-item" href="hq_studio_add.html">
+      <span class="icon-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"/>
+          <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+      </span>
+      지점 추가
+    </a>
+
+    <a class="nav-item disabled">
+      <span class="icon-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="17 1 21 5 17 9"/>
+          <path d="M3 11V9a4 4 0 014-4h14"/>
+          <polyline points="7 23 3 19 7 15"/>
+          <path d="M21 13v2a4 4 0 01-4 4H3"/>
+        </svg>
+      </span>
+      학생 이동
+      <span class="nav-item-tag p2">P2</span>
+    </a>
+
+    <a class="nav-item disabled">
+      <span class="icon-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33h0a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51h0a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v0a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+        </svg>
+      </span>
+      HQ 설정
+      <span class="nav-item-tag p2">P2</span>
+    </a>
+
+    <!-- 사이드바 하단 (v6.6 동일) -->
+    <div class="sidebar-bottom">
+      <a class="partner-link">
+        <span class="partner-icon">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/>
+            <circle cx="9" cy="7" r="4"/>
+            <path d="M22 11l-3 3-2-2"/>
+          </svg>
+        </span>
+        <span class="partner-text">STEP 파트너</span>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9B9BA8" stroke-width="2" style="margin-left: auto;">
+          <path d="M9 18l6-6-6-6"/>
+        </svg>
+      </a>
+
+      <div class="profile">
+        <div class="profile-avatar">S</div>
+        <div class="profile-info">
+          <div class="profile-name">Steve Park</div>
+          <div class="profile-email">steve@stepnext.us</div>
+        </div>
+        <button class="profile-settings" aria-label="설정">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33h0a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51h0a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v0a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ============================================================
+       MAIN AREA
+       ============================================================ -->
+  <div class="main-area">
+
+    <!-- Global Header -->
+    <header class="global-header hq">
+
+      <div class="global-search">
+        <svg class="s-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+        </svg>
+        <input placeholder="지점, 사범, 알림 검색...">
+        <span class="kbd-hint">⌘K</span>
+      </div>
+
+      <!-- 데모 토글 (v6.6 데모 환경 통일성) -->
+      <div class="demo-toggles">
+        <div class="demo-toggle-group">
+          <span class="demo-toggle-label">PLAN</span>
+          <button class="demo-toggle-btn">Core</button>
+          <button class="demo-toggle-btn active">Pro</button>
+        </div>
+      </div>
+
+      <div class="global-actions">
+        <button class="header-icon-btn" title="알림" aria-label="알림">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+          </svg>
+          <span class="badge">4</span>
+        </button>
+        <button class="header-icon-btn" title="도움말" aria-label="도움말">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+            <line x1="12" y1="17" x2="12.01" y2="17"/>
+          </svg>
+        </button>
+        <button class="header-icon-btn" title="정보" aria-label="정보">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+        </button>
+      </div>
+
+    </header>
+
+    <!-- Page Title (v6.6 "좋은 아침이에요" 자리) -->
+    <section class="page-title-section">
+      <h1 class="page-title-greeting">
+        Good morning, <span class="accent">Steve</span>
+      </h1>
+      <div class="page-title-date">
+        <span id="page-date-str" class="num">—</span>
+        <span class="pill">
+          <span class="pill-dot"></span>
+          본부 통합 뷰 · 3개 지점
+        </span>
+      </div>
+    </section>
+
+    <!-- Page Content -->
+    <main class="page-content">
+
+      <!-- ① HQ Briefing -->
+      <section class="hq-briefing" id="hq-briefing" aria-labelledby="briefing-headline">
+        <div class="hq-briefing-icon">🤖</div>
+        <div class="hq-briefing-body">
+          <div class="hq-briefing-meta">
+            <span class="agent">Xiro · HQ Briefing</span>
+            <span class="sep">·</span>
+            <span id="briefing-date" class="num">—</span>
+          </div>
+          <div class="hq-briefing-headline" id="briefing-headline">—</div>
+          <div class="hq-briefing-bullets" id="briefing-bullets"></div>
+          <div class="hq-briefing-cta-row">
+            <a class="hq-briefing-cta" id="briefing-cta">
+              <span id="briefing-cta-label">—</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M5 12h14M13 5l7 7-7 7"/>
+              </svg>
+            </a>
+            <a href="#" class="hq-briefing-cta hq-briefing-cta-secondary">전체 알림 보기</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ② Network KPI Strip -->
+      <div class="hq-section-label">
+        <span>Network KPI</span>
+      </div>
+      <section class="hq-kpi-strip" aria-label="Network KPI">
+        <div class="hq-kpi-card" data-metric="revenue" role="link" tabindex="0">
+          <div class="hq-kpi-label">
+            <span>총 매출</span>
+            <svg class="hq-kpi-label-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M5 12h14M13 5l7 7-7 7"/>
+            </svg>
+          </div>
+          <div class="hq-kpi-value num" id="kpi-revenue">—</div>
+          <div class="hq-kpi-foot">
+            <span class="trend-badge" id="kpi-revenue-trend">—</span>
+            <span class="hq-kpi-foot-label">vs 지난달</span>
+          </div>
+        </div>
+
+        <div class="hq-kpi-card" data-metric="students" role="link" tabindex="0">
+          <div class="hq-kpi-label">
+            <span>총 학생수</span>
+            <svg class="hq-kpi-label-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M5 12h14M13 5l7 7-7 7"/>
+            </svg>
+          </div>
+          <div class="hq-kpi-value num" id="kpi-students">—</div>
+          <div class="hq-kpi-foot">
+            <span class="trend-badge" id="kpi-students-trend">—</span>
+            <span class="hq-kpi-foot-label">이번주 신규 등록</span>
+          </div>
+        </div>
+
+        <div class="hq-kpi-card" data-metric="attendance" role="link" tabindex="0">
+          <div class="hq-kpi-label">
+            <span>평균 출석률</span>
+            <svg class="hq-kpi-label-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M5 12h14M13 5l7 7-7 7"/>
+            </svg>
+          </div>
+          <div class="hq-kpi-value num" id="kpi-attendance">—</div>
+          <div class="hq-kpi-foot">
+            <span class="trend-badge" id="kpi-attendance-trend">—</span>
+            <span class="hq-kpi-foot-label">vs 지난주</span>
+          </div>
+        </div>
+
+        <div class="hq-kpi-card" data-metric="signups" role="link" tabindex="0">
+          <div class="hq-kpi-label">
+            <span>신규 등록 (이번주)</span>
+            <svg class="hq-kpi-label-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M5 12h14M13 5l7 7-7 7"/>
+            </svg>
+          </div>
+          <div class="hq-kpi-value num" id="kpi-signups">—</div>
+          <div class="hq-kpi-foot">
+            <span class="trend-badge up" id="kpi-signups-detail">3개 지점</span>
+            <span class="hq-kpi-foot-label">분포 균형</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ③ Studio Comparison Board -->
+      <section class="hq-board" aria-labelledby="board-title">
+        <div class="hq-board-head">
+          <div class="hq-board-title-wrap">
+            <h2 class="hq-board-title" id="board-title">지점 비교 보드</h2>
+            <span class="hq-board-count num" id="board-count">3 STUDIOS</span>
+          </div>
+          <div class="hq-board-head-right">
+            <div class="hq-board-actions" role="tablist" aria-label="정렬 기준">
+              <button class="hq-board-action active" data-sort="status" role="tab" aria-selected="true">상태순</button>
+              <button class="hq-board-action" data-sort="revenue" role="tab" aria-selected="false">매출순</button>
+              <button class="hq-board-action" data-sort="students" role="tab" aria-selected="false">학생수순</button>
+            </div>
+            <a href="hq_studio_add.html" class="hq-board-add-btn">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              지점 추가
+            </a>
+          </div>
+        </div>
+        <div class="hq-board-grid" id="board-grid"></div>
+      </section>
+
+      <!-- ⑥ HQ Quick Actions -->
+      <section class="hq-actions" aria-labelledby="actions-title">
+        <div class="hq-actions-head">
+          <div class="hq-actions-title" id="actions-title">
+            <span class="icon">⚡</span>
+            HQ Actions
+          </div>
+          <span class="hq-actions-help">본부 전용 작업 · <code>P1B</code> = Phase 1B · <code>P2</code> = Phase 2</span>
+        </div>
+
+        <div class="hq-actions-grid">
+          <a href="hq_studio_add.html" class="hq-action">
+            <div class="hq-action-icon">+</div>
+            <div class="hq-action-text">
+              <div class="hq-action-name">지점 추가</div>
+              <div class="hq-action-sub">신규 도장 등록</div>
+            </div>
+          </a>
+          <a href="hq_studios.html" class="hq-action">
+            <div class="hq-action-icon">👥</div>
+            <div class="hq-action-text">
+              <div class="hq-action-name">사범 배치</div>
+              <div class="hq-action-sub">권한·순회 관리</div>
+            </div>
+          </a>
+          <a href="#" class="hq-action disabled" aria-disabled="true">
+            <div class="hq-action-icon">📊</div>
+            <div class="hq-action-text">
+              <div class="hq-action-name">통합 리포트</div>
+              <div class="hq-action-sub">전 지점 합산</div>
+            </div>
+            <span class="hq-action-tag p1b">P1B</span>
+          </a>
+          <a href="#" class="hq-action disabled" aria-disabled="true">
+            <div class="hq-action-icon">💰</div>
+            <div class="hq-action-text">
+              <div class="hq-action-name">매출 대시보드</div>
+              <div class="hq-action-sub">지점별 Stripe</div>
+            </div>
+            <span class="hq-action-tag p1b">P1B</span>
+          </a>
+          <a href="#" class="hq-action disabled" aria-disabled="true">
+            <div class="hq-action-icon">🔄</div>
+            <div class="hq-action-text">
+              <div class="hq-action-name">학생 이동</div>
+              <div class="hq-action-sub">Transfer + 이력</div>
+            </div>
+            <span class="hq-action-tag p2">P2</span>
+          </a>
+          <a href="#" class="hq-action disabled" aria-disabled="true">
+            <div class="hq-action-icon">⚙️</div>
+            <div class="hq-action-text">
+              <div class="hq-action-name">HQ 설정</div>
+              <div class="hq-action-sub">정책 통일 (띠/가격)</div>
+            </div>
+            <span class="hq-action-tag p2">P2</span>
+          </a>
+        </div>
+      </section>
+
+      <!-- 작업 진행 표시 -->
+      <div class="step-progress">
+        <div class="check">✓</div>
+        <div>
+          <strong>Step 4 — JS 정식 분리 + 빠른 보기 모달 완료</strong> ·
+          <code>hq_main.js</code> (~530줄) · Quick Peek · 키보드 단축키 (<code>⌘K</code> · <code>⌘L</code> · <code>Esc</code>)
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+</div>
+
+<!-- Ask Xiro FAB (v6.6 동일, HQ 컨텍스트 라벨 추가) -->
+<button class="ask-xiro" id="askXiroBtn">
+  <span class="ask-xiro-icon">🤖</span>
+  <span>Ask Xiro</span>
+  <span class="ctx-label">HQ</span>
+</button>
+
+<!-- ============================================================
+     SCRIPTS
+     ============================================================ -->
+<script src="shared/multi_data.js"></script>
+<script src="shared/studio_switcher.js"></script>
+<script src="shared/hq_main.js"></script>
+
+</body>
+</html>
