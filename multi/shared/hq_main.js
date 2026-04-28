@@ -89,13 +89,16 @@
   }
 
   // ============================================================
-  // 3. KPI 3카드
+  // 3. KPI 3카드 — v6.6 1:1 호환
+  //   [1] 통합 출석률   (v6.6 출석률)
+  //   [2] 통합 승급 심사 (v6.6 승급 예정자)
+  //   [3] 매출 진행률   (v6.6 이번 달 매출)
   // ============================================================
   function renderKPIs() {
     const kpi = computeNetworkKPI();
     const studios = Object.values(STUDIOS);
 
-    // KPI 1: 통합 출석률
+    // ─── [1] 통합 출석률 ───
     document.getElementById('kpi-attendance').innerHTML = `
       <span class="num">${(kpi.avg_attendance * 100).toFixed(1)}</span><span class="kpi-unit">%</span>
     `;
@@ -114,52 +117,67 @@
       <span class="sd ${s.status}" title="${s.name}: ${(s.attendance_rate * 100).toFixed(0)}%"></span>
     `).join('');
 
-    // KPI 2: 통합 매출
-    document.getElementById('kpi-revenue').textContent = formatCurrency(kpi.total_revenue);
+    // ─── [2] 통합 승급 심사 ───
+    const promotion = computePromotionTotals();
+    document.getElementById('kpi-promotion').innerHTML = `
+      <span class="num">${promotion.participants}</span><span class="kpi-unit">명</span>
+    `;
+    document.getElementById('kpi-promotion-meta').innerHTML = `
+      결제 완료 <strong>${promotion.paid}</strong> · 미결제 <strong class="risk-text">${promotion.pending}</strong>
+    `;
+
+    // 지점별 미니 아바타 (지점 첫 글자) — 진행 중 승급 심사 데이터에서 가져옴
+    const promotionEvent = HQ_EVENTS.ongoing.find(e => e.id === 'ong-promotion');
+    const promotionAvatars = (promotionEvent ? promotionEvent.by_studio : []).map(bs => {
+      const studio = STUDIOS[bs.studio_id];
+      const colorMap = { la: 'blue', nyc: 'green', dallas: 'amber' };
+      const initial = studio.name.charAt(0); // L / N / D
+      return `<div class="mini-avatar ${colorMap[bs.studio_id]}" title="${studio.name}: ${bs.participants}명">${initial}</div>`;
+    }).join('');
+    document.getElementById('kpi-promotion-avatars').innerHTML = promotionAvatars;
+
+    // ─── [3] 매출 진행률 ───
+    const totalRevenue = studios.reduce((acc, s) => acc + s.revenue_mtd, 0);
+    const totalGoal = studios.reduce((acc, s) => acc + s.revenue_goal, 0);
+    const progressRatio = totalGoal > 0 ? totalRevenue / totalGoal : 0;
+    const progressPct = (progressRatio * 100).toFixed(0);
+
+    document.getElementById('kpi-revenue').innerHTML = `
+      <span class="num">${progressPct}</span><span class="kpi-unit">%</span>
+    `;
+
     const revTrend = document.getElementById('kpi-revenue-trend');
     revTrend.className = 'kpi-trend ' + trendClass(kpi.revenue_trend);
     revTrend.textContent = `${trendArrow(kpi.revenue_trend)} ${formatPercent(kpi.revenue_trend)}`;
 
-    const totalPending = studios.reduce((acc, s) => acc + s.payment_failed, 0);
-    document.getElementById('kpi-revenue-meta').innerHTML = totalPending > 0
-      ? `미납 <strong>${totalPending}건</strong> · ${studios.length}개 지점 합산`
-      : `${studios.length}개 지점 합산`;
+    // D-day 계산 (월말까지)
+    const today = new Date();
+    const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
+    const dDay = lastDay - today.getDate();
 
-    // 지점별 매출 mini bars
+    document.getElementById('kpi-revenue-meta').innerHTML = `
+      ${formatCurrency(totalRevenue)} / ${formatCurrency(totalGoal)} · <strong>D-${dDay}</strong>
+    `;
+
+    // 지점별 매출 진행률 mini bars (목표 대비)
     const barsEl = document.getElementById('kpi-revenue-bars');
-    const maxRev = Math.max(...studios.map(s => s.revenue_mtd));
     barsEl.innerHTML = studios.map(s => {
-      const h = (s.revenue_mtd / maxRev) * 100;
-      const cls = s.revenue_trend < 0 ? 'warn' : '';
-      return `<span class="bar ${cls}" style="height: ${h}%;" title="${s.name}: ${formatCurrency(s.revenue_mtd)}"></span>`;
+      const ratio = s.revenue_goal > 0 ? s.revenue_mtd / s.revenue_goal : 0;
+      const h = Math.min(100, ratio * 100);
+      const cls = ratio < 0.5 ? 'warn' : '';
+      return `<span class="bar ${cls}" style="height: ${h}%;"
+                    title="${s.name}: ${(ratio * 100).toFixed(0)}% (${formatCurrency(s.revenue_mtd)} / ${formatCurrency(s.revenue_goal)})"></span>`;
     }).join('');
-
-    // KPI 3: 통합 학생수
-    document.getElementById('kpi-students').innerHTML = `
-      ${kpi.total_students.toLocaleString()}<span class="kpi-unit">명</span>
-    `;
-    const stuTrend = document.getElementById('kpi-students-trend');
-    const totalNew = kpi.total_new;
-    stuTrend.className = 'kpi-trend ' + (totalNew > 0 ? 'up' : 'neutral');
-    stuTrend.textContent = `${totalNew > 0 ? '↗' : '–'} ${totalNew > 0 ? '+' : ''}${totalNew}명`;
-
-    const avgRetention = studios.reduce((acc, s) => acc + s.retention_rate, 0) / studios.length;
-    document.getElementById('kpi-students-meta').innerHTML = `
-      이번주 신규 <strong>+${totalNew}</strong>명 · 유지율 ${(avgRetention * 100).toFixed(0)}%
-    `;
-
-    // 신규 학생 미니 아바타 (이번주 가입 첫 글자)
-    const newAvatars = ['서', '윤', '하', '민', '지'].slice(0, Math.min(3, totalNew));
-    const colors = ['blue', 'amber', 'green', 'purple', 'red'];
-    document.getElementById('kpi-students-avatars').innerHTML = newAvatars
-      .map((name, i) => `<div class="mini-avatar ${colors[i]}">${name}</div>`)
-      .join('');
   }
 
   // ============================================================
   // 4. HQ Ops Center
+  //   - 기본 5건 노출, 나머지는 "더보기" 토글
+  //   - 지점 라벨 색상 강화 (LA 파랑 / NYC 초록 / Dallas 주황 / 전체 점선)
   // ============================================================
   let currentOpsFilter = 'all';
+  let opsExpanded = false;
+  const OPS_INITIAL_LIMIT = 5;
 
   function renderOps() {
     const counts = computeOpsCounts();
@@ -175,6 +193,7 @@
         document.querySelectorAll('.ops-chip').forEach(c => c.classList.remove('active'));
         chip.classList.add('active');
         currentOpsFilter = chip.dataset.filter;
+        opsExpanded = false;          // 필터 바꾸면 항상 접힘 상태로 리셋
         renderOpsList(currentOpsFilter);
       });
     });
@@ -191,14 +210,47 @@
       return;
     }
 
-    list.innerHTML = items.map(opsItemHTML).join('');
+    const visibleItems = opsExpanded ? items : items.slice(0, OPS_INITIAL_LIMIT);
+    const hiddenCount = items.length - visibleItems.length;
+
+    let html = visibleItems.map(opsItemHTML).join('');
+
+    // 더보기 토글 (5건 초과 시)
+    if (items.length > OPS_INITIAL_LIMIT) {
+      const remaining = items.length - OPS_INITIAL_LIMIT;
+      html += `
+        <button class="ops-show-more ${opsExpanded ? 'expanded' : ''}" data-action="toggle-more" type="button">
+          ${opsExpanded
+            ? `<span>접기</span><span class="arrow">▾</span>`
+            : `<span>더보기</span><span class="count">+${remaining}</span><span class="arrow">▾</span>`
+          }
+        </button>
+      `;
+    }
+
+    list.innerHTML = html;
+
+    // 더보기 바인딩
+    const moreBtn = list.querySelector('[data-action="toggle-more"]');
+    if (moreBtn) {
+      moreBtn.addEventListener('click', () => {
+        opsExpanded = !opsExpanded;
+        renderOpsList(currentOpsFilter);
+      });
+    }
   }
 
   function opsItemHTML(item) {
     const studio = item.studio_id === 'all' ? null : STUDIOS[item.studio_id];
-    const studioTag = studio
-      ? `<span class="ops-studio-tag">${studio.id.toUpperCase()}</span>`
-      : `<span class="ops-studio-tag">전체</span>`;
+
+    // 지점 라벨 (색상 배지)
+    let studioTag;
+    if (studio) {
+      const studioLabel = item.studio_id.toUpperCase();
+      studioTag = `<span class="ops-studio-tag ${item.studio_id}">${studioLabel}</span>`;
+    } else {
+      studioTag = `<span class="ops-studio-tag all">전체</span>`;
+    }
 
     const typeIcon = {
       urgent: '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
@@ -364,61 +416,106 @@
 
   // ============================================================
   // 6. HQ Event Hub
+  //   - 진행 중 이벤트 2건 (승급 심사 + 캠페인)
+  //   - 다가오는 이벤트 2건 (컴팩트, 1줄)
   // ============================================================
   function renderEventHub() {
-    const totals = computePromotionTotals();
+    renderOngoingEvents();
+    renderUpcomingEvents();
+  }
 
-    // 원형 차트 3개
-    const ringsEl = document.getElementById('event-rings');
-    const ringData = [
-      { label: '참여 현황', num: totals.participants, total: totals.participants, color: 'purple', total_label: 'tot' },
-      { label: '결제 완료', num: totals.paid, total: totals.participants, color: 'green', total_label: '/' + totals.participants },
-      { label: '미결제', num: totals.pending, total: totals.participants, color: 'red', total_label: '/' + totals.participants },
-    ];
+  function renderOngoingEvents() {
+    const list = document.getElementById('event-ongoing-list');
+    if (!list) return;
 
-    ringsEl.innerHTML = ringData.map(r => {
-      const ratio = r.total > 0 ? r.num / r.total : 0;
-      const circumference = 2 * Math.PI * 22;
-      const dashoffset = circumference * (1 - ratio);
+    list.innerHTML = HQ_EVENTS.ongoing.map(evt => {
+      const totals = evt.by_studio.reduce(
+        (acc, s) => ({
+          participants: acc.participants + s.participants,
+          paid: acc.paid + s.paid,
+          pending: acc.pending + s.pending,
+        }),
+        { participants: 0, paid: 0, pending: 0 }
+      );
+      const paidRatio = totals.participants > 0 ? totals.paid / totals.participants : 0;
+      const isUrgent = evt.d_day <= 3 || (totals.pending / totals.participants > 0.4);
+      const ddayClass = isUrgent ? 'urgent' : '';
+
+      const ctaClass = isUrgent ? 'urgent' : '';
+      const ctaText = totals.pending > 0
+        ? `미결제 ${totals.pending}명 알림`
+        : '상세 보기';
+
       return `
-        <div class="event-ring">
-          <div class="event-ring-svg ${r.color}">
-            <svg width="56" height="56" viewBox="0 0 56 56">
-              <circle class="bg-circle" cx="28" cy="28" r="22"/>
-              <circle class="progress-circle" cx="28" cy="28" r="22"
-                      stroke-dasharray="${circumference}"
-                      stroke-dashoffset="${dashoffset}"/>
-            </svg>
-            <div class="event-ring-text">
-              <span class="ring-num">${r.num}</span>
-              <span class="ring-total">${r.total_label === 'tot' ? '명' : r.total_label}</span>
+        <div class="hq-event-ongoing ${isUrgent ? 'urgent' : ''}">
+          <div class="hq-event-ongoing-head">
+            <div class="hq-event-ongoing-meta">
+              <div class="hq-event-ongoing-tag-row">
+                <span class="hq-event-ongoing-tag ${evt.type}">${evt.type_label}</span>
+                <span class="hq-event-ongoing-dday ${ddayClass}">D-${evt.d_day}</span>
+              </div>
+              <div class="hq-event-ongoing-name">${evt.name}</div>
+              <div class="hq-event-ongoing-date">${evt.date}</div>
             </div>
           </div>
-          <span class="event-ring-label">${r.label}</span>
+
+          <div class="hq-event-progress">
+            <div class="hq-event-progress-stats">
+              <div class="hq-event-progress-stat">
+                <span class="num">${totals.participants}</span>
+                <span class="label">참여</span>
+              </div>
+              <div class="hq-event-progress-divider"></div>
+              <div class="hq-event-progress-stat">
+                <span class="num">${totals.paid}</span>
+                <span class="label">완료</span>
+              </div>
+              <div class="hq-event-progress-divider"></div>
+              <div class="hq-event-progress-stat ${totals.pending > 0 ? 'pending' : ''}">
+                <span class="num">${totals.pending}</span>
+                <span class="label">미결제</span>
+              </div>
+            </div>
+            <div class="hq-event-progress-bar" title="${(paidRatio * 100).toFixed(0)}% 완료">
+              <div class="hq-event-progress-bar-fill" style="width: ${paidRatio * 100}%;"></div>
+            </div>
+          </div>
+
+          <button class="hq-event-ongoing-cta ${ctaClass}"
+                  onclick="window.HQMain && window.HQMain.toast('${ctaText} — Phase 2 구현')">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+            ${ctaText}
+          </button>
         </div>
       `;
     }).join('');
+  }
 
-    // CTA
-    document.getElementById('event-cta').onclick = () => {
-      showToast(`${totals.pending}명에게 미결제 알림 발송 — Phase 2 구현`);
-    };
-
-    // 다가오는 이벤트
+  function renderUpcomingEvents() {
     const listEl = document.getElementById('event-list');
-    listEl.innerHTML = HQ_EVENTS.upcoming.map(evt => `
-      <div class="hq-event-item">
-        <div class="hq-event-item-icon ${evt.icon}">
-          ${evt.icon === 'purple' ? '⚡' : evt.icon === 'amber' ? '🏆' : '📚'}
+    if (!listEl) return;
+
+    listEl.innerHTML = HQ_EVENTS.upcoming.map(evt => {
+      const iconMap = { purple: '⚡', amber: '🏆', blue: '📚' };
+      const icon = iconMap[evt.icon] || '📅';
+      // 날짜 포맷 컴팩트화 (2026.05.24 → 5.24)
+      const dateMatch = evt.date.match(/(\d{4})\.(\d{2})\.(\d{2})/);
+      const compactDate = dateMatch ? `${parseInt(dateMatch[2])}.${parseInt(dateMatch[3])}` : evt.date;
+
+      return `
+        <div class="hq-event-item" onclick="window.HQMain && window.HQMain.toast('${evt.name} 상세 — Phase 2')">
+          <div class="hq-event-item-icon ${evt.icon}">${icon}</div>
+          <div class="hq-event-item-body">
+            <span class="hq-event-item-name">${evt.name}</span>
+            <span class="hq-event-item-date">${compactDate}</span>
+          </div>
+          <div class="hq-event-item-count">${evt.participants}명</div>
         </div>
-        <div class="hq-event-item-body">
-          <div class="hq-event-item-tag">${evt.type_label}</div>
-          <div class="hq-event-item-name">${evt.name}</div>
-          <div class="hq-event-item-meta">${evt.date}</div>
-        </div>
-        <div class="hq-event-item-count">참여 ${evt.participants}명</div>
-      </div>
-    `).join('');
+      `;
+    }).join('');
   }
 
   // ============================================================

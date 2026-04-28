@@ -22,6 +22,7 @@ const STUDIOS = {
     attendance_trend: +0.02,
     revenue_mtd: 32400,
     revenue_trend: +0.15,
+    revenue_goal: 42000,         // 5월 목표
     new_signups_week: 5,
     retention_rate: 0.94,
 
@@ -62,6 +63,7 @@ const STUDIOS = {
     attendance_trend: -0.08,
     revenue_mtd: 24800,
     revenue_trend: -0.04,
+    revenue_goal: 36000,         // 5월 목표
     new_signups_week: 1,
     retention_rate: 0.81,
 
@@ -101,6 +103,7 @@ const STUDIOS = {
     attendance_trend: +0.005,
     revenue_mtd: 18200,
     revenue_trend: +0.03,
+    revenue_goal: 24000,         // 5월 목표
     new_signups_week: 3,
     retention_rate: 0.89,
 
@@ -380,19 +383,41 @@ function computeOpsCounts() {
 
 /**
  * HQ Event Hub 데이터
- * 5월 통합 승급 심사 — 3개 지점 합산
+ * - 진행 중인 이벤트 2건 (대표: 5월 통합 승급 심사 + 4월 리텐션 캠페인)
+ * - 다가오는 이벤트 2건
  */
 const HQ_EVENTS = {
-  promotion: {
-    title: '5월 통합 승급 심사',
-    date: '26.05.20 (수) 10:00',
-    by_studio: [
-      { studio_id: 'la', participants: 16, paid: 14, pending: 2 },
-      { studio_id: 'nyc', participants: 12, paid: 9, pending: 3 },
-      { studio_id: 'dallas', participants: 10, paid: 9, pending: 1 },
-    ],
-  },
+  // 진행 중 (현재 운영 중인 통합 이벤트)
+  ongoing: [
+    {
+      id: 'ong-promotion',
+      type: 'promotion',
+      type_label: '승급 심사',
+      name: '5월 통합 승급 심사',
+      date: '26.05.20 (수) 10:00',
+      d_day: 22,
+      by_studio: [
+        { studio_id: 'la', participants: 16, paid: 14, pending: 2 },
+        { studio_id: 'nyc', participants: 12, paid: 9, pending: 3 },
+        { studio_id: 'dallas', participants: 10, paid: 9, pending: 1 },
+      ],
+    },
+    {
+      id: 'ong-campaign',
+      type: 'campaign',
+      type_label: '캠페인',
+      name: '4월 리텐션 캠페인 — Welcome Back',
+      date: '진행 중 · ~26.04.30',
+      d_day: 2,
+      by_studio: [
+        { studio_id: 'la', participants: 8, paid: 6, pending: 2 },
+        { studio_id: 'nyc', participants: 14, paid: 7, pending: 7 },  // 위험 지점 캠페인 집중
+        { studio_id: 'dallas', participants: 5, paid: 4, pending: 1 },
+      ],
+    },
+  ],
 
+  // 다가오는 이벤트 (2건만)
   upcoming: [
     {
       id: 'evt-1',
@@ -412,20 +437,16 @@ const HQ_EVENTS = {
       participants: 18,
       icon: 'amber',
     },
-    {
-      id: 'evt-3',
-      type: 'workshop',
-      type_label: '워크샵',
-      name: '학부모 STEP 사용 가이드',
-      date: '2026.05.18 (월)',
-      participants: 32,
-      icon: 'blue',
-    },
   ],
 };
 
-function computePromotionTotals() {
-  const total = HQ_EVENTS.promotion.by_studio.reduce(
+/**
+ * 진행 중 이벤트의 합계 계산
+ */
+function computeEventTotals(eventId) {
+  const evt = HQ_EVENTS.ongoing.find(e => e.id === eventId);
+  if (!evt) return null;
+  const totals = evt.by_studio.reduce(
     (acc, s) => ({
       participants: acc.participants + s.participants,
       paid: acc.paid + s.paid,
@@ -433,5 +454,11 @@ function computePromotionTotals() {
     }),
     { participants: 0, paid: 0, pending: 0 }
   );
-  return total;
+  return { ...evt, totals };
+}
+
+// 하위 호환 — 기존 코드가 사용
+function computePromotionTotals() {
+  const result = computeEventTotals('ong-promotion');
+  return result ? result.totals : { participants: 0, paid: 0, pending: 0 };
 }

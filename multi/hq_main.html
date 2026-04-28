@@ -41,7 +41,7 @@
       <svg class="s-icon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
       </svg>
-      <input id="sidebar-search-input" placeholder="회원, 수업 검색...">
+      <input id="sidebar-search-input" placeholder="지점, 사범, 알림 검색...">
       <span class="kbd-hint">⌘K</span>
     </div>
 
@@ -52,32 +52,84 @@
           <polyline points="9 22 9 12 15 12 15 22"/>
         </svg>
       </span>
-      STEP Manager
+      HQ Overview
     </a>
 
-    <!-- v6.6과 동일한 Business / Management 그룹 (HQ는 모든 지점 합산 컨텍스트) -->
-    <div class="nav-section-label">Business</div>
-    <a class="nav-item">
-      <span class="icon-wrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 21v-1a7 7 0 0114 0v1"/></svg></span>
-      회원 관리
+    <!-- NETWORK — HQ 전용 큰 그림 (지점 간 통합/이동/비교) -->
+    <div class="nav-section-label">Network</div>
+    <a class="nav-item" href="#">
+      <span class="icon-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-9h6v9"/>
+        </svg>
+      </span>
+      지점 목록
     </a>
-    <a class="nav-item">
-      <span class="icon-wrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></span>
-      이벤트
+    <a class="nav-item" href="#">
+      <span class="icon-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="9" cy="8" r="4"/>
+          <path d="M3 20v-1a6 6 0 016-6h0a6 6 0 016 6v1"/>
+          <circle cx="17" cy="6" r="2.5"/>
+          <path d="M21 14v-1a4 4 0 00-4-4"/>
+        </svg>
+      </span>
+      사범 배치
     </a>
-    <a class="nav-item">
-      <span class="icon-wrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></span>
-      용품 관리
+    <a class="nav-item nav-item-soon" href="#">
+      <span class="icon-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="20" x2="18" y2="10"/>
+          <line x1="12" y1="20" x2="12" y2="4"/>
+          <line x1="6" y1="20" x2="6" y2="14"/>
+        </svg>
+      </span>
+      통합 리포트
+      <span class="nav-soon-badge">P1B</span>
+    </a>
+    <a class="nav-item nav-item-soon" href="#">
+      <span class="icon-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="1" x2="12" y2="23"/>
+          <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+        </svg>
+      </span>
+      매출 통합
+      <span class="nav-soon-badge">P1B</span>
     </a>
 
+    <!-- MANAGEMENT — HQ 전용 운영 -->
     <div class="nav-section-label">Management</div>
-    <a class="nav-item">
-      <span class="icon-wrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21V8l9-5 9 5v13"/><path d="M9 21v-9h6v9"/></svg></span>
-      도장 관리
+    <a class="nav-item" href="#">
+      <span class="icon-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="12" y1="5" x2="12" y2="19"/>
+          <line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+      </span>
+      지점 추가
     </a>
-    <a class="nav-item">
-      <span class="icon-wrap"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="4"/><path d="M3 20v-1a6 6 0 016-6h0a6 6 0 016 6v1"/><circle cx="17" cy="6" r="2.5"/><path d="M21 14v-1a4 4 0 00-4-4"/></svg></span>
-      직원 관리
+    <a class="nav-item nav-item-soon" href="#">
+      <span class="icon-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="17 1 21 5 17 9"/>
+          <path d="M3 11V9a4 4 0 014-4h14"/>
+          <polyline points="7 23 3 19 7 15"/>
+          <path d="M21 13v2a4 4 0 01-4 4H3"/>
+        </svg>
+      </span>
+      학생 이동
+      <span class="nav-soon-badge">P2</span>
+    </a>
+    <a class="nav-item nav-item-soon" href="#">
+      <span class="icon-wrap">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"/>
+          <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33h0a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51h0a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v0a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/>
+        </svg>
+      </span>
+      HQ 설정
+      <span class="nav-soon-badge">P2</span>
     </a>
 
     <div class="sidebar-bottom">
@@ -105,15 +157,10 @@
   <!-- ============ MAIN AREA ============ -->
   <div class="main-area">
 
-    <!-- Global Header -->
+    <!-- Global Header — 검색 제거됨 (사이드바 검색과 중복 회피) -->
     <header class="global-header">
-      <div class="global-search">
-        <svg class="s-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
-        </svg>
-        <input placeholder="지점, 사범, 학생 검색...">
-        <span class="kbd-hint">⌘K</span>
-      </div>
+      <!-- 빈 공간 (사이드바 폭 보정) -->
+      <div class="global-header-spacer"></div>
 
       <div class="demo-toggles">
         <div class="demo-toggle-group">
@@ -170,15 +217,18 @@
         </button>
       </div>
 
-      <!-- 3. KPI 3카드 (v6.6 동일 구조, HQ 메트릭) -->
+      <!-- 3. KPI 3카드 — v6.6 1:1 호환 (출석률 / 통합 승급 / 매출 진행률) -->
       <div class="kpi-row">
 
-        <!-- KPI 1: 통합 출석률 -->
-        <div class="kpi-card" data-metric="attendance" role="link" tabindex="0">
+        <!-- KPI 1: 통합 출석률 (v6.6 출석률에 1:1 매핑) -->
+        <div class="kpi-card kpi-card-attendance" data-metric="attendance" role="link" tabindex="0">
           <div class="kpi-header">
             <div class="kpi-icon blue">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
+                <circle cx="9" cy="7" r="4"/>
+                <path d="M23 21v-2a4 4 0 00-3-3.87"/>
+                <path d="M16 3.13a4 4 0 010 7.75"/>
               </svg>
             </div>
             <div class="kpi-label">통합 출석률</div>
@@ -196,52 +246,49 @@
           </div>
         </div>
 
-        <!-- KPI 2: 이번 달 통합 매출 -->
-        <div class="kpi-card" data-metric="revenue" role="link" tabindex="0">
+        <!-- KPI 2: 통합 승급 심사 (v6.6 승급 예정자에 1:1 매핑) -->
+        <div class="kpi-card kpi-card-promotion" data-metric="promotion" role="link" tabindex="0">
+          <div class="kpi-header">
+            <div class="kpi-icon amber">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="8" r="6"/>
+                <path d="M15.5 13l1.5 8-5-3-5 3 1.5-8"/>
+              </svg>
+            </div>
+            <div class="kpi-label">통합 승급 심사</div>
+            <div class="kpi-trend neutral" id="kpi-promotion-trend">5월 심사</div>
+            <div class="kpi-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>
+          </div>
+          <div class="kpi-body">
+            <div class="kpi-value-wrap">
+              <div class="kpi-value" id="kpi-promotion"><span class="num">—</span><span class="kpi-unit">명</span></div>
+              <div class="kpi-meta-text" id="kpi-promotion-meta">— · 미결제 —</div>
+            </div>
+            <div class="kpi-meta-row">
+              <div class="avatar-stack" id="kpi-promotion-avatars"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- KPI 3: 매출 진행률 (v6.6 이번 달 매출에 1:1 매핑) -->
+        <div class="kpi-card kpi-card-revenue" data-metric="revenue" role="link" tabindex="0">
           <div class="kpi-header">
             <div class="kpi-icon green">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="12" y1="1" x2="12" y2="23"/>
-                <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
+                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
               </svg>
             </div>
-            <div class="kpi-label">이번 달 통합 매출</div>
+            <div class="kpi-label">매출 진행률</div>
             <div class="kpi-trend up" id="kpi-revenue-trend">— —</div>
             <div class="kpi-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>
           </div>
           <div class="kpi-body">
             <div class="kpi-value-wrap">
-              <div class="kpi-value" id="kpi-revenue">—</div>
-              <div class="kpi-meta-text" id="kpi-revenue-meta">— · 3개 지점 합산</div>
+              <div class="kpi-value" id="kpi-revenue"><span class="num">—</span><span class="kpi-unit">%</span></div>
+              <div class="kpi-meta-text" id="kpi-revenue-meta">— / — · D-—</div>
             </div>
             <div class="kpi-meta-row">
               <div class="kpi-mini-bars" id="kpi-revenue-bars"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- KPI 3: 통합 학생수 -->
-        <div class="kpi-card" data-metric="students" role="link" tabindex="0">
-          <div class="kpi-header">
-            <div class="kpi-icon amber">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/>
-                <circle cx="9" cy="7" r="4"/>
-                <path d="M23 21v-2a4 4 0 00-3-3.87"/>
-                <path d="M16 3.13a4 4 0 010 7.75"/>
-              </svg>
-            </div>
-            <div class="kpi-label">통합 학생수</div>
-            <div class="kpi-trend up" id="kpi-students-trend">— —</div>
-            <div class="kpi-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>
-          </div>
-          <div class="kpi-body">
-            <div class="kpi-value-wrap">
-              <div class="kpi-value" id="kpi-students">—<span class="kpi-unit">명</span></div>
-              <div class="kpi-meta-text" id="kpi-students-meta">이번주 신규 — · 평균 유지율 —</div>
-            </div>
-            <div class="kpi-meta-row">
-              <div class="avatar-stack" id="kpi-students-avatars"></div>
             </div>
           </div>
         </div>
@@ -312,28 +359,13 @@
             <button class="panel-arrow"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></button>
           </div>
 
-          <!-- 통합 승급 심사 (지점별 합산 원형 차트) -->
-          <div class="hq-event-promotion">
-            <div class="hq-event-promotion-head">
-              <div class="hq-event-title">5월 통합 승급 심사</div>
-              <div class="hq-event-date">26.05.20 (수)</div>
-            </div>
-            <div class="hq-event-rings" id="event-rings"></div>
-            <button class="hq-event-cta" id="event-cta">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="22" y1="2" x2="11" y2="13"/>
-                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-              </svg>
-              <span>지점별 미결제 알림 보내기</span>
-            </button>
-          </div>
+          <!-- 진행 중인 이벤트 (2건) -->
+          <div class="hq-event-ongoing-list" id="event-ongoing-list"></div>
 
-          <div class="hq-event-divider"></div>
-
-          <!-- 다가오는 통합 이벤트 -->
+          <!-- 다가오는 통합 이벤트 (압축, 2건) -->
           <div class="hq-event-upcoming">
             <div class="hq-event-upcoming-head">
-              <span>다가오는 통합 이벤트</span>
+              <span>다가오는 이벤트</span>
               <a href="#" class="hq-event-link">전체 보기 ›</a>
             </div>
             <div class="hq-event-list" id="event-list"></div>
