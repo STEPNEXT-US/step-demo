@@ -178,6 +178,832 @@
   .profile-email { font-size: 10px; color: #9B9BA8; line-height: 1.4; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .profile-settings { color: #9B9BA8; }
 
+  /* ===== STEP Partner 마케팅 배너 (사이드바 하단) ===== */
+  .partner-promo-banner {
+    position: relative;
+    background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 50%, #6D28D9 100%);
+    border-radius: 14px;
+    padding: 16px 14px 14px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    color: white;
+    text-decoration: none;
+    display: block;
+  }
+  .partner-promo-banner:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px -4px rgba(37, 99, 235, 0.45);
+  }
+  /* 배경 일러스트: 큰 빛나는 원 */
+  .partner-promo-banner::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 110px; height: 110px;
+    background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 65%);
+    pointer-events: none;
+  }
+  /* 배경 일러스트: 작은 빛나는 점 */
+  .partner-promo-banner::after {
+    content: '';
+    position: absolute;
+    bottom: -10px; left: -10px;
+    width: 60px; height: 60px;
+    background: radial-gradient(circle, rgba(167, 139, 250, 0.25), transparent 70%);
+    pointer-events: none;
+  }
+  .partner-promo-illust {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    opacity: 0.85;
+    pointer-events: none;
+  }
+  .partner-promo-label {
+    position: relative;
+    font-size: 9px;
+    font-weight: 700;
+    color: rgba(255,255,255,0.9);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .partner-promo-title {
+    position: relative;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.4;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+    padding-right: 36px;
+  }
+  .partner-promo-desc {
+    position: relative;
+    font-size: 11px;
+    line-height: 1.5;
+    color: rgba(255,255,255,0.88);
+    margin-bottom: 12px;
+  }
+  .partner-promo-cta {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    color: white;
+    background: rgba(255,255,255,0.18);
+    border: 1px solid rgba(255,255,255,0.25);
+    padding: 6px 10px;
+    border-radius: 8px;
+    transition: background 0.15s;
+  }
+  .partner-promo-banner:hover .partner-promo-cta {
+    background: rgba(255,255,255,0.28);
+  }
+
+  /* ===== PARTNER | NETWORK 라벨 (배너와 프로필 사이 섹션 디바이더) ===== */
+  .partner-network-label {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 14px 0 10px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #9B9BA8;
+    letter-spacing: 0.14em;
+  }
+  .partner-network-label-divider {
+    color: #D4D4D8;
+    font-weight: 400;
+  }
+
+  /* ============================================================ */
+  /* === 동적 배너 시스템 (Phase A) === */
+  /* 모든 배너 기본 숨김, JS가 data-active-banner 설정으로 1개만 표시 */
+  /* ============================================================ */
+  .promo-banner { display: none; }
+  body[data-active-banner="pro-trial"]            .promo-banner-pro-trial,
+  body[data-active-banner="partner-program"]      .promo-banner-partner-program,
+  body[data-active-banner="app-download-manager"] .promo-banner-app-download-manager,
+  body[data-active-banner="setup-incomplete"]     .promo-banner-setup-incomplete,
+  body[data-active-banner="play-step-promo"]      .promo-banner-play-step-promo {
+    display: block;
+  }
+
+  /* === 공통 배너 베이스 === */
+  .promo-banner {
+    position: relative;
+    border-radius: 14px;
+    padding: 16px 14px 14px;
+    margin-bottom: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    text-decoration: none;
+  }
+  .promo-banner:hover { transform: translateY(-1px); }
+  .promo-banner .promo-illust {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    opacity: 0.85;
+    pointer-events: none;
+  }
+  .promo-banner .promo-label {
+    position: relative;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .promo-banner .promo-title {
+    position: relative;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.4;
+    margin-bottom: 8px;
+    letter-spacing: -0.01em;
+    padding-right: 36px;
+  }
+  .promo-banner .promo-desc {
+    position: relative;
+    font-size: 11px;
+    line-height: 1.5;
+    margin-bottom: 12px;
+  }
+  .promo-banner .promo-cta {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 6px 10px;
+    border-radius: 8px;
+    transition: background 0.15s;
+  }
+
+  /* === 배너 1: Pro Trial (보라/파랑 그라데이션 — 강력한 CTA) === */
+  .promo-banner-pro-trial {
+    background: linear-gradient(135deg, #7C3AED 0%, #6D28D9 50%, #4C1D95 100%);
+    color: white;
+  }
+  .promo-banner-pro-trial:hover { box-shadow: 0 6px 20px -4px rgba(124, 58, 237, 0.5); }
+  .promo-banner-pro-trial::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 110px; height: 110px;
+    background: radial-gradient(circle, rgba(255,255,255,0.2), transparent 65%);
+    pointer-events: none;
+  }
+  .promo-banner-pro-trial .promo-label { color: rgba(255,255,255,0.9); }
+  .promo-banner-pro-trial .promo-desc { color: rgba(255,255,255,0.88); }
+  .promo-banner-pro-trial .promo-cta {
+    background: rgba(255,255,255,0.95);
+    color: #6D28D9;
+    border: 1px solid rgba(255,255,255,0.95);
+    font-weight: 700;
+  }
+  .promo-banner-pro-trial:hover .promo-cta { background: white; }
+
+  /* === 배너 2: Partner Program (파랑 → 보라, 기존 배너 — 일반 운영 마케팅) === */
+  .promo-banner-partner-program {
+    background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 50%, #6D28D9 100%);
+    color: white;
+  }
+  .promo-banner-partner-program:hover { box-shadow: 0 6px 20px -4px rgba(37, 99, 235, 0.45); }
+  .promo-banner-partner-program::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 110px; height: 110px;
+    background: radial-gradient(circle, rgba(255,255,255,0.18), transparent 65%);
+    pointer-events: none;
+  }
+  .promo-banner-partner-program::after {
+    content: '';
+    position: absolute;
+    bottom: -10px; left: -10px;
+    width: 60px; height: 60px;
+    background: radial-gradient(circle, rgba(167, 139, 250, 0.25), transparent 70%);
+    pointer-events: none;
+  }
+  .promo-banner-partner-program .promo-label { color: rgba(255,255,255,0.9); }
+  .promo-banner-partner-program .promo-desc { color: rgba(255,255,255,0.88); }
+  .promo-banner-partner-program .promo-cta {
+    background: rgba(255,255,255,0.18);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.25);
+  }
+  .promo-banner-partner-program:hover .promo-cta { background: rgba(255,255,255,0.28); }
+
+  /* === 배너 3: STEP Manager App 다운로드 (다크 블루 — 데스크톱·모바일 앱 안내) === */
+  .promo-banner-app-download-manager {
+    background: linear-gradient(135deg, #1E40AF 0%, #1E3A8A 50%, #312E81 100%);
+    color: white;
+  }
+  .promo-banner-app-download-manager:hover { box-shadow: 0 6px 20px -4px rgba(30, 64, 175, 0.5); }
+  .promo-banner-app-download-manager::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 110px; height: 110px;
+    background: radial-gradient(circle, rgba(96, 165, 250, 0.3), transparent 65%);
+    pointer-events: none;
+  }
+  .promo-banner-app-download-manager .promo-label { color: #93C5FD; }
+  .promo-banner-app-download-manager .promo-desc { color: rgba(255,255,255,0.85); }
+  .promo-banner-app-download-manager .promo-cta {
+    background: rgba(255,255,255,0.18);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.25);
+  }
+  .promo-banner-app-download-manager:hover .promo-cta { background: rgba(255,255,255,0.28); }
+
+  /* === 배너 4: Setup Incomplete (앰버/주황 — 경고 톤) === */
+  .promo-banner-setup-incomplete {
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 50%, #B45309 100%);
+    color: white;
+  }
+  .promo-banner-setup-incomplete:hover { box-shadow: 0 6px 20px -4px rgba(217, 119, 6, 0.45); }
+  .promo-banner-setup-incomplete::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 110px; height: 110px;
+    background: radial-gradient(circle, rgba(255,255,255,0.2), transparent 65%);
+    pointer-events: none;
+  }
+  .promo-banner-setup-incomplete .promo-label { color: rgba(255,255,255,0.95); }
+  .promo-banner-setup-incomplete .promo-desc { color: rgba(255,255,255,0.92); }
+  .promo-banner-setup-incomplete .promo-cta {
+    background: white;
+    color: #B45309;
+    border: 1px solid white;
+    font-weight: 700;
+  }
+
+  /* === 배너 5: Play STEP App 다운로드 (초록 — 학부모/학생 앱 안내) === */
+  .promo-banner-play-step-promo {
+    background: linear-gradient(135deg, #047857 0%, #059669 50%, #10B981 100%);
+    color: white;
+  }
+  .promo-banner-play-step-promo:hover { box-shadow: 0 6px 20px -4px rgba(16, 185, 129, 0.5); }
+  .promo-banner-play-step-promo::before {
+    content: '';
+    position: absolute;
+    top: -30px; right: -30px;
+    width: 110px; height: 110px;
+    background: radial-gradient(circle, rgba(255,255,255,0.2), transparent 65%);
+    pointer-events: none;
+  }
+  .promo-banner-play-step-promo .promo-label { color: rgba(255,255,255,0.95); }
+  .promo-banner-play-step-promo .promo-desc { color: rgba(255,255,255,0.88); }
+  .promo-banner-play-step-promo .promo-cta {
+    background: rgba(255,255,255,0.18);
+    color: white;
+    border: 1px solid rgba(255,255,255,0.25);
+  }
+  .promo-banner-play-step-promo:hover .promo-cta { background: rgba(255,255,255,0.28); }
+
+  /* ===== Live Dojang: Play STEP 미설치 환기 ===== */
+  /* panel 내부 마지막 요소 — flex로 인한 잘림 방지 */
+  .play-step-alert {
+    flex-shrink: 0;
+    margin: 12px 14px 14px;
+    padding: 10px 12px;
+    background: linear-gradient(90deg, #FFFBEB 0%, #FEF3C7 100%);
+    border: 1px solid #FDE68A;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .play-step-alert-icon {
+    width: 24px; height: 24px;
+    border-radius: 7px;
+    background: #F59E0B;
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .play-step-alert-content {
+    flex: 1;
+    min-width: 0;
+  }
+  .play-step-alert-title {
+    font-size: 11px;
+    font-weight: 600;
+    color: #78350F;
+    line-height: 1.4;
+  }
+  .play-step-alert-title strong {
+    color: #92400E;
+    font-weight: 700;
+  }
+  .play-step-alert-cta {
+    flex-shrink: 0;
+    font-size: 10px;
+    font-weight: 600;
+    color: #92400E;
+    background: white;
+    border: 1px solid #FCD34D;
+    padding: 5px 9px;
+    border-radius: 7px;
+    transition: all 0.15s;
+    cursor: pointer;
+  }
+  .play-step-alert-cta:hover {
+    background: #FEF3C7;
+    border-color: #F59E0B;
+  }
+
+  /* ============================================================ */
+  /* ===== Play STEP 안내 메일 발송 모달 ===== */
+  /* ============================================================ */
+  .ps-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 10, 15, 0.5);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 250;
+  }
+  .ps-modal-overlay.open { display: flex; animation: overlayFadeIn 0.2s ease-out; }
+
+  .ps-modal {
+    background: white;
+    border-radius: 20px;
+    width: 560px;
+    max-width: calc(100vw - 40px);
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 32px 80px -16px rgba(0,0,0,0.32);
+    animation: modalSlideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .ps-modal-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid #F1F1F4;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .ps-modal-title-wrap { flex: 1; }
+  .ps-modal-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 10px;
+    font-weight: 700;
+    color: #059669;
+    background: #ECFDF5;
+    padding: 3px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.04em;
+    margin-bottom: 8px;
+  }
+  .ps-modal-title {
+    font-size: 17px;
+    font-weight: 700;
+    color: #0A0A0F;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+  }
+  .ps-modal-subtitle {
+    font-size: 12px;
+    color: #6B6B78;
+    margin-top: 4px;
+    line-height: 1.5;
+  }
+  .ps-modal-close {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: #F9FAFB;
+    border: 0;
+    color: #6B6B78;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .ps-modal-close:hover { background: #F1F1F4; color: #0A0A0F; }
+
+  .ps-modal-body { padding: 18px 24px 4px; }
+
+  /* Section base */
+  .ps-section { margin-bottom: 18px; }
+  .ps-section-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #2A2A35;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .ps-section-label-icon {
+    width: 16px; height: 16px;
+    color: #6B6B78;
+  }
+
+  /* Recipient selection */
+  .ps-recipient-list {
+    background: #F9FAFB;
+    border: 1px solid #F1F1F4;
+    border-radius: 12px;
+    padding: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  .ps-recipient-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: background 0.12s;
+  }
+  .ps-recipient-row:hover { background: white; }
+  .ps-recipient-row.selected {
+    background: white;
+    box-shadow: 0 0 0 1.5px #2563EB inset;
+  }
+  .ps-recipient-radio {
+    width: 16px; height: 16px;
+    border-radius: 9999px;
+    border: 1.5px solid #C8C8D0;
+    flex-shrink: 0;
+    position: relative;
+    transition: all 0.15s;
+  }
+  .ps-recipient-row.selected .ps-recipient-radio {
+    border-color: #2563EB;
+  }
+  .ps-recipient-row.selected .ps-recipient-radio::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border-radius: 9999px;
+    background: #2563EB;
+  }
+  .ps-recipient-info { flex: 1; min-width: 0; }
+  .ps-recipient-title {
+    font-size: 12.5px;
+    font-weight: 600;
+    color: #0A0A0F;
+    line-height: 1.4;
+  }
+  .ps-recipient-desc {
+    font-size: 10.5px;
+    color: #6B6B78;
+    line-height: 1.4;
+    margin-top: 1px;
+  }
+  .ps-recipient-count {
+    font-size: 11px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    color: #2563EB;
+    background: #EFF6FF;
+    padding: 3px 8px;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+  .ps-recipient-row.selected .ps-recipient-count {
+    background: #2563EB;
+    color: white;
+  }
+
+  /* Recipient detail (expanded when "직접 선택") */
+  .ps-recipient-detail {
+    margin-top: 8px;
+    padding: 10px 12px;
+    background: white;
+    border: 1px solid #F1F1F4;
+    border-radius: 10px;
+    display: none;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .ps-recipient-detail.open { display: flex; }
+  .ps-recipient-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 6px 0;
+    font-size: 12px;
+  }
+  .ps-recipient-checkbox {
+    width: 16px; height: 16px;
+    border-radius: 5px;
+    border: 1.5px solid #C8C8D0;
+    flex-shrink: 0;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.15s;
+  }
+  .ps-recipient-checkbox.checked {
+    background: #2563EB;
+    border-color: #2563EB;
+  }
+  .ps-recipient-checkbox.checked::after {
+    content: '';
+    position: absolute;
+    left: 4px; top: 1px;
+    width: 5px; height: 9px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+  .ps-recipient-item-name {
+    flex: 1;
+    font-weight: 500;
+    color: #0A0A0F;
+  }
+  .ps-recipient-item-status {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 5px;
+    letter-spacing: 0.02em;
+  }
+  .ps-status-not-installed {
+    background: #FEF3C7;
+    color: #92400E;
+  }
+  .ps-status-installed {
+    background: #ECFDF5;
+    color: #047857;
+  }
+
+  /* Email preview */
+  .ps-email-preview {
+    background: #FAFAFB;
+    border: 1px solid #F1F1F4;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .ps-email-subject {
+    padding: 12px 14px;
+    background: white;
+    border-bottom: 1px solid #F1F1F4;
+    font-size: 12px;
+    font-weight: 600;
+    color: #0A0A0F;
+    line-height: 1.5;
+  }
+  .ps-email-subject .ps-email-subject-label {
+    color: #9B9BA8;
+    font-weight: 500;
+    margin-right: 4px;
+  }
+  .ps-email-body {
+    padding: 14px;
+    font-size: 11.5px;
+    color: #2A2A35;
+    line-height: 1.65;
+  }
+  .ps-email-body p { margin: 0 0 10px; }
+  .ps-email-body strong { color: #0A0A0F; font-weight: 600; }
+  .ps-email-cta-block {
+    margin: 12px 0 6px;
+    display: flex;
+    gap: 8px;
+  }
+  .ps-email-cta-btn {
+    flex: 1;
+    background: #0A0A0F;
+    color: white;
+    padding: 9px 0;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+  }
+  .ps-email-cta-btn.ios {
+    background: #0A0A0F;
+  }
+  .ps-email-cta-btn.android {
+    background: #34A853;
+  }
+  .ps-email-footer {
+    padding: 8px 14px 12px;
+    border-top: 1px solid #F1F1F4;
+    font-size: 10px;
+    color: #9B9BA8;
+    line-height: 1.5;
+  }
+
+  .ps-edit-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #2563EB;
+    cursor: pointer;
+  }
+  .ps-edit-link:hover { color: #1D4ED8; }
+
+  /* Send options */
+  .ps-options {
+    background: #F9FAFB;
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .ps-option-row {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    cursor: pointer;
+    font-size: 11.5px;
+    color: #2A2A35;
+    line-height: 1.4;
+  }
+  .ps-option-row .ps-recipient-checkbox {
+    width: 15px; height: 15px;
+  }
+
+  /* Footer */
+  .ps-modal-footer {
+    padding: 14px 24px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    border-top: 1px solid #F9FAFB;
+    background: white;
+    position: sticky;
+    bottom: 0;
+  }
+  .ps-modal-footer-info {
+    font-size: 11px;
+    color: #6B6B78;
+  }
+  .ps-modal-footer-info strong {
+    color: #2563EB;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .ps-modal-footer-actions {
+    display: flex;
+    gap: 8px;
+  }
+  .ps-btn-cancel {
+    padding: 9px 16px;
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #2A2A35;
+    background: #F1F1F4;
+    border: 0;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .ps-btn-cancel:hover { background: #E4E4E7; }
+  .ps-btn-send {
+    padding: 9px 16px;
+    border-radius: 9px;
+    font-size: 12px;
+    font-weight: 700;
+    color: white;
+    background: linear-gradient(135deg, #2563EB 0%, #1D4ED8 100%);
+    border: 0;
+    cursor: pointer;
+    transition: all 0.15s;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .ps-btn-send:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px -2px rgba(37, 99, 235, 0.4);
+  }
+
+  /* Toast for sent confirmation */
+  .ps-toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: #0A0A0F;
+    color: white;
+    padding: 14px 22px;
+    border-radius: 12px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 16px 32px -8px rgba(0,0,0,0.3);
+    z-index: 300;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    pointer-events: none;
+  }
+  .ps-toast.show {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  .ps-toast-icon {
+    width: 22px; height: 22px;
+    border-radius: 9999px;
+    background: #10B981;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* ===== Day 30 마일스톤: 다른 도장 추천 CTA ===== */
+  .milestone-partner-hint {
+    margin-top: 16px;
+    padding: 12px 14px;
+    background: linear-gradient(90deg, rgba(37, 99, 235, 0.05) 0%, rgba(124, 58, 237, 0.05) 100%);
+    border: 1px solid rgba(124, 58, 237, 0.15);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .milestone-partner-hint-icon {
+    width: 28px; height: 28px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #2563EB 0%, #7C3AED 100%);
+    color: white;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .milestone-partner-hint-content {
+    flex: 1;
+    min-width: 0;
+  }
+  .milestone-partner-hint-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #2A2A35;
+    line-height: 1.4;
+    margin-bottom: 2px;
+  }
+  .milestone-partner-hint-desc {
+    font-size: 10.5px;
+    color: #6B6B78;
+    line-height: 1.4;
+  }
+  .milestone-partner-hint-cta {
+    flex-shrink: 0;
+    font-size: 11px;
+    font-weight: 600;
+    color: #6D28D9;
+    background: white;
+    border: 1px solid #DDD6FE;
+    padding: 7px 12px;
+    border-radius: 8px;
+    transition: all 0.15s;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .milestone-partner-hint-cta:hover {
+    background: #F5F3FF;
+    border-color: #7C3AED;
+  }
+
   /* ============ MAIN AREA ============ */
   .main-area { display: flex; flex-direction: column; min-height: 100vh; }
 
@@ -353,15 +1179,15 @@
   .kpi-arrow { margin-left: auto; flex-shrink: 0; }
   .kpi-arrow svg { width: 14px; height: 14px; color: #C8C8D0; }
 
-  /* Body: 큰 숫자 + 메타 텍스트 + 아바타 한 줄 배치 */
+  /* Body: 큰 숫자 + Trend + 메타 텍스트 한 줄 배치 (우측 시각요소 제거, 메인=압축 철학) */
   .kpi-body {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 10px;
   }
-  .kpi-value-wrap { display: flex; align-items: baseline; gap: 8px; flex-shrink: 0; }
+  .kpi-value-wrap { display: flex; align-items: baseline; gap: 6px; flex-shrink: 0; }
   .kpi-value { font-family: 'JetBrains Mono', monospace; font-size: 26px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; }
+  .kpi-value-wrap .kpi-trend { margin-left: 2px; }
   .kpi-meta-text { font-size: 11px; color: #6B6B78; line-height: 1.3; flex: 1; min-width: 0; }
   .kpi-meta-row { display: flex; align-items: center; gap: 4px; flex-shrink: 0; }
   .avatar-stack { display: flex; gap: -4px; }
@@ -1210,18 +2036,18 @@
   .milestone-card { display: none; }
 
   /* 일반 (data-day=0): 모든 마일스톤 카드 숨김 + briefing 표시 */
-  /* DAY 30: 마일스톤 카드만 표시, briefing은 숨김 (마일스톤이 메인) */
+  /* DAY 30: 30일 무료 체험 제안 — 마일스톤 카드만 표시, briefing 숨김 (마일스톤이 메인) */
   body[data-day="30"] .briefing-card { display: none; }
   body[data-day="30"] .milestone-day-30 { display: block; }
 
-  /* DAY 33: 체험 중 카드 + briefing 모두 표시 (체험 중 일상) */
-  body[data-day="33"] .milestone-day-33 { display: block; }
+  /* DAY 45: 체험 15일째 (절반 도달) — 카드 + briefing 모두 표시 */
+  body[data-day="45"] .milestone-day-45 { display: block; }
 
-  /* DAY 37: 종료 임박 카드 + briefing 모두 표시 */
-  body[data-day="37"] .milestone-day-37 { display: block; }
+  /* DAY 55: 체험 종료 5일 전 (Loss Aversion) — 카드 + briefing 모두 표시 */
+  body[data-day="55"] .milestone-day-55 { display: block; }
 
-  /* DAY 38: 회상 카드 + briefing 모두 표시 */
-  body[data-day="38"] .milestone-day-38 { display: block; }
+  /* DAY 60: 체험 종료 후 회상 — 카드 + briefing 모두 표시 */
+  body[data-day="60"] .milestone-day-60 { display: block; }
 
   /* === 공통 마일스톤 카드 디자인 === */
   .milestone-card {
@@ -3771,10 +4597,7 @@
     </div>
 
     <div class="sidebar-logo">
-      <span class="logo-text">
-        <span class="logo-step">ST<span class="logo-e">E</span>P</span>
-        <span class="logo-manager">Manager</span>
-      </span>
+      <img src="step_logo.png" alt="STEP Manager" style="height: 28px; width: auto; display: block;">
     </div>
 
     <div class="dojang-selector">
@@ -3821,13 +4644,140 @@
     </a>
 
     <div class="sidebar-bottom">
-      <a class="partner-link">
-        <span class="partner-icon">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 11l-3 3-2-2"/></svg>
+      <!-- ============ 동적 배너 시스템 ============ -->
+      <!-- 5개 배너가 모두 DOM에 있고, body[data-active-banner]로 1개만 표시 -->
+      <!-- 우선순위: setup-incomplete > pro-trial > app-download-manager > partner-program > play-step-promo -->
+
+      <!-- 배너 1: Pro Trial (Core × Day 30 마일스톤 — Pro 무료 체험 유도) -->
+      <a class="promo-banner promo-banner-pro-trial" title="30일 Pro 무료 체험 시작하기">
+        <svg class="promo-illust" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- 보라 별 + 빛나는 원 -->
+          <circle cx="36" cy="12" r="10" fill="rgba(255,255,255,0.15)"/>
+          <path d="M30 6 L31.6 10.4 L36 10.4 L32.4 13 L34 17.4 L30 14.6 L26 17.4 L27.6 13 L24 10.4 L28.4 10.4 Z" fill="rgba(255,255,255,0.95)"/>
+          <circle cx="14" cy="36" r="2" fill="rgba(255,255,255,0.7)"/>
+          <circle cx="20" cy="42" r="1.2" fill="rgba(255,255,255,0.5)"/>
+        </svg>
+        <div class="promo-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 2v3M12 19v3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M2 12h3M19 12h3"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
+          PRO 30일 무료 체험
+        </div>
+        <div class="promo-title">30일 동안 Pro 기능을<br>무료로 써보세요</div>
+        <div class="promo-desc">결제 정보 입력 없음 ·<br>30일 후 자동으로 Core로</div>
+        <span class="promo-cta">
+          체험 시작하기
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
         </span>
-        <span class="partner-text">STEP 파트너</span>
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#9B9BA8" stroke-width="2" style="margin-left: auto;"><path d="M9 18l6-6-6-6"/></svg>
       </a>
+
+      <!-- 배너 2: Partner Program (Pro × 일반 운영 — 도장 추천 마케팅) -->
+      <a class="promo-banner promo-banner-partner-program" title="STEP Partner — 도장 네트워크의 리더가 되어주세요">
+        <svg class="promo-illust" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- 도복 깃 (V자) -->
+          <path d="M14 10 L24 18 L34 10 L34 22 L24 30 L14 22 Z" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.6)" stroke-width="1.2" stroke-linejoin="round"/>
+          <rect x="10" y="22" width="28" height="6" rx="1" fill="rgba(255,255,255,0.85)"/>
+          <rect x="10" y="22" width="28" height="6" rx="1" fill="url(#beltGrad)" opacity="0.7"/>
+          <rect x="22" y="20" width="6" height="10" rx="1" fill="white"/>
+          <path d="M6 6 L7 9 L10 9 L7.5 11 L8.5 14 L6 12 L3.5 14 L4.5 11 L2 9 L5 9 Z" fill="rgba(255,255,255,0.9)"/>
+          <circle cx="40" cy="38" r="1.5" fill="rgba(255,255,255,0.7)"/>
+          <circle cx="44" cy="42" r="1" fill="rgba(255,255,255,0.5)"/>
+          <defs>
+            <linearGradient id="beltGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0" stop-color="#FCD34D"/>
+              <stop offset="1" stop-color="#F59E0B"/>
+            </linearGradient>
+          </defs>
+        </svg>
+        <div class="promo-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 16.8l-6.2 4.5 2.4-7.4L2 9.4h7.6z"/></svg>
+          STEP Partner Program
+        </div>
+        <div class="promo-title">함께 성장하는<br>도장 네트워크의 리더가<br>되어주세요</div>
+        <div class="promo-desc">도장 추천 시 <strong style="color:white;">2개월 사용권</strong> 획득</div>
+        <span class="promo-cta">
+          프로그램 자세히 보기
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </span>
+      </a>
+
+      <!-- 배너 3: STEP Manager App 다운로드 (관장 본인 - 데스크톱·모바일 앱) -->
+      <a class="promo-banner promo-banner-app-download-manager" title="STEP Manager 앱 다운로드">
+        <svg class="promo-illust" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- 데스크톱 + 모바일 디바이스 -->
+          <rect x="6" y="10" width="22" height="16" rx="2" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.7)" stroke-width="1.3"/>
+          <rect x="14" y="28" width="6" height="2" fill="rgba(255,255,255,0.7)"/>
+          <rect x="11" y="30" width="12" height="1.5" rx="0.5" fill="rgba(255,255,255,0.7)"/>
+          <!-- 모바일 -->
+          <rect x="30" y="14" width="11" height="20" rx="2" fill="rgba(255,255,255,0.85)" stroke="white" stroke-width="1.2"/>
+          <circle cx="35.5" cy="31" r="0.8" fill="#1E40AF"/>
+          <!-- 다운로드 화살표 -->
+          <path d="M24 36 L24 42 M21 39 L24 42 L27 39" stroke="white" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        </svg>
+        <div class="promo-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M12 3v12M7 10l5 5 5-5M5 21h14"/></svg>
+          STEP MANAGER APP
+        </div>
+        <div class="promo-title">데스크톱 앱으로<br>더 빠르게 운영하세요</div>
+        <div class="promo-desc">Mac · Windows · iOS · Android</div>
+        <span class="promo-cta">
+          앱 다운로드
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </span>
+      </a>
+
+      <!-- 배너 4: Setup Incomplete (모든 Plan × Setup 미완료 — 최우선 환기) -->
+      <a class="promo-banner promo-banner-setup-incomplete" href="step_setup_required.html" title="도장 설정을 마저 완료해주세요">
+        <svg class="promo-illust" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- 경고 삼각형 + 빛 -->
+          <path d="M24 8 L40 36 L8 36 Z" fill="rgba(255,255,255,0.18)" stroke="rgba(255,255,255,0.7)" stroke-width="1.5" stroke-linejoin="round"/>
+          <line x1="24" y1="18" x2="24" y2="26" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+          <circle cx="24" cy="31" r="1.5" fill="white"/>
+        </svg>
+        <div class="promo-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          설정 미완료
+        </div>
+        <div class="promo-title">도장 설정을<br>마저 완료해주세요</div>
+        <div class="promo-desc">학생 등록 1단계만 마치면<br>모든 기능이 켜져요</div>
+        <span class="promo-cta">
+          이어하기
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </span>
+      </a>
+
+      <!-- 배너 5: Play STEP App 다운로드 안내 (학부모/학생 앱 — 도장 운영자가 학부모에게 안내) -->
+      <a class="promo-banner promo-banner-play-step-promo" title="Play STEP — 학부모·학생 앱 안내" onclick="event.preventDefault(); openPsInviteModal();" href="#">
+        <svg class="promo-illust" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- 모바일 (Play STEP) -->
+          <rect x="14" y="6" width="20" height="36" rx="3" fill="rgba(255,255,255,0.85)" stroke="white" stroke-width="1.2"/>
+          <!-- 화면 안: 띠 캐릭터 (벨트 게이미피케이션 상징) -->
+          <circle cx="24" cy="20" r="4" fill="#10B981"/>
+          <rect x="20" y="24" width="8" height="3" rx="0.5" fill="#FCD34D"/>
+          <!-- 진행도 바 -->
+          <rect x="18" y="32" width="12" height="1.5" rx="0.5" fill="rgba(16,185,129,0.3)"/>
+          <rect x="18" y="32" width="8" height="1.5" rx="0.5" fill="#10B981"/>
+          <circle cx="24" cy="38" r="0.8" fill="#10B981"/>
+          <!-- 별 (게임 요소) -->
+          <path d="M40 12 L41 14.5 L43.5 14.5 L41.5 16 L42.2 18.5 L40 17 L37.8 18.5 L38.5 16 L36.5 14.5 L39 14.5 Z" fill="rgba(255,255,255,0.85)"/>
+        </svg>
+        <div class="promo-label">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="18" r="1" fill="currentColor"/></svg>
+          PLAY STEP APP
+        </div>
+        <div class="promo-title">학부모·학생에게<br>Play STEP을 안내하세요</div>
+        <div class="promo-desc">출석 체크, 띠 진행도,<br>승급 알림을 한 손에</div>
+        <span class="promo-cta">
+          학부모에게 보내기
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </span>
+      </a>
+
+      <!-- 섹션 디바이더: 마케팅 영역 끝, 사용자 프로필 시작 -->
+      <div class="partner-network-label">
+        <span>PARTNER</span>
+        <span class="partner-network-label-divider">|</span>
+        <span>NETWORK</span>
+      </div>
+
       <div class="profile">
         <div class="profile-avatar">M</div>
         <div class="profile-info">
@@ -3860,10 +4810,10 @@
         <span class="demo-divider"></span>
         <span class="demo-label">DAY</span>
         <button class="demo-pill day-pill active" data-day="0">일반</button>
-        <button class="demo-pill day-pill" data-day="30" title="30일 마일스톤 — 7일 무료 체험 제안">30</button>
-        <button class="demo-pill day-pill" data-day="33" title="체험 4일째 — Pro 활용 중">33</button>
-        <button class="demo-pill day-pill" data-day="37" title="체험 종료 24시간 전">37</button>
-        <button class="demo-pill day-pill" data-day="38" title="체험 종료 후 — 회상">38</button>
+        <button class="demo-pill day-pill" data-day="30" title="30일 마일스톤 — 30일 무료 체험 제안">30</button>
+        <button class="demo-pill day-pill" data-day="45" title="체험 15일째 — Pro 활용 중 (절반 도달)">45</button>
+        <button class="demo-pill day-pill" data-day="55" title="체험 종료 5일 전 — Loss Aversion">55</button>
+        <button class="demo-pill day-pill" data-day="60" title="체험 종료 후 — 회상">60</button>
       </div>
 
       <!-- 우측: 메뉴 5 + 사용자 도구 -->
@@ -3956,7 +4906,7 @@
 
       <!-- ============ Pro Mode Preview — 5가지 상태 카드 ============ -->
 
-      <!-- DAY 30: 마일스톤 카드 (7일 체험 제안) -->
+      <!-- DAY 30: 마일스톤 카드 (30일 체험 제안) -->
       <div class="milestone-card milestone-day-30">
         <div class="milestone-glow"></div>
         <div class="milestone-content">
@@ -3964,7 +4914,7 @@
             <div class="milestone-celebrate">🎉</div>
             <div class="milestone-title-wrap">
               <div class="milestone-title">Master Kim님, 30일 동안 STEP을 잘 사용하셨네요!</div>
-              <div class="milestone-subtitle">다음 7일 동안 Pro 기능을 무료로 켜드릴게요. 한 번 써보시고 마음에 들면 그대로 유지하세요.</div>
+              <div class="milestone-subtitle">다음 30일 동안 Pro 기능을 무료로 켜드릴게요. 한 번 써보시고 마음에 들면 그대로 유지하세요.</div>
             </div>
           </div>
 
@@ -3990,27 +4940,42 @@
           <div class="milestone-actions">
             <button class="milestone-cta-primary" onclick="document.getElementById('plan-badge').click()">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
-              7일 무료 체험 시작
+              30일 무료 체험 시작
             </button>
             <button class="milestone-cta-secondary" onclick="setDemoDay(0)">지금은 괜찮아요</button>
           </div>
 
           <div class="milestone-fineprint">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/></svg>
-            결제 정보 입력 없음 · 7일 후 자동으로 Core로 돌아가요
+            결제 정보 입력 없음 · 30일 후 자동으로 Core로 돌아가요
+          </div>
+
+          <!-- 30일 마일스톤 보너스: STEP Partner 추천 환기 -->
+          <div class="milestone-partner-hint">
+            <div class="milestone-partner-hint-icon">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 11l-3 3-2-2"/></svg>
+            </div>
+            <div class="milestone-partner-hint-content">
+              <div class="milestone-partner-hint-title">이 정도 잘 쓰셨으면, 다른 관장님께도 추천해보세요</div>
+              <div class="milestone-partner-hint-desc">추천한 도장과 추천받은 도장 모두 <strong>2개월 사용권</strong> 획득</div>
+            </div>
+            <a class="milestone-partner-hint-cta">
+              추천하기
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
           </div>
         </div>
       </div>
 
-      <!-- DAY 33: Pro 체험 중 (남은 일수 카운트다운) -->
-      <div class="milestone-card milestone-day-33">
+      <!-- DAY 45: Pro 체험 15일째 (절반 도달, 활용 리뷰) -->
+      <div class="milestone-card milestone-day-45">
         <div class="milestone-glow"></div>
         <div class="milestone-content">
           <div class="milestone-header">
             <div class="milestone-celebrate">✨</div>
             <div class="milestone-title-wrap">
-              <div class="milestone-title">Pro 체험 4일째 — 남은 시간 <span class="milestone-countdown">3일 12시간</span></div>
-              <div class="milestone-subtitle">이번 주 Xiro가 도와드린 것을 살펴보세요. 체험 종료 전에 결정하실 수 있어요.</div>
+              <div class="milestone-title">Pro 체험 15일째 — 남은 시간 <span class="milestone-countdown">15일 12시간</span></div>
+              <div class="milestone-subtitle">절반 도달! 지금까지 Xiro가 도와드린 것을 살펴보세요. 체험 종료 전에 결정하실 수 있어요.</div>
             </div>
           </div>
 
@@ -4019,21 +4984,21 @@
               <div class="ms-icon mf-icon-money"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
               <div class="ms-body">
                 <div class="ms-label">결제 안내 준비</div>
-                <div class="ms-value">$280<span class="ms-meta">3건</span></div>
+                <div class="ms-value">$840<span class="ms-meta">9건</span></div>
               </div>
             </div>
             <div class="milestone-stat">
               <div class="ms-icon mf-icon-chat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
               <div class="ms-body">
                 <div class="ms-label">Xiro 대화</div>
-                <div class="ms-value">12<span class="ms-meta">회</span></div>
+                <div class="ms-value">38<span class="ms-meta">회</span></div>
               </div>
             </div>
             <div class="milestone-stat">
               <div class="ms-icon mf-icon-bell"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.73 21a2 2 0 01-3.46 0"/></svg></div>
               <div class="ms-body">
                 <div class="ms-label">학부모 답장 도우미</div>
-                <div class="ms-value">8<span class="ms-meta">건</span></div>
+                <div class="ms-value">24<span class="ms-meta">건</span></div>
               </div>
             </div>
           </div>
@@ -4047,35 +5012,35 @@
         </div>
       </div>
 
-      <!-- DAY 37: 체험 종료 24시간 전 (Loss Aversion 발동) -->
-      <div class="milestone-card milestone-day-37">
+      <!-- DAY 55: 체험 종료 5일 전 (Loss Aversion 발동) -->
+      <div class="milestone-card milestone-day-55">
         <div class="milestone-glow milestone-glow-warn"></div>
         <div class="milestone-content">
           <div class="milestone-header">
             <div class="milestone-celebrate">⏰</div>
             <div class="milestone-title-wrap">
-              <div class="milestone-title">Pro 체험이 <span class="milestone-countdown milestone-countdown-warn">24시간</span> 후 종료됩니다</div>
-              <div class="milestone-subtitle">7일 동안 Xiro가 절약한 시간을 확인하시고, 계속 사용할지 결정해주세요.</div>
+              <div class="milestone-title">Pro 체험이 <span class="milestone-countdown milestone-countdown-warn">5일</span> 후 종료됩니다</div>
+              <div class="milestone-subtitle">지난 25일 동안 Xiro가 절약한 시간을 확인하시고, 계속 사용할지 결정해주세요.</div>
             </div>
           </div>
 
           <div class="milestone-summary">
             <div class="milestone-summary-row">
               <span class="msr-label">⏱️ Xiro가 절약한 시간</span>
-              <span class="msr-value">약 8시간</span>
+              <span class="msr-value">약 32시간</span>
             </div>
             <div class="milestone-summary-row">
               <span class="msr-label">💰 회수한 매출</span>
-              <span class="msr-value">$580</span>
+              <span class="msr-value">$2,180</span>
             </div>
             <div class="milestone-summary-row">
               <span class="msr-label">💬 Xiro와 대화</span>
-              <span class="msr-value">23회</span>
+              <span class="msr-value">87회</span>
             </div>
           </div>
 
           <div class="milestone-warning">
-            <div class="mw-title">내일부터 비활성화되는 기능</div>
+            <div class="mw-title">5일 뒤부터 비활성화되는 기능</div>
             <div class="mw-list">
               <div class="mw-item"><span class="mw-dot"></span>Xiro 대화 무제한 → 잠금</div>
               <div class="mw-item"><span class="mw-dot"></span>결제 회수 안내 자동 준비 → 직접 안내 필요</div>
@@ -4088,19 +5053,19 @@
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
               Pro 유지하기 — $249/월
             </button>
-            <button class="milestone-cta-secondary" onclick="setDemoDay(38)">Core로 돌아가기</button>
+            <button class="milestone-cta-secondary" onclick="setDemoDay(60)">Core로 돌아가기</button>
           </div>
         </div>
       </div>
 
-      <!-- DAY 38+: Core 복귀 후 회상 카드 (Briefing 위에 추가 표시) -->
-      <div class="milestone-card milestone-day-38">
+      <!-- DAY 60+: Core 복귀 후 회상 카드 (Briefing 위에 추가 표시) -->
+      <div class="milestone-card milestone-day-60">
         <div class="milestone-glow milestone-glow-soft"></div>
         <div class="milestone-content">
           <div class="milestone-header">
             <div class="milestone-celebrate">📊</div>
             <div class="milestone-title-wrap">
-              <div class="milestone-title">지난 주 Pro 체험 회상</div>
+              <div class="milestone-title">지난 한 달 Pro 체험 회상</div>
               <div class="milestone-subtitle">체험 중에 Xiro가 챙겨주던 항목들이 이번 주는 다시 직접 처리해야 해요.</div>
             </div>
           </div>
@@ -4110,14 +5075,14 @@
               <div class="mr-icon mr-icon-money"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div>
               <div class="mr-body">
                 <div class="mr-title">미납 회수</div>
-                <div class="mr-meta">체험 중 Xiro 도움 $580 · 이번 주 수동 안내 필요</div>
+                <div class="mr-meta">체험 중 Xiro 도움 $2,180 · 이번 주 수동 안내 필요</div>
               </div>
             </div>
             <div class="mr-row">
               <div class="mr-icon mr-icon-chat"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
               <div class="mr-body">
                 <div class="mr-title">Xiro 대화 무제한</div>
-                <div class="mr-meta">체험 중 23회 활용 · 다시 잠금 상태로 전환됨</div>
+                <div class="mr-meta">체험 중 87회 활용 · 다시 잠금 상태로 전환됨</div>
               </div>
             </div>
           </div>
@@ -4139,21 +5104,14 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
             </div>
             <div class="kpi-label">출석률</div>
-            <div class="kpi-trend">↘ 6%</div>
             <div class="kpi-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>
           </div>
           <div class="kpi-body">
             <div class="kpi-value-wrap">
               <div class="kpi-value">84<span style="font-size: 14px; color: #6B6B78;">%</span></div>
-              <div class="kpi-meta-text">3명의 수련생이 위험해요</div>
+              <div class="kpi-trend">↘ 6%</div>
             </div>
-            <div class="kpi-meta-row">
-              <div class="avatar-stack" style="display:flex;">
-                <div class="mini-avatar">김</div>
-                <div class="mini-avatar amber">이</div>
-                <div class="mini-avatar blue">박</div>
-              </div>
-            </div>
+            <div class="kpi-meta-text">3명의 수련생이 위험해요</div>
           </div>
           <!-- Empty state overlay -->
           <div class="kpi-empty-overlay">
@@ -4172,20 +5130,14 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="6"/><path d="M15.5 13l1.5 8-5-3-5 3 1.5-8"/></svg>
             </div>
             <div class="kpi-label">승급 예정자</div>
-            <div class="kpi-trend neutral">이번 달</div>
             <div class="kpi-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>
           </div>
           <div class="kpi-body">
             <div class="kpi-value-wrap">
               <div class="kpi-value">9<span style="font-size: 14px; color: #6B6B78;">명</span></div>
-              <div class="kpi-meta-text">2명의 승인 대기 중</div>
+              <div class="kpi-trend neutral">이번 달</div>
             </div>
-            <div class="kpi-meta-row">
-              <div class="avatar-stack" style="display:flex;">
-                <div class="mini-avatar purple">정</div>
-                <div class="mini-avatar red">최</div>
-              </div>
-            </div>
+            <div class="kpi-meta-text">2명의 승인 대기 중</div>
           </div>
           <!-- Empty state overlay -->
           <div class="kpi-empty-overlay">
@@ -4223,21 +5175,14 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
             </div>
             <div class="kpi-label">이번 달 매출</div>
-            <div class="kpi-trend up">↗ 16%</div>
             <div class="kpi-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>
           </div>
           <div class="kpi-body">
             <div class="kpi-value-wrap">
               <div class="kpi-value">$18,420</div>
-              <div class="kpi-meta-text">미납 <span class="num">$420</span> · 3건</div>
+              <div class="kpi-trend up">↗ 16%</div>
             </div>
-            <div class="kpi-meta-row">
-              <div class="avatar-stack" style="display:flex;">
-                <div class="mini-avatar green">장</div>
-                <div class="mini-avatar amber">한</div>
-                <div class="mini-avatar purple">윤</div>
-              </div>
-            </div>
+            <div class="kpi-meta-text">미납 <span class="num">$420</span> · 3건</div>
           </div>
           <!-- Empty state overlay -->
           <div class="kpi-empty-overlay">
@@ -4277,21 +5222,14 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 00-4-4H6a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/></svg>
             </div>
             <div class="kpi-label">신규 등록</div>
-            <div class="kpi-trend up">↗ 2명</div>
             <div class="kpi-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>
           </div>
           <div class="kpi-body">
             <div class="kpi-value-wrap">
               <div class="kpi-value">7<span style="font-size: 14px; color: #6B6B78;">명</span></div>
-              <div class="kpi-meta-text">이번 달 가입 · 평균 5명</div>
+              <div class="kpi-trend up">↗ 2명</div>
             </div>
-            <div class="kpi-meta-row">
-              <div class="avatar-stack" style="display:flex;">
-                <div class="mini-avatar blue">서</div>
-                <div class="mini-avatar amber">윤</div>
-                <div class="mini-avatar green">하</div>
-              </div>
-            </div>
+            <div class="kpi-meta-text">이번 달 가입 · 평균 5명</div>
           </div>
           <div class="kpi-empty-overlay">
             <span class="kpi-empty-tag">설정 필요</span>
@@ -4310,23 +5248,14 @@
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
             </div>
             <div class="kpi-label">업무 완료율</div>
-            <div class="kpi-trend up">↗ 8%</div>
             <div class="kpi-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg></div>
           </div>
           <div class="kpi-body">
             <div class="kpi-value-wrap">
               <div class="kpi-value">76<span style="font-size: 14px; color: #6B6B78;">%</span></div>
-              <div class="kpi-meta-text">19/25 업무 처리 · 이번 주</div>
+              <div class="kpi-trend up">↗ 8%</div>
             </div>
-            <div class="kpi-meta-row">
-              <div class="kpi-mini-bars" style="display:flex; gap:3px; align-items:flex-end; height:28px;">
-                <span style="width:6px; background:#7C3AED; height:80%; border-radius:2px;" title="월: 80%"></span>
-                <span style="width:6px; background:#7C3AED; height:100%; border-radius:2px;" title="화: 100%"></span>
-                <span style="width:6px; background:#F59E0B; height:60%; border-radius:2px;" title="수: 60%"></span>
-                <span style="width:6px; background:#7C3AED; height:75%; border-radius:2px;" title="목: 75%"></span>
-                <span style="width:6px; background:#7C3AED; height:90%; border-radius:2px;" title="금: 90%"></span>
-              </div>
-            </div>
+            <div class="kpi-meta-text">19/25 업무 처리 · 이번 주</div>
           </div>
           <div class="kpi-empty-overlay">
             <span class="kpi-empty-tag">설정 필요</span>
@@ -4343,7 +5272,7 @@
       <div class="main-grid">
 
         <!-- Ops Center -->
-        <div class="panel">
+        <div class="panel panel-ops">
           <div class="panel-header">
             <div class="panel-title">
               <span class="panel-title-icon" style="background: #DBEAFE; color: #2563EB;">
@@ -4483,7 +5412,7 @@
         </div>
 
         <!-- Live Dojang -->
-        <div class="panel">
+        <div class="panel panel-live">
           <div class="panel-header">
             <div class="panel-title">
               <span class="panel-title-icon" style="background: #ECFDF5; color: #10B981;">
@@ -4574,6 +5503,16 @@
                 수업 시간표 등록
               </a>
             </div>
+          </div>
+          <!-- Play STEP 미설치 환기 (학부모 onboarding 누수 방지) -->
+          <div class="play-step-alert">
+            <div class="play-step-alert-icon">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <div class="play-step-alert-content">
+              <div class="play-step-alert-title">전체 22명 중 <strong>3명</strong>이 Play STEP 앱 미설치 상태예요</div>
+            </div>
+            <button class="play-step-alert-cta" onclick="openPsInviteModal()">다시 안내</button>
           </div>
         </div>
 
@@ -4797,7 +5736,7 @@
         <div class="roi-result-meta">연간 회수 <span class="num">$1,188</span> − Pro 연 구독 <span class="num">$249</span></div>
       </div>
       <div class="roi-cta-row">
-        <button class="roi-btn-primary" onclick="goToSoftChoice()">7일 무료 체험으로 확인</button>
+        <button class="roi-btn-primary" onclick="goToSoftChoice()">30일 무료 체험으로 확인</button>
         <button class="roi-btn-secondary" onclick="closeRoiModal()">계산 근거</button>
       </div>
       <p class="roi-note">* 자동 결제 전환 없음 · 종료 시 데이터 30일 보관 · 시간 절감 가치는 별도 계산</p>
@@ -4814,7 +5753,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
           </div>
           <div class="soft-opt-text">
-            <div class="soft-opt-title">지금 7일 체험 시작</div>
+            <div class="soft-opt-title">지금 30일 체험 시작</div>
             <div class="soft-opt-sub">바로 사용해보고 결정</div>
           </div>
           <div class="soft-opt-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 18l6-6-6-6"/></svg></div>
@@ -4978,11 +5917,43 @@
   const upsellPills = document.querySelectorAll('.demo-pill[data-upsell]');
   const body = document.body;
 
+  // ============================================
+  // 동적 배너 시스템 — 사용자 상태 자동 감지 → 활성 배너 결정
+  // 우선순위: setup-incomplete > pro-trial > app-download-manager > partner-program > play-step-promo
+  // 향후 슈퍼관리자에서 우선순위/조건 편집 가능하도록 데이터 분리 예정 (현재는 목업 수준 하드코딩)
+  // ============================================
+  function resolveActiveBanner() {
+    const plan  = body.getAttribute('data-plan')  || 'pro';
+    const state = body.getAttribute('data-state') || 'ready';
+    const day   = body.getAttribute('data-day')   || '0';
+
+    // 1. 최우선: 도장 설정이 미완료면 무조건 환기
+    if (state === 'empty') return 'setup-incomplete';
+
+    // 2. Core × Day 30 마일스톤 — Pro 무료 체험 제안
+    if (plan === 'core' && day === '30') return 'pro-trial';
+
+    // 3. Core × Day 0 일반 사용 — Manager 데스크톱 앱 다운로드 안내 (가입 직후)
+    if (plan === 'core' && day === '0') return 'app-download-manager';
+
+    // 4. Pro × 일반 운영 (Day 30+) — Partner Program 마케팅
+    if (plan === 'pro') return 'partner-program';
+
+    // 5. 그 외 — Play STEP 학부모 앱 안내
+    return 'play-step-promo';
+  }
+
+  function applyActiveBanner() {
+    const bannerId = resolveActiveBanner();
+    body.setAttribute('data-active-banner', bannerId);
+  }
+
   function setState(state) {
     body.setAttribute('data-state', state);
     demoPills.forEach(p => {
       p.classList.toggle('active', p.dataset.state === state);
     });
+    applyActiveBanner();
   }
 
   demoPills.forEach(pill => {
@@ -5004,6 +5975,7 @@
       const dot = document.getElementById('xiroNotifDot');
       if (dot) dot.style.display = '';
     }
+    applyActiveBanner();
   }
   upsellPills.forEach(pill => {
     pill.addEventListener('click', () => setUpsellMode(pill.dataset.upsell));
@@ -5035,6 +6007,7 @@
         planBadge.title = 'Pro Plan · 구독 정보';
       }
     }
+    applyActiveBanner();
   }
   planPills.forEach(pill => {
     pill.addEventListener('click', () => setPlan(pill.dataset.plan));
@@ -5058,6 +6031,7 @@
     if (day !== 0 && day !== '0') {
       setPlan('core');
     }
+    applyActiveBanner();
   }
   dayPills.forEach(pill => {
     pill.addEventListener('click', () => setDemoDay(pill.dataset.day));
@@ -5065,6 +6039,9 @@
 
   // 페이지 진입 시 기본 = Day 0 (일반)
   setDemoDay(0);
+
+  // 페이지 진입 시 동적 배너 1회 적용 (모든 토글 초기화 후)
+  applyActiveBanner();
 
   // ============================================
   // PLAN POPOVER: 헤더 Plan 뱃지 클릭 시 팝오버
@@ -5164,7 +6141,7 @@
   function softChoice(choice) {
     closeRoiModal();
     if (choice === 'start') {
-      showToast('Pro 7일 무료 체험을 시작할게요!');
+      showToast('Pro 30일 무료 체험을 시작할게요!');
       // 실제 서비스에서는 onboarding flow로 이동
     } else if (choice === 'week') {
       body.setAttribute('data-t1-dismissed', 'true');
@@ -5515,8 +6492,8 @@
     main: {
       title: '메인 대시보드',
       welcome: {
-        title: '메인 대시보드 둘러보기',
-        desc: '운영 중인 도장의 메인 대시보드 핵심 영역을 1분 안에 안내해드릴게요. 매일 도장을 운영하는 모든 흐름이 여기서 시작됩니다.'
+        title: '메인 Ops 둘러보기',
+        desc: '운영 중인 도장의 메인 Ops 핵심 영역을 1분 안에 안내해드릴게요. 매일 도장을 운영하는 모든 흐름이 여기서 시작됩니다.'
       },
       steps: [
         {
@@ -5544,6 +6521,14 @@
           placement: 'left',
           title: '라이브 도장 — 실시간 수업',
           desc: '현재 진행 중인 수업과 다음 수업을 실시간으로 보여줘요. <span class="accent">Mark Attendance</span> 버튼으로 출석 체크를 즉시 시작할 수 있어요.'
+        },
+        {
+          target: '.panel-event-hub',
+          placement: 'left',
+          requiresPlan: 'pro',
+          title: 'Event Hub — 행사 관리',
+          desc: '<strong>승급심사, 대회, 캠프, 시범</strong> 등 도장의 주요 행사를 한곳에서 관리해요. 진행 중인 행사의 참여·결제 현황을 한눈에 보고, 다가오는 이벤트도 미리 챙길 수 있어요.',
+          tip: 'Pro에서는 Xiro가 행사 2주/1주/1일 전 학부모 안내 메시지를 자동 준비해드려요'
         },
         {
           target: '.quick-actions',
@@ -5596,6 +6581,18 @@
     return body.getAttribute('data-page') || 'main';
   }
 
+  // 현재 plan 기준으로 노출 가능한 steps만 반환
+  // - step.requiresPlan === 'pro' && 현재 plan === 'core' → 제외
+  // - step.requiresPlan === 'core' && 현재 plan === 'pro' → 제외
+  // - requiresPlan 없으면 모든 plan에서 노출
+  function getActiveSteps(guide) {
+    const currentPlan = document.body.getAttribute('data-plan') || 'pro';
+    return guide.steps.filter(step => {
+      if (!step.requiresPlan) return true;
+      return step.requiresPlan === currentPlan;
+    });
+  }
+
   function startCoachMark() {
     const pageKey = getCurrentPageKey();
     const guide = PAGE_GUIDES[pageKey];
@@ -5642,7 +6639,8 @@
     const nextBtn = $coach('coach-next');
     const nextLabel = $coach('coach-next-label');
 
-    const totalSteps = guide.steps.length;
+    const activeSteps = getActiveSteps(guide);
+    const totalSteps = activeSteps.length;
 
     // Welcome (centered) 화면
     if (coachState.currentStep === -1) {
@@ -5669,10 +6667,10 @@
     ring.style.display = 'block';
     prevBtn.style.display = '';
 
-    const step = guide.steps[coachState.currentStep];
-    const targetEl = document.querySelector(step.target);
+    const step = activeSteps[coachState.currentStep];
+    const targetEl = step ? document.querySelector(step.target) : null;
     if (!targetEl) {
-      console.warn(`Coach mark target not found: ${step.target}`);
+      console.warn(`Coach mark target not found: ${step?.target}`);
       // 다음 단계로 자동 진행
       if (coachState.currentStep < totalSteps - 1) {
         coachState.currentStep++;
@@ -5783,7 +6781,7 @@
   function coachNext() {
     const guide = PAGE_GUIDES[coachState.pageKey];
     if (!guide) return;
-    const totalSteps = guide.steps.length;
+    const totalSteps = getActiveSteps(guide).length;
 
     if (coachState.currentStep === -1) {
       coachState.currentStep = 0;
@@ -5852,6 +6850,92 @@
   } else {
     bindAll();
   }
+
+  // ============================================================
+  // Play STEP 안내 메일 발송 모달
+  // ============================================================
+  const PS_RECIPIENT_COUNTS = { 'all': 22, 'not-installed': 3, 'custom': 0 };
+  let psSelectedRecipient = 'not-installed';
+
+  window.openPsInviteModal = function() {
+    const modal = document.getElementById('psInviteModal');
+    if (!modal) return;
+    modal.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    // 기본 선택: not-installed
+    selectPsRecipient('not-installed');
+  };
+
+  window.closePsInviteModal = function() {
+    const modal = document.getElementById('psInviteModal');
+    if (!modal) return;
+    modal.classList.remove('open');
+    document.body.style.overflow = '';
+  };
+
+  window.closePsInviteModalOnOverlay = function(event) {
+    if (event.target.id === 'psInviteModal') closePsInviteModal();
+  };
+
+  window.selectPsRecipient = function(type) {
+    psSelectedRecipient = type;
+    const rows = document.querySelectorAll('.ps-recipient-row');
+    rows.forEach(r => r.classList.toggle('selected', r.dataset.recipient === type));
+    // "직접 선택" 펼침/접힘
+    const detail = document.getElementById('ps-recipient-detail');
+    if (detail) detail.classList.toggle('open', type === 'custom');
+    // 카운트 갱신
+    updatePsSendCount();
+  };
+
+  window.togglePsCustomItem = function(checkbox) {
+    checkbox.classList.toggle('checked');
+    // 체크된 개수 다시 계산
+    const detail = document.getElementById('ps-recipient-detail');
+    if (!detail) return;
+    const checked = detail.querySelectorAll('.ps-recipient-checkbox.checked').length;
+    PS_RECIPIENT_COUNTS.custom = checked;
+    const customCountEl = document.getElementById('ps-custom-count');
+    if (customCountEl) customCountEl.textContent = checked + '명';
+    if (psSelectedRecipient === 'custom') updatePsSendCount();
+  };
+
+  window.togglePsOption = function(checkbox) {
+    checkbox.classList.toggle('checked');
+  };
+
+  function updatePsSendCount() {
+    const count = PS_RECIPIENT_COUNTS[psSelectedRecipient] || 0;
+    const sendCountEl = document.getElementById('ps-send-count');
+    const btnLabelEl = document.getElementById('ps-send-btn-label');
+    if (sendCountEl) sendCountEl.textContent = count;
+    if (btnLabelEl) btnLabelEl.textContent = count + '명에게 보내기';
+  }
+
+  window.sendPsInvite = function() {
+    const count = PS_RECIPIENT_COUNTS[psSelectedRecipient] || 0;
+    if (count === 0) {
+      alert('받는 사람을 1명 이상 선택해주세요.');
+      return;
+    }
+    // 모달 닫고 토스트 표시
+    closePsInviteModal();
+    const toast = document.getElementById('psToast');
+    const toastMsg = document.getElementById('ps-toast-msg');
+    if (toastMsg) toastMsg.textContent = count + '명에게 안내 메일을 발송했어요';
+    if (toast) {
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2800);
+    }
+  };
+
+  // ESC 키로 닫기
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      const modal = document.getElementById('psInviteModal');
+      if (modal && modal.classList.contains('open')) closePsInviteModal();
+    }
+  });
 
 </script>
 
@@ -6384,6 +7468,167 @@
       </div>
     </div>
   </div>
+</div>
+
+<!-- ============================================================ -->
+<!-- Play STEP 안내 메일 발송 모달 -->
+<!-- ============================================================ -->
+<div class="ps-modal-overlay" id="psInviteModal" onclick="closePsInviteModalOnOverlay(event)">
+  <div class="ps-modal" role="dialog" aria-modal="true" aria-labelledby="ps-modal-title">
+    <div class="ps-modal-header">
+      <div class="ps-modal-title-wrap">
+        <span class="ps-modal-eyebrow">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><rect x="5" y="2" width="14" height="20" rx="2"/><circle cx="12" cy="18" r="1" fill="currentColor"/></svg>
+          PLAY STEP APP
+        </span>
+        <div class="ps-modal-title" id="ps-modal-title">학부모에게 Play STEP 다운로드 안내 메일 보내기</div>
+        <div class="ps-modal-subtitle">학부모와 학생이 출석, 띠 진행도, 승급 알림을 앱으로 직접 확인할 수 있어요.</div>
+      </div>
+      <button class="ps-modal-close" onclick="closePsInviteModal()" aria-label="닫기">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+
+    <div class="ps-modal-body">
+      <!-- 받는 사람 선택 -->
+      <div class="ps-section">
+        <div class="ps-section-label">
+          <svg class="ps-section-label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          받는 사람
+        </div>
+        <div class="ps-recipient-list">
+          <div class="ps-recipient-row" data-recipient="all" onclick="selectPsRecipient('all')">
+            <div class="ps-recipient-radio"></div>
+            <div class="ps-recipient-info">
+              <div class="ps-recipient-title">전체 학부모</div>
+              <div class="ps-recipient-desc">도장의 모든 학부모에게 발송</div>
+            </div>
+            <span class="ps-recipient-count">22명</span>
+          </div>
+          <div class="ps-recipient-row selected" data-recipient="not-installed" onclick="selectPsRecipient('not-installed')">
+            <div class="ps-recipient-radio"></div>
+            <div class="ps-recipient-info">
+              <div class="ps-recipient-title">Play STEP 미설치 학부모만 <span style="color:#059669;">(추천)</span></div>
+              <div class="ps-recipient-desc">아직 앱을 설치하지 않은 학부모에게만 발송</div>
+            </div>
+            <span class="ps-recipient-count">3명</span>
+          </div>
+          <div class="ps-recipient-row" data-recipient="custom" onclick="selectPsRecipient('custom')">
+            <div class="ps-recipient-radio"></div>
+            <div class="ps-recipient-info">
+              <div class="ps-recipient-title">직접 선택</div>
+              <div class="ps-recipient-desc">학생을 개별로 선택해서 발송</div>
+            </div>
+            <span class="ps-recipient-count" id="ps-custom-count">0명</span>
+          </div>
+        </div>
+
+        <!-- 직접 선택 펼침 영역 -->
+        <div class="ps-recipient-detail" id="ps-recipient-detail">
+          <div class="ps-recipient-item">
+            <div class="ps-recipient-checkbox" onclick="togglePsCustomItem(this)"></div>
+            <span class="ps-recipient-item-name">김민준 학생 학부모 · kim.parent@example.com</span>
+            <span class="ps-recipient-item-status ps-status-not-installed">미설치</span>
+          </div>
+          <div class="ps-recipient-item">
+            <div class="ps-recipient-checkbox" onclick="togglePsCustomItem(this)"></div>
+            <span class="ps-recipient-item-name">이서연 학생 학부모 · lee.parent@example.com</span>
+            <span class="ps-recipient-item-status ps-status-not-installed">미설치</span>
+          </div>
+          <div class="ps-recipient-item">
+            <div class="ps-recipient-checkbox" onclick="togglePsCustomItem(this)"></div>
+            <span class="ps-recipient-item-name">박지호 학생 학부모 · park.parent@example.com</span>
+            <span class="ps-recipient-item-status ps-status-not-installed">미설치</span>
+          </div>
+          <div class="ps-recipient-item">
+            <div class="ps-recipient-checkbox" onclick="togglePsCustomItem(this)"></div>
+            <span class="ps-recipient-item-name">최예린 학생 학부모 · choi.parent@example.com</span>
+            <span class="ps-recipient-item-status ps-status-installed">설치됨</span>
+          </div>
+          <div class="ps-recipient-item">
+            <div class="ps-recipient-checkbox" onclick="togglePsCustomItem(this)"></div>
+            <span class="ps-recipient-item-name">정도윤 학생 학부모 · jung.parent@example.com</span>
+            <span class="ps-recipient-item-status ps-status-installed">설치됨</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 메일 미리보기 -->
+      <div class="ps-section">
+        <div class="ps-section-label">
+          <svg class="ps-section-label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          메일 미리보기
+        </div>
+        <div class="ps-email-preview">
+          <div class="ps-email-subject">
+            <span class="ps-email-subject-label">제목:</span>[Tae Ryong Taekwondo] 자녀의 출석·승급 현황을 앱으로 직접 확인하세요
+          </div>
+          <div class="ps-email-body">
+            <p><strong>안녕하세요, 학부모님.</strong></p>
+            <p>저희 도장에서 STEP 시스템을 도입하여, 학부모님께서 자녀의 도장 활동을 더 가까이서 응원하실 수 있도록 <strong>Play STEP 앱</strong>을 안내드립니다.</p>
+            <p>앱을 설치하시면 자녀의 <strong>출석 현황, 띠 진행도, 다음 승급심사 일정</strong>을 실시간으로 받아보실 수 있어요.</p>
+            <div class="ps-email-cta-block">
+              <span class="ps-email-cta-btn ios">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M17.05 20.28c-.98.95-2.05.94-3.08.45-1.09-.5-2.08-.5-3.24 0-1.44.62-2.2.44-3.06-.45C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+                iOS 다운로드
+              </span>
+              <span class="ps-email-cta-btn android">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M5 16V8c0-.6.4-1 1-1h12c.6 0 1 .4 1 1v8c0 .6-.4 1-1 1H6c-.6 0-1-.4-1-1zm14 4H5v-1h14v1zM7 5l1-1c.4-.4 1.1-.4 1.5 0L10 5h4l.5-.5c.4-.4 1.1-.4 1.5 0l1 1H7z"/></svg>
+                Android 다운로드
+              </span>
+            </div>
+            <p style="font-size:10.5px; color:#6B6B78; margin-top:10px;">버튼이 작동하지 않으면 도장에서 안내받은 QR 코드를 사용해주세요.</p>
+          </div>
+          <div class="ps-email-footer">
+            Tae Ryong Taekwondo · 도장 ID: STEP-1001 · 문의: master@taeryong.com
+          </div>
+        </div>
+        <span class="ps-edit-link">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          메일 내용 편집
+        </span>
+      </div>
+
+      <!-- 발송 옵션 -->
+      <div class="ps-section">
+        <div class="ps-section-label">
+          <svg class="ps-section-label-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 01-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06a1.65 1.65 0 001.82.33h0a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51h0a1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82v0a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+          발송 옵션
+        </div>
+        <div class="ps-options">
+          <label class="ps-option-row">
+            <span class="ps-recipient-checkbox checked" onclick="togglePsOption(this)"></span>
+            <span>미설치 학부모에게 <strong>7일 후 자동 재발송</strong></span>
+          </label>
+          <label class="ps-option-row">
+            <span class="ps-recipient-checkbox" onclick="togglePsOption(this)"></span>
+            <span>발송 후 <strong>학부모 응답률을 Xiro가 추적</strong></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <div class="ps-modal-footer">
+      <div class="ps-modal-footer-info">
+        <strong id="ps-send-count">3</strong>명에게 발송됩니다
+      </div>
+      <div class="ps-modal-footer-actions">
+        <button class="ps-btn-cancel" onclick="closePsInviteModal()">취소</button>
+        <button class="ps-btn-send" onclick="sendPsInvite()">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          <span id="ps-send-btn-label">3명에게 보내기</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 발송 완료 토스트 -->
+<div class="ps-toast" id="psToast">
+  <div class="ps-toast-icon">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+  </div>
+  <span id="ps-toast-msg">3명에게 안내 메일을 발송했어요</span>
 </div>
 
 </body>

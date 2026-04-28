@@ -156,6 +156,66 @@
   .demo-banner {
     background: linear-gradient(180deg, #0A0A0F 0%, #1A1A22 100%);
   }
+
+  /* === Demo toggle (시연용 — 일반 가입 / Partner 추천) === */
+  .signup-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 9999px;
+    margin-left: 16px;
+  }
+  .signup-toggle button {
+    padding: 4px 14px;
+    border-radius: 9999px;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.7);
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    transition: all .15s;
+    font-family: 'Pretendard', system-ui, sans-serif;
+    letter-spacing: -0.011em;
+  }
+  .signup-toggle button:hover { color: white; }
+  .signup-toggle button.active {
+    background: white;
+    color: #0A0A0F;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+
+  /* Partner 모드 분기 */
+  body[data-signup="standard"] .partner-only { display: none !important; }
+  body[data-signup="partner"]  .standard-only { display: none !important; }
+
+  /* 가격 가운데줄 (Partner 모드 시 $50, $249 위에) */
+  .price-strike {
+    text-decoration: line-through;
+    text-decoration-thickness: 2px;
+    color: #9B9BA8 !important;
+    margin-right: 8px;
+  }
+  .price-zero { color: #2563EB !important; }
+  .price-zero-pro { color: #7C3AED !important; }
+
+  /* Partner 추천 배너 (상단 안내문 박스) */
+  .partner-banner {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 12px;
+    background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%);
+    border: 1px solid #FCD34D;
+    border-radius: 9999px;
+    color: #92400E;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
 </style>
 </head>
 <body>
@@ -167,6 +227,10 @@
   <span class="inline-flex items-center gap-2 en">
     <span class="w-1.5 h-1.5 rounded-full bg-blue-400"></span>
     STEP Manager Onboarding · Design Review · 8 Steps
+  </span>
+  <span class="signup-toggle">
+    <button id="toggle-standard" data-signup-set="standard" class="active">일반 가입</button>
+    <button id="toggle-partner" data-signup-set="partner">Partner 추천</button>
   </span>
 </div>
 
@@ -205,10 +269,22 @@
     </div>
     <!-- Hero -->
     <div class="text-center mb-12 max-w-[640px] mx-auto">
+      <!-- Partner 모드 전용: 추천 배너 -->
+      <div class="partner-only">
+        <div class="partner-banner">
+          🎁 STEP Partner 추천 혜택
+        </div>
+      </div>
       <h1 class="text-[32px] font-semibold tracking-tight leading-[1.2] mb-4" style="letter-spacing: -0.025em;">
         도장에 맞는 <span class="text-blue-600">Plan</span>을 선택해주세요.
       </h1>
-      <p class="text-[14px] text-ink-500 leading-relaxed">
+      <!-- 일반 가입: 무료 체험 없이 즉시 시작 -->
+      <p class="standard-only text-[14px] text-ink-500 leading-relaxed">
+        분석 결과를 기반으로 <span class="text-ink-700 font-medium">Pro</span>를 추천드려요.<br>
+        모든 Plan은 <span class="text-ink-700 font-medium">선택 즉시</span> 시작됩니다.
+      </p>
+      <!-- Partner 추천: 60일 무료 -->
+      <p class="partner-only text-[14px] text-ink-500 leading-relaxed">
         분석 결과를 기반으로 <span class="text-ink-700 font-medium">Pro</span>를 추천드려요.<br>
         모든 Plan은 <span class="text-ink-700 font-medium">60일 무료</span> 후 자동 결제됩니다.
       </p>
@@ -230,10 +306,18 @@
         <h3 class="text-[22px] font-semibold tracking-tight mb-2" style="letter-spacing: -0.02em;">Run your dojang</h3>
         <p class="text-[12.5px] text-ink-500 leading-relaxed mb-6">일상 운영의 디지털 인프라. AI 기반 핵심 기능 모두 포함.</p>
 
-        <div class="flex items-baseline gap-1 mb-6">
+        <!-- 일반 가입: 정상 가격 $50 -->
+        <div class="standard-only flex items-baseline gap-1 mb-6">
           <span class="text-[14px] text-ink-500 num">$</span>
           <span class="text-[36px] font-semibold text-ink-900 leading-none num">50</span>
           <span class="text-[13px] text-ink-500 mb-1">/ month</span>
+        </div>
+        <!-- Partner 추천: $50 가운데줄 → $0 (60일간) -->
+        <div class="partner-only flex items-baseline gap-1 mb-6">
+          <span class="text-[14px] text-ink-500 num">$</span>
+          <span class="text-[28px] font-semibold leading-none num price-strike">50</span>
+          <span class="text-[36px] font-semibold leading-none num price-zero">0</span>
+          <span class="text-[13px] text-ink-500 mb-1">· 60일간</span>
         </div>
 
         <div class="space-y-2.5 mb-1">
@@ -251,7 +335,7 @@
           </div>
           <div class="flex items-start gap-2">
             <svg class="w-3.5 h-3.5 text-emerald-500 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <span class="text-[12.5px] text-ink-700">Xiro AI 추천 (기본)</span>
+            <span class="text-[12.5px] text-ink-700">고급 템플릿 (업무·노트·메시지) 제공</span>
           </div>
         </div>
       </label>
@@ -260,9 +344,13 @@
       <label class="plan-card cursor-pointer block bg-white border-2 border-pro-200 rounded-2xl p-7 transition-all hover:border-pro-400 has-[:checked]:border-pro-500 has-[:checked]:shadow-lg has-[:checked]:shadow-purple-100 relative">
         <input type="radio" name="plan" value="pro" class="sr-only peer" checked>
 
-        <!-- "Most Popular" badge -->
-        <div class="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-gradient-to-r from-pro-500 to-pro-600 text-white text-[10px] font-semibold tracking-wider uppercase rounded-full en">
+        <!-- "Most Popular" badge — 일반 가입 -->
+        <div class="standard-only absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-gradient-to-r from-pro-500 to-pro-600 text-white text-[10px] font-semibold tracking-wider uppercase rounded-full en">
           ⭐ Most Popular
+        </div>
+        <!-- Partner 추천 모드 — 추천드려요 -->
+        <div class="partner-only absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-1 bg-gradient-to-r from-amber-500 to-amber-600 text-white text-[10px] font-semibold tracking-wider rounded-full en">
+          🎁 추천드려요
         </div>
 
         <!-- Selected indicator -->
@@ -274,10 +362,18 @@
         <h3 class="text-[22px] font-semibold tracking-tight mb-2" style="letter-spacing: -0.02em;">Manage your dojang</h3>
         <p class="text-[12.5px] text-ink-500 leading-relaxed mb-6">진지한 도장을 위한 전부. 학부모 연결, 자동 결제, 한 플랫폼.</p>
 
-        <div class="flex items-baseline gap-1 mb-6">
+        <!-- 일반 가입: 정상 가격 $249 -->
+        <div class="standard-only flex items-baseline gap-1 mb-6">
           <span class="text-[14px] text-ink-500 num">$</span>
           <span class="text-[36px] font-semibold text-ink-900 leading-none num">249</span>
           <span class="text-[13px] text-ink-500 mb-1">/ month</span>
+        </div>
+        <!-- Partner 추천: $249 가운데줄 → $0 (60일간) -->
+        <div class="partner-only flex items-baseline gap-1 mb-6">
+          <span class="text-[14px] text-ink-500 num">$</span>
+          <span class="text-[28px] font-semibold leading-none num price-strike">249</span>
+          <span class="text-[36px] font-semibold leading-none num price-zero-pro">0</span>
+          <span class="text-[13px] text-ink-500 mb-1">· 60일간</span>
         </div>
 
         <div class="text-[10px] font-semibold text-pro-700 uppercase tracking-wider en mb-3">EVERYTHING IN CORE, PLUS</div>
@@ -293,7 +389,7 @@
           </div>
           <div class="flex items-start gap-2">
             <svg class="w-3.5 h-3.5 text-pro-500 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <span class="text-[12.5px] text-ink-700">출석 + 프로모션</span>
+            <span class="text-[12.5px] text-ink-700">출석 + 프로모션 + 디지털 승급심사</span>
           </div>
           <div class="flex items-start gap-2">
             <svg class="w-3.5 h-3.5 text-pro-500 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
@@ -301,36 +397,24 @@
           </div>
           <div class="flex items-start gap-2">
             <svg class="w-3.5 h-3.5 text-pro-500 flex-shrink-0 mt-0.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            <span class="text-[12.5px] text-ink-700">고급 템플릿 (업무·노트·메시지)</span>
+            <span class="text-[12.5px] text-ink-700">업무·노트·메시지 작성 AI 자동화</span>
           </div>
         </div>
       </label>
 
     </div>
 
-    <!-- Grow Plan hint (작은 카드) -->
-    <div class="bg-gradient-to-br from-purple-50 to-blue-50 border border-purple-100 rounded-2xl px-5 py-4 mb-8 flex items-center gap-3">
-      <div class="w-9 h-9 rounded-lg bg-white border border-purple-100 flex items-center justify-center flex-shrink-0">
-        <svg class="w-4 h-4 text-purple-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v6M12 22v-6M4.93 4.93l4.24 4.24M14.83 14.83l4.24 4.24M2 12h6M22 12h-6M4.93 19.07l4.24-4.24M14.83 9.17l4.24-4.24"/></svg>
-      </div>
-      <div class="flex-1">
-        <div class="text-[13px] font-semibold text-ink-900 mb-0.5">
-          🌱 Grow Plan <span class="text-ink-500 font-normal">($399/mo · Coming when you're ready)</span>
-        </div>
-        <div class="text-[11.5px] text-ink-500 leading-relaxed">
-          AI 자동화, 마케팅, 사이트 — Pro 정착 후 90일에 자동 안내드려요.
-        </div>
-      </div>
-    </div>
-
     <!-- Confirm CTA -->
-    <a href="step_onboarding_step7.html" class="block w-full bg-blue-600 hover:bg-blue-700 text-white text-[15px] font-medium py-4 rounded-xl transition flex items-center justify-center gap-2 mb-3">
+    <a href="step_onboarding_step7.html" class="block w-full bg-blue-600 hover:bg-blue-700 text-white text-[15px] font-medium py-4 rounded-xl transition flex items-center justify-center gap-2 mb-3 mt-8">
       선택한 Plan으로 진행하기
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
     </a>
 
-    <p class="text-center text-[11.5px] text-ink-400">
+    <p class="standard-only text-center text-[11.5px] text-ink-400">
       언제든지 설정에서 Plan을 변경하실 수 있어요. 30일 환불 보장.
+    </p>
+    <p class="partner-only text-center text-[11.5px] text-ink-400">
+      언제든지 설정에서 Plan을 변경하실 수 있어요. 60일 무료 체험 · 언제든 취소 가능.
     </p>
 
   </div>
@@ -340,6 +424,31 @@
   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
   인덱스로
 </a>
+
+<script>
+  // ============================================
+  // DEMO: Signup 토글 (일반 가입 / Partner 추천)
+  // - standard: 무료 체험 없음, 정상 가격
+  // - partner:  60일 무료 후 자동 결제, $0 표시
+  // ============================================
+  (function setupSignupToggle() {
+    const buttons = document.querySelectorAll('.signup-toggle button[data-signup-set]');
+    function setSignup(mode) {
+      document.body.setAttribute('data-signup', mode);
+      buttons.forEach(b => {
+        b.classList.toggle('active', b.dataset.signupSet === mode);
+      });
+    }
+    buttons.forEach(b => {
+      b.addEventListener('click', () => setSignup(b.dataset.signupSet));
+    });
+    // 기본값: 일반 가입
+    setSignup('standard');
+    // URL query support: ?signup=partner
+    const urlMode = new URLSearchParams(window.location.search).get('signup');
+    if (urlMode === 'partner' || urlMode === 'standard') setSignup(urlMode);
+  })();
+</script>
 
 </body>
 </html>
