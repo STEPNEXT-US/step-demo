@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>STEP Multi-Studio · Mockup Index</title>
+<link rel="stylesheet" href="shared/multi_styles.css">
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  body { background: #FAFAFB; }
+
+  .hero {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 72px 24px 32px;
+  }
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--primary);
+    background: var(--primary-bg);
+    padding: 6px 12px;
+    border-radius: 999px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .hero-eyebrow .dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--primary);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  .hero-title {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: 14px;
+  }
+  .hero-title .accent {
+    background: linear-gradient(135deg, var(--primary) 0%, #60A5FA 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-sub {
+    font-size: 15px;
+    color: var(--text-muted);
+    max-width: 720px;
+    line-height: 1.6;
+  }
+
+  .concept-box {
+    max-width: 980px;
+    margin: 0 auto 32px;
+    padding: 0 24px;
+  }
+  .concept-card {
+    background: linear-gradient(135deg, #FAFAFF 0%, var(--surface) 100%);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--primary);
+    border-radius: var(--r-lg);
+    padding: 20px 24px;
+  }
+  .concept-card-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .concept-card-title .icon { font-size: 14px; }
+  .concept-card-body {
+    font-size: 13px;
+    color: var(--text-soft);
+    line-height: 1.65;
+  }
+  .concept-card-body strong { color: var(--text); }
+  .concept-card-body code {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 11px;
+    color: var(--text);
+  }
+
+  .meta-strip {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 24px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .meta-strip .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+  }
+  .meta-strip .pill .num { font-weight: 700; color: var(--text); font-family: 'JetBrains Mono', monospace; }
+
+  .entry-section {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 24px 60px;
+  }
+  .section-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 12px;
+  }
+  .entry-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r-xl);
+    padding: 32px;
+    transition: all 0.2s ease;
+    display: grid;
+    grid-template-columns: 56px 1fr auto;
+    gap: 24px;
+    align-items: center;
+  }
+  .entry-card:hover {
+    border-color: var(--primary);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+  .entry-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: var(--r);
+    background: var(--primary-bg);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 26px;
+  }
+  .entry-text { min-width: 0; }
+  .entry-title {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+  .entry-desc {
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+  .entry-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 22px;
+    background: var(--primary);
+    color: white;
+    border-radius: var(--r);
+    font-size: 13px;
+    font-weight: 600;
+    transition: all 0.15s ease;
+    white-space: nowrap;
+  }
+  .entry-card:hover .entry-cta {
+    background: var(--primary-hover);
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
+  }
+
+  .guide {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 0 24px 60px;
+  }
+  .guide-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+  .guide-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--r);
+    padding: 18px 20px;
+  }
+  .guide-item-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .guide-item-title .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    background: var(--primary-bg);
+    color: var(--primary);
+    padding: 2px 7px;
+    border-radius: 4px;
+    font-weight: 700;
+  }
+  .guide-item-body {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .guide-item-body code {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 10.5px;
+    color: var(--text);
+  }
+
+  .env-footer {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 24px;
+    font-size: 11px;
+    color: var(--text-faint);
+    text-align: center;
+    border-top: 1px solid var(--border);
+  }
+  .env-footer code {
+    font-family: 'JetBrains Mono', monospace;
+    background: var(--surface);
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: var(--text-muted);
+  }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-eyebrow">
+    <span class="dot"></span>
+    <span>Mockup · Multi-Studio IA</span>
+  </div>
+  <h1 class="hero-title">
+    다지점 운영의 <span class="accent">통합 본부 뷰</span> 기획
+  </h1>
+  <p class="hero-sub">
+    Owner가 여러 도장을 운영할 때 마주하는 HQ 메인 화면의 IA 검증 mockup.
+    제품 기획 단계의 중간 산출물입니다.
+  </p>
+</section>
+
+<div class="concept-box">
+  <div class="concept-card">
+    <div class="concept-card-title">
+      <span class="icon">💡</span>
+      <span>이 mockup의 위치</span>
+    </div>
+    <div class="concept-card-body">
+      이 트랙은 <strong>v6.6 메인을 보존</strong>하면서 다지점 IA를 별도로 검증하기 위한 작업 공간입니다.
+      <strong>Production에서는</strong> Switcher가 v6.6 사이드바의 1급 컴포넌트가 되어, HQ 모드와 단일 지점 모드를 같은 화면에서 컨텍스트로 전환합니다.
+      현재의 <code>multi/</code> 폴더 분리는 <strong>기획 검증의 편의</strong>일 뿐, 실제 제품에서는 단일 시스템으로 통합됩니다.
+    </div>
+  </div>
+</div>
+
+<div class="meta-strip">
+  <span class="pill">📦 <span class="num">3</span> Studios mock</span>
+  <span class="pill">🔒 v6.6 Untouched</span>
+  <span class="pill">🎨 Toss-style + Pretendard</span>
+  <span class="pill">📅 2026.04</span>
+</div>
+
+<section class="entry-section">
+  <div class="section-label">진입점</div>
+  <a href="hq_main.html" class="entry-card">
+    <div class="entry-icon">🏢</div>
+    <div class="entry-text">
+      <div class="entry-title">HQ 메인 — 다지점 통합 본부 뷰</div>
+      <div class="entry-desc">
+        Owner의 매일 아침 진입 화면. v6.6 메인의 어휘를 차용하되 다지점 컨텍스트에 맞게 재구성.
+        Live View 중심 — 각 지점이 살아있는 운영 상태로 표시.
+      </div>
+    </div>
+    <span class="entry-cta">
+      진입
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M5 12h14M13 5l7 7-7 7"/>
+      </svg>
+    </span>
+  </a>
+</section>
+
+<section class="guide">
+  <div class="section-label">사용 가이드</div>
+  <div class="guide-grid">
+    <div class="guide-item">
+      <div class="guide-item-title">
+        <span class="num">01</span>
+        <span>HQ 메인 진입</span>
+      </div>
+      <div class="guide-item-body">
+        위 카드를 클릭하면 다지점 통합 뷰로 이동합니다. 사이드바의 도장 셀렉터로 컨텍스트 전환 가능.
+      </div>
+    </div>
+    <div class="guide-item">
+      <div class="guide-item-title">
+        <span class="num">02</span>
+        <span>지점 컨텍스트 전환</span>
+      </div>
+      <div class="guide-item-body">
+        Switcher에서 LA/NYC/Dallas 선택 시, production에서는 v6.6 메인이 그 지점 데이터로 작동합니다.
+        현재 mockup에서는 <code>step_main_v6.html</code>로 직접 링크.
+      </div>
+    </div>
+    <div class="guide-item">
+      <div class="guide-item-title">
+        <span class="num">03</span>
+        <span>v6.6 ↔ HQ 전환</span>
+      </div>
+      <div class="guide-item-body">
+        단일 지점 운영 화면(v6.6)에서 HQ로 복귀는 사이드바 하단 또는 Switcher에서 "HQ 전체 보기" 선택.
+      </div>
+    </div>
+    <div class="guide-item">
+      <div class="guide-item-title">
+        <span class="num">04</span>
+        <span>키보드 단축키</span>
+      </div>
+      <div class="guide-item-body">
+        <code>⌘K</code> 검색 포커스 · <code>⌘L</code> Switcher 열기 · <code>Esc</code> 모달 닫기
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="env-footer">
+  Mockup 진입점 · <code>v6.6 untouched</code> · 모든 멀티 IA 작업은 <code>/multi/</code> 폴더 내 격리 ·
+  Production 통합은 별도 단계
+</div>
+
+<script src="shared/multi_data.js"></script>
+<script>
+  console.log('[Multi-Studio Mockup] HQ 메인 진입점');
+</script>
+
+</body>
+</html>
