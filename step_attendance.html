@@ -174,6 +174,95 @@
   /* === Core mode: Pro-only 요소 숨김 === */
   body[data-plan="core"] .pro-only { display:none !important; }
 
+  /* ============================================================ */
+  /* === ROLE 분기 시스템 (Owner/Manager/Coach) === */
+  /* ============================================================ */
+  .owner-only,
+  .manager-only,
+  .coach-only { display: none; }
+  body[data-role="owner"]   .owner-only,
+  body[data-role="manager"] .manager-only,
+  body[data-role="coach"]   .coach-only { display: block; }
+  body[data-role="owner"]   .owner-only.flex,
+  body[data-role="manager"] .manager-only.flex,
+  body[data-role="coach"]   .coach-only.flex { display: flex; }
+  body[data-role="owner"]   .owner-only.inline,
+  body[data-role="manager"] .manager-only.inline,
+  body[data-role="coach"]   .coach-only.inline { display: inline; }
+  /* not-coach: Owner+Manager 공통 */
+  body[data-role="coach"] .not-coach { display: none !important; }
+
+  /* === ROLE 토글 PILL (Plan 토글과 동일 스타일) === */
+  .role-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    background: #F4F4F5;
+    border-radius: 7px;
+    padding: 3px;
+  }
+  .role-toggle-label {
+    font-size: 9px;
+    font-weight: 700;
+    color: #71717A;
+    letter-spacing: 0.08em;
+    padding: 0 6px;
+  }
+  .role-toggle button {
+    padding: 3px 10px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    color: #71717A;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .role-toggle button:hover { color: #27272A; }
+  .role-toggle button[data-role-set="owner"].active { background: #2563EB; color: white; }
+  .role-toggle button[data-role-set="manager"].active { background: #059669; color: white; }
+  .role-toggle button[data-role-set="coach"].active { background: #D97706; color: white; }
+
+  /* === 헤더 eyebrow 라벨 (Coach: 앰버 / Manager: 초록) === */
+  .header-role-eyebrow {
+    display: none;
+    font-size: 10px;
+    font-weight: 700;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 6px;
+    letter-spacing: 0.06em;
+    margin-right: 8px;
+    align-items: center;
+  }
+  body[data-role="coach"] .header-role-eyebrow.eyebrow-coach {
+    display: inline-flex;
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  }
+  body[data-role="manager"] .header-role-eyebrow.eyebrow-manager {
+    display: inline-flex;
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  }
+
+  /* === Coach 모드: 내 수업 학생만 노출 (시각화) === */
+  /* 학생 카드에 data-my-class 속성으로 내 수업 학생 식별 */
+  body[data-role="coach"] .student-card:not([data-my-class="true"]) {
+    display: none !important;
+  }
+  /* Coach 모드 — 헤더의 도장명을 "내 수업 학생"으로 변경할 수 있는 라벨 */
+  .coach-class-label {
+    display: none;
+    font-size: 10px;
+    font-weight: 700;
+    color: #92400E;
+    background: #FEF3C7;
+    padding: 3px 8px;
+    border-radius: 5px;
+    margin-left: 8px;
+  }
+  body[data-role="coach"] .coach-class-label { display: inline-flex; align-items: center; }
+
   /* === Add Student card (학생 그리드 마지막 슬롯, Core/Pro 공통) === */
   .add-student-card {
     border:1.5px dashed #D4D4D8;
@@ -246,6 +335,7 @@
           <span class="text-ink-500">Attendance</span>
           <svg class="w-3 h-3 text-ink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
           <span class="font-semibold text-ink-900">Mark Today</span>
+          <span class="coach-class-label">내 수업 학생만</span>
           <span class="mono text-xs text-ink-400 ml-2">Sun · Apr 26</span>
         </nav>
       </div>
@@ -262,6 +352,14 @@
           <span class="text-xs font-semibold text-brand-700">Xiro</span>
           <span class="mono text-[10px] font-bold text-white bg-brand-500 px-1.5 py-0.5 rounded-full">3</span>
         </button>
+
+        <!-- ROLE toggle (Owner/Manager/Coach) — Demo pill -->
+        <div class="role-toggle">
+          <span class="role-toggle-label">ROLE</span>
+          <button data-role-set="owner" class="active">Owner</button>
+          <button data-role-set="manager">Manager</button>
+          <button data-role-set="coach">Coach</button>
+        </div>
 
         <!-- Plan toggle (Core/Pro) — Demo pill -->
         <div class="plan-toggle">
@@ -446,26 +544,26 @@
 
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-1">
-              <div class="tab active">All <span class="count mono">22</span></div>
+              <div class="tab active">All <span class="count mono not-coach">22</span><span class="count mono coach-only inline">6</span></div>
               <div class="tab">
                 <span class="w-2 h-2 rounded-full bg-present"></span>
-                Present <span class="count mono">14</span>
+                Present <span class="count mono not-coach">14</span><span class="count mono coach-only inline">3</span>
               </div>
               <div class="tab">
                 <span class="w-2 h-2 rounded-full bg-late"></span>
-                Late <span class="count mono">2</span>
+                Late <span class="count mono not-coach">2</span><span class="count mono coach-only inline">1</span>
               </div>
               <div class="tab">
                 <span class="w-2 h-2 rounded-full bg-absent"></span>
-                Absent <span class="count mono">2</span>
+                Absent <span class="count mono not-coach">2</span><span class="count mono coach-only inline">1</span>
               </div>
               <div class="tab">
                 <span class="w-2 h-2 rounded-full bg-trial"></span>
-                Trial <span class="count mono">1</span>
+                Trial <span class="count mono not-coach">1</span><span class="count mono coach-only inline">0</span>
               </div>
               <div class="tab">
                 <span class="w-2 h-2 rounded-full bg-ink-300"></span>
-                Pending <span class="count mono">3</span>
+                Pending <span class="count mono not-coach">3</span><span class="count mono coach-only inline">1</span>
               </div>
             </div>
             <div class="flex items-center gap-2 text-xs text-ink-500">
@@ -487,7 +585,7 @@
           <div class="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3">
 
             <!-- Card 1: Present -->
-            <div class="student-card status-present selected">
+            <div class="student-card status-present selected" data-my-class="true">
               <div class="ck checked absolute top-3 right-3"><svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg></div>
               <button class="quick-note-btn"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
               <div class="flex items-center gap-2 mb-2">
@@ -511,7 +609,7 @@
             </div>
 
             <!-- Card 2: Late -->
-            <div class="student-card status-late">
+            <div class="student-card status-late" data-my-class="true">
               <div class="ck absolute top-3 right-3"></div>
               <button class="quick-note-btn"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
               <div class="flex items-center gap-2 mb-2">
@@ -536,7 +634,7 @@
             </div>
 
             <!-- Card 3: Absent + auto-alert sent -->
-            <div class="student-card status-absent">
+            <div class="student-card status-absent" data-my-class="true">
               <div class="ck absolute top-3 right-3"></div>
               <span class="note-indicator" title="Note added"></span>
               <div class="flex items-center gap-2 mb-2">
@@ -561,7 +659,7 @@
             </div>
 
             <!-- Card 4: Present (Coach manual) -->
-            <div class="student-card status-present">
+            <div class="student-card status-present" data-my-class="true">
               <div class="ck absolute top-3 right-3"></div>
               <button class="quick-note-btn"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg></button>
               <div class="flex items-center gap-2 mb-2">
@@ -585,7 +683,7 @@
             </div>
 
             <!-- Card 5: Trial student -->
-            <div class="student-card">
+            <div class="student-card" data-my-class="true">
               <div class="ck absolute top-3 right-3"></div>
               <div class="flex items-center gap-2 mb-2">
                 <span class="belt-trial belt-badge">★ Trial</span>
@@ -606,7 +704,7 @@
             </div>
 
             <!-- Card 6: Pending -->
-            <div class="student-card">
+            <div class="student-card" data-my-class="true">
               <div class="ck absolute top-3 right-3"></div>
               <div class="flex items-center gap-2 mb-2">
                 <span class="belt-yellow belt-badge">● Yellow</span>
@@ -1244,6 +1342,28 @@
   // URL query support: ?plan=core
   const urlPlan = new URLSearchParams(window.location.search).get('plan');
   if (urlPlan === 'core') setPlan('core');
+
+  // ============================================
+  // DEMO: Role 토글 (Owner / Manager / Coach)
+  // - Owner: 도장 전체 학생 출석 체크 (기본값)
+  // - Manager: 도장 전체 학생 출석 체크 (Owner와 동일 권한)
+  // - Coach: 내 수업 학생만 출석 체크 (data-my-class="true" 카드만 노출)
+  // ============================================
+  const roleButtons = document.querySelectorAll('.role-toggle button[data-role-set]');
+  function setRole(role) {
+    document.body.setAttribute('data-role', role);
+    roleButtons.forEach(b => {
+      b.classList.toggle('active', b.dataset.roleSet === role);
+    });
+  }
+  roleButtons.forEach(b => {
+    b.addEventListener('click', () => setRole(b.dataset.roleSet));
+  });
+  // 기본값 Owner
+  setRole('owner');
+  // URL query support: ?role=coach
+  const urlRole = new URLSearchParams(window.location.search).get('role');
+  if (urlRole === 'manager' || urlRole === 'coach') setRole(urlRole);
 
   // ESC = return to dashboard (focus mode behavior)
   document.addEventListener('keydown', e => {
